@@ -1,0 +1,149 @@
+<template>
+    <td-dropdown class="td-locale-select" :text="getLanguageName(locale)" right>
+        <template #default="{ close }">
+            <div class="td-dropdown-search">
+                <input
+                    type="text"
+                    v-model="searchQuery"
+                    class="td-dropdown-input"
+                    placeholder="Search language..."
+                    @click.stop
+                    @input="filterLocales"
+                />
+            </div>
+            <div class="td-dropdown-scroll">
+                <button
+                    v-for="localeCode in filteredLocales"
+                    :key="`locale-${localeCode}`"
+                    type="button"
+                    class="td-dropdown-item"
+                    role="menuitem"
+                    @click.stop.prevent="updateLocale(localeCode, close)"
+                >
+                    {{ getLanguageName(localeCode) }}
+                </button>
+            </div>
+        </template>
+    </td-dropdown>
+</template>
+  
+<script>
+import { mapState } from 'vuex';
+import { LOCALE_SELECTED } from '@/store/actions/locale.js';
+import isElectron from 'is-electron';
+import TdDropdown from './Dropdown.vue';
+
+export default {
+    name: 'TdLocalSelect',
+    components: {
+        TdDropdown
+    },
+    data() {
+        return {
+            searchQuery: '',
+            filteredLocales: []
+        };
+    },
+    created() {
+        // Initialize filteredLocales with all available locales
+        this.filteredLocales = [...this.$i18n.availableLocales]; 
+    },
+    computed: {
+        ...mapState({
+            locale: function (state) {
+                if (this.$i18n.locale !== state.locale.locale) {
+                    this.$i18n.locale = state.locale.locale;
+                }
+                return state.locale.locale;
+            }
+        })
+    },
+    methods: {
+        filterLocales() {
+            const query = this.searchQuery.toLowerCase().trim();
+
+            if (!query) {
+                this.filteredLocales = [...this.$i18n.availableLocales];
+                return;
+            }
+
+            // Sort and filter locales
+            this.filteredLocales = [...this.$i18n.availableLocales]
+                .sort((a, b) => {
+                    const nameA = this.getLanguageName(a).toLowerCase();
+                    const nameB = this.getLanguageName(b).toLowerCase();
+
+                    // If name starts with query, it should come first
+                    const startsWithA = nameA.startsWith(query);
+                    const startsWithB = nameB.startsWith(query);
+
+                    if (startsWithA && !startsWithB) return -1;
+                    if (!startsWithA && startsWithB) return 1;
+
+                    // If neither or both start with query, sort alphabetically
+                    return nameA.localeCompare(nameB);
+                })
+                .filter(locale => {
+                    const name = this.getLanguageName(locale).toLowerCase();
+                    const searchableText = this.getSearchableText(name);
+                    return name.includes(query) ||
+                        locale.toLowerCase().includes(query) ||
+                        searchableText.includes(query);
+                });
+        },
+        updateLocale(locale, closeDropdown) {
+            this.$store.dispatch(LOCALE_SELECTED, locale);
+            if (isElectron()) {
+                window.electronAPI.updateMenu(locale);
+            }
+            this.searchQuery = ''; // Clear search after selection
+            this.filterLocales(); // Reset the filtered list
+            closeDropdown();
+        },
+        getLanguageName(locale) {
+            switch (locale) {
+            case 'ar':
+                return 'العربية'; // Arabic
+            case 'de':
+                return 'Deutsch'; // German
+            case 'el':
+                return 'Ελληνικά'; // Greek
+            case 'en':
+                return 'English';
+            case 'es':
+                return 'Español'; // Spanish
+            case 'fi':
+                return 'Suomi'; // Finnish
+            case 'fr':
+                return 'Français'; // French
+            case 'hi':
+                return 'हिंदी'; // Hindi
+            case 'id':
+                return 'Bahasa Indonesia'; // Indonesia
+            case 'ja':
+                return '日本語'; // Japanese
+            case 'ms':
+                return 'Malay'; // Malay
+            case 'pt':
+                return 'Português'; // Portuguese
+            case 'pt-BR':
+                return 'Português (Brasil)'; // Brazilian Portuguese
+            case 'zh':
+                return '中文'; // Chinese
+            default:
+                return locale;
+            }
+        },
+        getSearchableText(name) {
+            const searchMapping = {
+                'العربية': 'arabic',
+                'Ελληνικά': 'greek',
+                'हिंदी': 'hindi',
+                '日本語': 'japanese',
+                '中文': 'chinese'
+            };
+            return searchMapping[name] || name;
+        }
+    }
+};
+</script>

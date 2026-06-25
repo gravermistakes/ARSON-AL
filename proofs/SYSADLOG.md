@@ -4,6 +4,14 @@
 Sysadmin/dissolution error log for proofs/. Each entry: what broke, how it was
 found, the fix. Newest first. Linked from CLAUDE.md.
 
+## 1782416720d — batch 5 review (mitre-attack, threat-dragon, ssti-research, osint-tools)  [CLEAN]
+
+Review cadence after batch-5 pushes. No errors — merged.
+- **verify:** threat-dragon sample JS `node --check` 20/20 clean (full npm
+  build skipped — heavy monorepo); ssti/mitre/osint are docs/HTML.
+- **security:** no real credentials. threat-dragon `example.env` holds
+  obvious placeholder values (`asdfasdfasdf`, `0123...`) — upstream template.
+
 ## 1782416720c — batch 3 review (noir, ast10, bofhound)  [CLEAN]
 
 Review cadence after batch-3 pushes. No errors — merged.

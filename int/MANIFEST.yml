@@ -88,3 +88,45 @@ dissolved:
     notes: >
       Upstream fork archived ("no longer active" -> coffeegist/bofhound).
       tests/ fixtures (~8.9M) kept as corpus per policy. py_compile clean.
+
+  - source_repo: mitre-attack
+    origin: https://github.com/infosecn1nja/awesome-mitre-attack
+    license: see upstream
+    classification: attack-technique-mapping
+    rationale: >
+      Curated MITRE ATT&CK resource list (techniques, mappings, tooling). The
+      root doc names "ATT&CK technique mappings" for int/. A reference doc.
+    placed:
+      - unit: ATT&CK resource index
+        verb: map findings/TTPs to ATT&CK techniques
+        files: int/mitre-attack/README.md
+
+  - source_repo: threat-dragon
+    origin: https://github.com/OWASP/threat-dragon
+    license: Apache-2.0
+    classification: threat-modeling
+    rationale: >
+      OWASP Threat Dragon — a threat-modeling app (diagrams + rule engine). The
+      root doc names "threat diagrams" for int/. Models a target's threats to
+      steer the recon loop.
+    placed:
+      - unit: threat-modeling app
+        verb: draw threat diagrams + derive threats
+        files: int/threat-dragon/   # Vue/Electron app source, docs/, ThreatDragonModels/ examples
+    build: "npm install (monorepo); ThreatDragonModels/ holds example models."
+    dropped: [.github/, lint/CI dotfiles]
+    reason_dropped: CI/lint scaffolding. docs + example models kept per policy.
+
+  - source_repo: osint-tools
+    origin: https://github.com/cipher387/osint_stuff_tool_collection
+    license: see upstream
+    classification: osint-tooling-collection
+    rationale: >
+      Curated OSINT tool collection (1000+ tools) plus a few standalone HTML
+      search widgets. OSINT / investigation research -> int/.
+    placed:
+      - unit: OSINT collection + search widgets
+        verb: enumerate OSINT tooling for a target/person/infra
+        files: int/osint-tools/   # README.md (the collection), *_search/*_list.html, weekly_updates/
+    dropped: [_config.yml, google-site-verification.html]
+    reason_dropped: Jekyll/site-verification scaffolding.

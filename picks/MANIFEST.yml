@@ -54,3 +54,16 @@ dissolved:
     notes: >
       test-vuln/ carries ~13M of compiled fuzz harnesses + corpus + crash
       output — intentionally retained as the runnable reference, not stripped.
+
+  - source_repo: ssti-research
+    origin: https://github.com/vladko312/Research_Successful_Errors
+    license: see upstream
+    classification: ssti-injection-technique
+    rationale: >
+      "Successful Errors" SSTI research — server-side template injection payloads
+      and methodology (the paper + slides). SSTI is a named picks/ class. Ways in.
+    placed:
+      - unit: SSTI payloads + research
+        verb: exploit server-side template injection
+        files: picks/ssti-research/   # Payloads.md, README, 2 PDFs (paper+slides), images/
+    notes: PDFs + images kept per policy (docs/research/examples).

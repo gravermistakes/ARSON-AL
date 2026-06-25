@@ -1,0 +1,144 @@
+import { BootstrapVue, BModal, BFormInput, BButton } from 'bootstrap-vue';
+import { createLocalVue, shallowMount } from '@vue/test-utils';
+import AddBranchDialog from '@/components/AddBranchDialog.vue';
+import TdFormSelect from '@/components/FormSelect.vue';
+import TdOverlay from '@/components/Overlay.vue';
+
+describe('components/AddBranchDialog.vue', () => {
+    let localVue, wrapper;
+
+    beforeEach(() => {
+        localVue = createLocalVue();
+        localVue.use(BootstrapVue);
+    });
+
+    describe('with data', () => {
+        const branches = ['main', 'develop', 'feature'];
+
+        beforeEach(() => {
+            wrapper = shallowMount(AddBranchDialog, {
+                localVue,
+                propsData: {
+                    branches
+                },
+                mocks: {
+                    $t: key => key
+                }
+            });
+        });
+
+        it('displays the modal', () => {
+            expect(wrapper.findComponent(BModal).exists()).toBe(true);
+        });
+
+        it('displays the branch name input', () => {
+            expect(wrapper.findComponent(BFormInput).exists()).toBe(true);
+        });
+
+        it('displays the reference branch select', () => {
+            expect(wrapper.findComponent(TdFormSelect).exists()).toBe(true);
+        });
+
+        it('displays the add button', () => {
+            expect(wrapper.findAllComponents(BButton).at(0).text()).toBe('branch.add');
+        });
+
+        it('wraps the add button in the Threat Dragon overlay', () => {
+            expect(wrapper.findComponent(TdOverlay).exists()).toBe(true);
+        });
+
+        it('displays the cancel button', () => {
+            expect(wrapper.findAllComponents(BButton).at(1).text()).toBe('branch.cancel');
+        });
+
+        it('calls closeDialog on cancel button click', async () => {
+            await wrapper.findAllComponents(BButton).at(1).trigger('click');
+            expect(wrapper.emitted('close-dialog')).toHaveLength(1);
+        });
+    });
+
+    describe('validation', () => {
+        const branches = ['develop', 'feature', 'main'];
+
+        beforeEach(() => {
+            wrapper = shallowMount(AddBranchDialog, {
+                localVue,
+                propsData: {
+                    branches
+                },
+                mocks: {
+                    $t: key => key
+                }
+            });
+        });
+
+        it('shows an error if branch name is empty', async () => {
+            await wrapper.setData({ newBranchName: '' });
+            wrapper.vm.validate();
+            expect(wrapper.vm.branchNameError).toBe('branch.nameRequired');
+        });
+
+        it('shows an error if branch name already exists', async () => {
+            await wrapper.setData({ newBranchName: 'main' });
+            wrapper.vm.validate();
+            expect(wrapper.vm.branchNameError).toBe('branch.nameExists');
+        });
+
+        it('does not show an error if branch name is valid', async () => {
+            await wrapper.setData({ newBranchName: 'new-branch' });
+            wrapper.vm.validate();
+            expect(wrapper.vm.branchNameError).toBe('');
+        });
+    });
+
+    describe('addBranch', () => {
+        let branches, commit, dispatch;
+
+        beforeEach(() => {
+            branches = ['main', 'develop', 'feature'];
+            commit = jest.fn();
+            dispatch = jest.fn((action, payload) => {
+                if (action === 'BRANCH_CREATE') {
+                    const { branchName } = payload;
+                    branches.push(branchName);
+                    return Promise.resolve();
+                }
+                if (action === 'BRANCH_FETCH') {
+                    wrapper.setProps({ branches: [...branches] });
+                    return Promise.resolve();
+                }
+                return Promise.resolve();
+            });
+            wrapper = shallowMount(AddBranchDialog, {
+                localVue,
+                propsData: { branches },
+                mocks: {
+                    $t: key => key,
+                    $store: { dispatch, commit }
+                },
+                data() {
+                    return {
+                        newBranchName: 'new-branch',
+                        refBranch: 'main'
+                    };
+                }
+            });
+        });
+
+        it('dispatches the create action with correct payload', async () => {
+            await wrapper.vm.addBranch();
+            expect(wrapper.vm.branches).toContain('new-branch');
+        });
+
+        it('closes the dialog after adding the branch', async () => {
+            await wrapper.setData({ newBranchName: 'new-branch', refBranch: 'main' });
+            await wrapper.vm.addBranch();
+            expect(wrapper.emitted('close-dialog')).toHaveLength(1);
+        });
+
+        it('dispatches BRANCH_FETCH with { page: 1 } when polling for the new branch', async () => {
+            await wrapper.vm.addBranch();
+            expect(dispatch).toHaveBeenCalledWith('BRANCH_FETCH', { page: 1 });
+        });
+    });
+});
