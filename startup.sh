@@ -74,5 +74,5 @@ git push -u origin main 2>/dev/null && ok "pushed" \
   || warn "create repo first: gh repo create ${REMOTE_ORG}/${REMOTE_REPO} --private"
 
 # ── Done ───────────────────────────────────────────────────────
-log "$(ls staging/ | wc -l) repos in staging/ — dissolve per claude.md"
+log "$(ls staging/ | wc -l) repos in staging/ — dissolve per CLAUDE.md"
 [ ${#MISSING[@]} -gt 0 ] && warn "missing: ${MISSING[*]}"
