@@ -87,3 +87,23 @@ dissolved:
     complications: >
       Root CMakeLists referenced the dropped dirs; trimmed those refs and the
       EXPERIMENTS/BENCHMARKS options so the default configure stays coherent.
+
+  - source_repo: ast10
+    origin: https://github.com/OWASP/www-project-agentic-skills-top-10
+    license: CC BY-SA 4.0
+    classification: compliance-framework
+    rationale: >
+      OWASP Agentic Skills Top 10 — security risks + mitigations for AI agent
+      skills (SKILL.md/skill.json/manifest.json/package.json ecosystems). The
+      compliance framework the root doc names for ops/ ("compliance frameworks
+      (AST10)"). Joins ponytail under ops/standards/ as the rules-agents-follow.
+    placed:
+      - unit: the AST10 standard
+        verb: govern agent-skill security
+        files: ops/standards/ast10/   # ast01-10.md, checklist, universal-skill-format, trust-boundary-model, mappings, remediation-guide, ...
+        detail: >
+          Plus docs/, examples/, tools/ (scanner-integration), risk-assessment,
+          threat-intelligence, case-studies, validate.sh. docs/examples kept per policy.
+    dropped:
+      - _config.yml, Gemfile, 404.html, CONTRIBUTING.md, SECURITY.md, MAINTENANCE.md, community-contribution.md, leaders.md
+    reason_dropped: Jekyll site scaffolding + project governance — not the standard itself.

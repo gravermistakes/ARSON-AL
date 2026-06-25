@@ -10,7 +10,11 @@ directory is built under.
 - `substrate/opack/` — C++ ECS multi-agent library (flecs-based). The compiled
   substrate tool "cells" recombine onto; C++ owns branching/merging/pruning/
   state, the LLM rides on top for triage and prose.
-Future peers: AST10 compliance, CI/CD.
+- `standards/ast10/` — OWASP Agentic Skills Top 10: security risks + mitigations
+  for AI agent skills (ast01–10, checklist, universal-skill-format, trust-
+  boundary-model, scanner-integration). The compliance framework; gates the
+  skills we dissolve (ponytail, lance, bug-reaper, fuzz-skill, h1dr4).
+Future peers: CI/CD.
 
 ## Build
 - Ponytail: config + skills, nothing compiles. Install into an agent:
@@ -37,4 +41,5 @@ Future peers: AST10 compliance, CI/CD.
 - OPACK is upstream-flagged WIP ("project not ready yet"); treat the substrate
   API as unstable. benchmarks/experiments/docs were dropped — don't enable those
   CMake options.
-- AST10 compliance and CI/CD not yet dissolved.
+- AST10 now present (standards/ast10) — its tools/ scanner-integration could
+  later lint the dissolved skills automatically. CI/CD still to dissolve.

@@ -1,0 +1,149 @@
+require "../../func_spec.cr"
+
+expected_endpoints = [
+  Endpoint.new("/api/v2/Home/Index", "GET"),
+  Endpoint.new("/Home/Index", "GET"),
+  Endpoint.new("/api/v2/Home/About", "GET"),
+  Endpoint.new("/Home/About", "GET"),
+  Endpoint.new("/api/v2/Home/Save", "POST", [
+    Param.new("name", "", "form"),
+    Param.new("description", "", "form"),
+  ]),
+  Endpoint.new("/Home/Save", "POST", [
+    Param.new("name", "", "form"),
+    Param.new("description", "", "form"),
+  ]),
+  Endpoint.new("/api/v2/Home/Details/{id}", "GET", [
+    Param.new("id", "", "path"),
+  ]),
+  Endpoint.new("/Home/Details/{id}", "GET", [
+    Param.new("id", "", "path"),
+  ]),
+  Endpoint.new("/api/Users", "GET", [
+    Param.new("traceId", "", "header"),
+  ]),
+  Endpoint.new("/api/Users/{id}", "GET", [
+    Param.new("id", "", "path"),
+  ]),
+  Endpoint.new("/api/Users", "POST", [
+    Param.new("name", "", "json"),
+  ]),
+  Endpoint.new("/api/Users/raw", "GET", [
+    Param.new("filter", "", "query"),
+  ]),
+  Endpoint.new("/api/Users/search", "GET", [
+    Param.new("keyword", "", "query"),
+  ]),
+  Endpoint.new("/api/Users/{id}", "PUT", [
+    Param.new("id", "", "path"),
+    Param.new("name", "", "json"),
+  ]),
+  Endpoint.new("/api/Users/{id}", "DELETE", [
+    Param.new("id", "", "path"),
+    Param.new("soft", "", "query"),
+  ]),
+  Endpoint.new("/admin/Dashboard", "GET"),
+  Endpoint.new("/admin/reports/{year}/{month}", "GET", [
+    Param.new("year", "", "path"),
+    Param.new("month", "", "path"),
+  ]),
+  Endpoint.new("/admin/Notify", "POST", [
+    Param.new("subject", "", "form"),
+    Param.new("message", "", "form"),
+    Param.new("sessionId", "", "form"),
+  ]),
+  Endpoint.new("/mapped/ping", "GET"),
+  Endpoint.new("/mapped/health", "GET"),
+  Endpoint.new("/mapped/items/{id}", "POST", [
+    Param.new("id", "", "path"),
+    Param.new("filter", "", "query"),
+    Param.new("X-Trace-Id", "", "header"),
+    Param.new("sessionId", "", "cookie"),
+  ]),
+  Endpoint.new("/mapped/methods", "PUT"),
+  Endpoint.new("/mapped/methods", "DELETE"),
+  Endpoint.new("/mapped/multiline", "PATCH", [
+    Param.new("page", "", "query"),
+    Param.new("X-Mode", "", "header"),
+    Param.new("ml", "", "cookie"),
+  ]),
+  Endpoint.new("/mapped/multiline", "HEAD", [
+    Param.new("page", "", "query"),
+    Param.new("X-Mode", "", "header"),
+    Param.new("ml", "", "cookie"),
+  ]),
+  Endpoint.new("/mapped/rich", "GET", [
+    Param.new("q", "", "query"),
+    Param.new("X-Test", "", "header"),
+    Param.new("cid", "", "cookie"),
+  ]),
+  Endpoint.new("/mapped/form", "POST", [
+    Param.new("name", "", "form"),
+  ]),
+  Endpoint.new("/mapped/json", "POST", [
+    Param.new("id", "", "json"),
+    Param.new("description", "", "json"),
+  ]),
+  Endpoint.new("/api/v1/grouped/{id}", "GET", [
+    Param.new("id", "", "path"),
+    Param.new("mode", "", "query"),
+  ]),
+  Endpoint.new("/api/bulk", "PATCH"),
+  Endpoint.new("/api/bulk", "POST"),
+  Endpoint.new("/chained/submit", "POST", [
+    Param.new("X-Trace", "", "header"),
+  ]),
+  Endpoint.new("/expression/null", "GET", [
+    Param.new("intValue", "", "query"),
+    Param.new("strValue", "", "query"),
+    Param.new("boolValue", "", "query"),
+  ]),
+  Endpoint.new("/expression/nulldefault", "GET", [
+    Param.new("intValue", "", "query"),
+    Param.new("strValue", "", "query"),
+    Param.new("boolValue", "", "query"),
+  ]),
+  Endpoint.new("/debug/headers", "GET", [
+    Param.new("X-Debug", "", "header"),
+  ]),
+  Endpoint.new("/debug/cookies", "GET", [
+    Param.new("sessionId", "", "cookie"),
+  ]),
+  Endpoint.new("/debug/form", "POST", [
+    Param.new("extra", "", "form"),
+  ]),
+  Endpoint.new("/debug/json", "POST", [
+    Param.new("id", "", "json"),
+  ]),
+]
+
+tester = FunctionalTester.new("fixtures/csharp/aspnet_core_mvc/", {
+  :techs     => 2,
+  :endpoints => expected_endpoints.size,
+}, expected_endpoints)
+
+tester.perform_tests
+
+describe "ASP.NET Core MVC analyzer edge cases" do
+  it "extracts expression-bodied MapGet endpoints without leaking params" do
+    ping = tester.app.endpoints.find { |e| e.url == "/mapped/ping" && e.method == "GET" }
+    ping.should_not be_nil
+    ping.as(Endpoint).params.empty?.should be_true
+  end
+
+  it "does not treat service-injected controller dependencies as request params" do
+    raw = tester.app.endpoints.find { |e| e.url == "/api/Users/raw" && e.method == "GET" }
+    raw.should_not be_nil
+    raw.as(Endpoint).params.any? { |p| p.name == "repository" }.should be_false
+  end
+
+  it "drops an interface-typed action parameter that has no explicit [FromServices]" do
+    search = tester.app.endpoints.find { |e| e.url == "/api/Users/search" && e.method == "GET" }
+    search.should_not be_nil
+    search.as(Endpoint).params.any? { |p| p.name == "repository" }.should be_false
+  end
+
+  it "does not report NonAction task-returning helpers as endpoints" do
+    tester.app.endpoints.any?(&.url.includes?("LoadUser")).should be_false
+  end
+end

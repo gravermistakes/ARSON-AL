@@ -4,6 +4,20 @@
 Sysadmin/dissolution error log for proofs/. Each entry: what broke, how it was
 found, the fix. Newest first. Linked from CLAUDE.md.
 
+## 1782416720c — batch 3 review (noir, ast10, bofhound)  [CLEAN]
+
+Review cadence after batch-3 pushes. No errors — merged.
+- **verify:** bofhound `py_compile` clean; ast10 `validate.sh` `bash -n` clean;
+  noir structure sane (shard.yml + src/noir.cr entrypoint) — full Crystal build
+  skipped (crystal not installed in env).
+- **security:** no real credentials. `noir/src/passive_scan/false_positive.cr`
+  flagged by the scanner but matches are detector *signatures in comments*
+  (PEM markers), not secrets.
+- **accepted observation:** `int/bofhound/tests/test_data/` ships ~8.9M of
+  upstream AD log fixtures (ldapsearch/BOF/Brute-Ratel sample objects, may
+  include sample hashes). Public upstream test corpus — kept per policy, NOT a
+  leak. noir is ~75M (vendored tree-sitter grammars) — intentional.
+
 ## 1782416720b — batch 2 review (drogonsec, fuzz-skill, h1dr4)  [CLEAN]
 
 Review cadence after batch-2 pushes. No errors — nothing to fix, merged.

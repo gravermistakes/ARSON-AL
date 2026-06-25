@@ -1,0 +1,18 @@
+require "../../func_spec.cr"
+
+expected_endpoints = [
+  Endpoint.new("/sign", "GET"),
+  Endpoint.new("/sign", "POST", [Param.new("username", "", "form"), Param.new("password", "", "form")]),
+  Endpoint.new("/cookie", "GET"),
+  Endpoint.new("/login", "POST", [Param.new("username", "", "form"), Param.new("password", "", "form")]),
+  Endpoint.new("/create_record", "PUT"),
+  Endpoint.new("/delete_record", "DELETE", [Param.new("name", "", "json")]),
+  Endpoint.new("/get_ip", "GET", [Param.new("X-Forwarded-For", "", "header")]),
+  Endpoint.new("/update_record", "POST", [Param.new("page", "", "query"), Param.new("name", "", "json")]),
+  Endpoint.new("/", "GET"),
+]
+
+FunctionalTester.new("fixtures/python/flask/", {
+  :techs     => 1,
+  :endpoints => expected_endpoints.size,
+}, expected_endpoints).perform_tests

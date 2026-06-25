@@ -77,3 +77,26 @@ dissolved:
     dropped:
       - report.html, CHANGELOG.md, CLA.md, CODE_OF_CONDUCT.md, CONTRIBUTING.md, SECURITY.md, .claude/
     reason_dropped: generated sample output + governance/IDE files. docs/ kept per policy (keep docs/corpus/examples).
+
+  - source_repo: noir
+    origin: https://github.com/owasp-noir/noir
+    license: see probes/noir/LICENSE (MIT)
+    classification: endpoint-attack-surface-extractor
+    rationale: >
+      OWASP Noir is a Crystal SAST tool that reads source and extracts the
+      endpoints an app exposes — paths, methods, params, headers, cookies, plus
+      shadow/deprecated routes — as one inventory. Literal probes/ charter
+      (endpoint extractors). The recon-loop surface engine.
+    placed:
+      - unit: endpoint-extraction engine
+        verb: parse source -> endpoint inventory
+        files: noir/   # src/ (analyzers + tree-sitter grammars), spec/ corpus, docs/, build (shard.yml, Dockerfile, justfile)
+        detail: >
+          src/ext/tree_sitter/grammars vendors generated parser.c for many langs
+          (kotlin 23M, rust, python, ...) — required to parse code, kept whole.
+          spec/ test fixtures kept as corpus per policy; docs/ kept.
+    build: "shards build (Crystal 1.x); or docker build. github-action/ kept."
+    dropped:
+      - CODE_OF_CONDUCT.md, CONTRIBUTING.md, SECURITY.md, aur/, snap/, flake.{nix,lock}, shards.nix
+    reason_dropped: governance + distro/nix packaging — not functional units.
+    notes: ~75M, mostly vendored tree-sitter grammars (integral, not artifacts).

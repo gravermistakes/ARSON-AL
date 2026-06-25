@@ -1,0 +1,34 @@
+GET / controllers.HomeController.index
+GET /users controllers.Users.list
+GET /users/:id controllers.Users.show(id: Long)
+POST /users controllers.Users.create
+PUT /users/:id controllers.Users.update(id: Long)
+DELETE /users/:id controllers.Users.delete(id: Long)
+
+GET /search controllers.Search.search(q: String, filter: String)
+GET /users/:userId/posts/:postId controllers.Posts.show(userId: Long, postId: Long)
+
+GET /items controllers.Items.list(category: String, page: Integer)
+GET /clients controllers.Clients.list(page: Int ?= 1, label: String ?= "new,hot")
+GET /api/list-all controllers.Api.list(version ?= null)
+GET /fixed-home controllers.Application.show(page = "home")
+
+GET /files/$path<.+> controllers.Files.download(path: String)
+POST /upload controllers.Upload.file
+
+GET /api/protected controllers.Api.protectedEndpoint
+POST /api/data controllers.Api.postData
+POST /api/modern controllers.Api.modern(request: Request)
+GET /async controllers.AsyncApi.async(request: Request)
+GET /legacy-async controllers.AsyncApi.legacy
+
+GET /assets/*file controllers.Assets.at(path="/public", file)
+
+POST /multipart controllers.MissingController.multipart
+POST /bytes controllers.MissingController.bytes
+POST /whitespace controllers.MissingController.whitespace
+POST /api/static @controllers.Api.staticPost
+
+POST /v1/posts v1.PostsApi.create(request: Request)
+
+-> /api api.Routes

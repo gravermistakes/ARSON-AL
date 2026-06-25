@@ -1,0 +1,59 @@
+[default]
+extend-ignore-re = [
+  # numeric literals
+  '0x[0-9a-fA-F_\.\+]+([fiu](8|16|32|64|128))?',
+  '\\u\{[0-9a-fA-F]+\}',
+  # words including a number are likely some kind of identifier
+  "[a-zA-Z]+[0-9]+",
+  # Support common inline spellchecker disable directives (see crate-ci/typos docs)
+  # Ignore lines ending with `# spellchecker:disable-line` or `// spellchecker:disable-line`
+  "(?Rm)^.*(#|//)\\s*spellchecker:disable-line$",
+  # Ignore the line following a `# spellchecker:ignore-next-line` / `// ...`
+  "(#|//)\\s*spellchecker:ignore-next-line\\n.*",
+  # Ignore blocks between `# spellchecker:off` ... `# spellchecker:on`
+  "(?s)(#|//)\\s*spellchecker:off.*?\\n\\s*(#|//)\\s*spellchecker:on",
+]
+
+[default.extend-words]
+vertx = "vertx"
+Verticle = "Verticle"
+nd = "nd"
+# `deps.edn` is the canonical Clojure dependency file (extensible data notation).
+edn = "edn"
+# `paket` is the .NET dependency manager (paket.dependencies).
+paket = "paket"
+# Insomnia uses `wrk_` as the canonical prefix for workspace IDs in exports.
+wrk = "wrk"
+# `mis-route` / `mis-classification` are intentional hyphenated forms in comments.
+mis = "mis"
+falsk = "falsk"
+nin = "nin"
+# `directorys`/`directoryes` appear in a comment in rails.cr as examples of
+# the *incorrect* plural forms (contrasted with the y->ies rule).
+directorys = "directorys"
+directoryes = "directoryes"
+# `look-alikes` (plural of look-alike) in a vapor fixture comment; typos
+# mis-flags the hyphen-split `alikes` token as `alike`/`likes`.
+alikes = "alikes"
+# `sade` is a JavaScript CLI framework (referenced by the js_cli analyzer);
+# typos mis-flags it as `sad`.
+sade = "sade"
+
+[files]
+extend-exclude = [
+  # git and dependencies
+  ".git/**",
+  "lib/**",
+  "docs/themes/goyo/**",
+  # individual files to exclude
+  "spec/functional_test/fixtures/python/django/djangoblog/settings.py",
+  # framework taggers contain regex patterns with intentional partial words
+  "src/tagger/framework_taggers/**",
+  # vendored tree-sitter runtime + grammars (auto-generated, not ours to fix)
+  "src/ext/tree_sitter/runtime/**",
+  "src/ext/tree_sitter/grammars/**",
+  # vendored docs assets: minified highlight.js + generated @font-face tables
+  # whose unicode-range codepoints (e.g. U+02BA) read as typos, not prose
+  "docs/static/assets/**",
+  "docs/static/css/fonts.css",
+]

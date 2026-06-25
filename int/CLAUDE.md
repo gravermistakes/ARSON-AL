@@ -13,9 +13,13 @@ the recon loop. Models a target so probes/ know what surface to hit.
 - `h1dr4/` — agent-native OSINT/investigation toolkit (MCP): case files,
   evidence/source verification, contradiction checks; docs incl SKYNET historical
   bases, case-studies, research. `node index.js` / see `examples/`.
+- `bofhound/` — Active Directory recon: parses ldapsearch/BOF logs into
+  BloodHound graph data (operator-controlled LDAP, evades collector honeypots).
+  `bofhound -i <logs> -o <out>`.
 
 ## Build
-Python scripts, no build. `python3 web3/lance/scripts/parse_web3_scope.py --help`.
+- Knowledge/scripts (web3/web2): Python, no build.
+- `bofhound/`: `poetry install` (Python). `h1dr4/`: `npm install`.
 
 ## Test
 `python3 web3/lance/scripts/normalize_targets.py` on a sample scope; eyeball the

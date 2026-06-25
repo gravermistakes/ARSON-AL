@@ -15,14 +15,19 @@ detection knowledge that says *what to look for*. The engine of the scan loop.
 - `drogonsec/` — **executable** Go scanner: SAST (20+ langs), SCA (CVE deps),
   secret leaks (50+ patterns), IaC misconfig; SARIF/CWE/CVSS, OWASP 2025. The
   first real probe binary. `make build` then `./bin/drogonsec scan <path>`.
+- `noir/` — **executable** OWASP endpoint/attack-surface extractor (Crystal):
+  parses source → inventory of paths/methods/params/headers/cookies incl. shadow
+  & deprecated routes. `cd noir && shards build`. Vendors tree-sitter grammars.
 
 ## Build
 - Knowledge (web2/web3): nothing compiles — playbooks read by the scanning agent.
 - `drogonsec/`: `cd drogonsec && make build` (go 1.26; outputs `bin/drogonsec`).
+- `noir/`: `cd noir && shards build` (Crystal 1.x) or `docker build`.
 
 ## Test
 - Knowledge: read a playbook against a known-vulnerable pattern.
 - `drogonsec/`: `cd drogonsec && go test ./...`; smoke `./bin/drogonsec scan .`.
+- `noir/`: `cd noir && crystal spec` (fixtures under spec/).
 
 ## Feeds
 - **Loop:** Scan — probes/ scan what int/ exposed → a hit feeds adjacent probes
@@ -32,5 +37,6 @@ detection knowledge that says *what to look for*. The engine of the scan loop.
 
 ## Issues
 - Lance/bug-reaper detection knowledge split from their skills (spines in proofs/).
-- drogonsec gives probes/ its first teeth (SAST/SCA/secrets). Endpoint-extraction
-  engines (noir Crystal, vigolium Go) still to dissolve here.
+- drogonsec (SAST/SCA/secrets) + noir (endpoint extraction) give probes/ its
+  teeth. vigolium (Go scanner) still to dissolve here.
+- noir is ~75M (vendored tree-sitter grammars kept — required to parse code).
