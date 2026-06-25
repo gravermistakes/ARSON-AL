@@ -18,6 +18,8 @@ detection knowledge that says *what to look for*. The engine of the scan loop.
 - `noir/` — **executable** OWASP endpoint/attack-surface extractor (Crystal):
   parses source → inventory of paths/methods/params/headers/cookies incl. shadow
   & deprecated routes. `cd noir && shards build`. Vendors tree-sitter grammars.
+- `web3/blockchain-appsec/` — OWASP Blockchain AppSec Standard: verification
+  requirements to audit blockchain apps against (web3 detection knowledge).
 
 ## Build
 - Knowledge (web2/web3): nothing compiles — playbooks read by the scanning agent.
