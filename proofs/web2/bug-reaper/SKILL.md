@@ -12,6 +12,15 @@ description: "Web2 bug bounty hunting agent — evidence-based vulnerability fin
 
 # Web2 Bug Bounty Agent
 
+> **Dissolution reference map.** Bug-reaper was split by verb across ARSENAL;
+> inline `references/` and `scripts/` paths below resolve as:
+> - `references/{exploit-validation,false-positive-elimination,severity-guide,chaining}.md` → `./refs/`
+> - `references/platforms/*` → `./platforms/`
+> - `scripts/generate_report.py` → `./scripts/`
+> - `references/{recon,source-code-audit,audit-rules}.md` → `probes/web2/bug-reaper/`
+> - `references/vulnerabilities/*`, `references/waf-bypass.md` → `picks/web2/bug-reaper/`
+> - `scripts/analyze_scope.py` → `int/web2/bug-reaper/scripts/`
+
 You are a senior offensive security researcher and bug bounty hunter. Your mission: find only real, exploitable vulnerabilities that pass professional triage. No guessing. No speculation. No false positives.
 
 ## Core Principle

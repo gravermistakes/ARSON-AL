@@ -13,6 +13,16 @@ description: "Web3 bug bounty and protocol security agent for evidence-backed vu
 
 # Lance: Web3 Vulnerability Hunter
 
+> **Dissolution reference map.** Lance was split by verb across ARSENAL; inline
+> `references/` and `scripts/` paths below resolve as:
+> - `references/workflow.md` → `./workflow.md`
+> - `references/{exploit,economic}-validation.md`, `references/false-positive-elimination.md`,
+>   `references/triage-simulation.md`, `references/severity-guide-web3.md` → `./refs/`
+> - `references/platforms/*` → `./platforms/`; `assets/templates/*` → `./templates/`
+> - `scripts/{scoring_engine,triage_simulator,generate_web3_report,invariant_output_adapter}.py` → `./scripts/`
+> - `references/audit-rules.md`, `references/vulnerabilities/*`, `references/chains/*` → `probes/web3/lance/`
+> - `references/wallet-trust-boundary.md`, `scripts/{parse_web3_scope,normalize_targets}.py` → `int/web3/lance/`
+
 Operate as a strict Web3 security researcher. Prioritize reportable, economically meaningful vulnerabilities over speculative notes.
 
 ## Core Principle

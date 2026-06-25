@@ -30,7 +30,8 @@ Accepted/Needs-Evidence/Rejected verdict. No upstream test suite shipped.
 - **Emits:** platform-ready reports (Immunefi/Bugcrowd/HackenProof/HackerOne).
 
 ## Issues
-- The lance SKILL spine lives here but references G0/G1 scripts that dissolved
-  to int/web3/lance/scripts/ — stale relative paths, cross-referenced in
-  MANIFEST. Recombination onto OPACK reunifies the gates.
+- The lance/bug-reaper SKILL spines live here but reference files that dissolved
+  to int/probes/picks — see the "Dissolution reference map" block at the top of
+  each spine, and **[SYSADLOG.md](SYSADLOG.md)** entry 1782416720. Recombination
+  onto OPACK reunifies the gates.
 - Python (no-Python rule is for new code; inherited tools kept).
