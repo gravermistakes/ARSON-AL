@@ -29,3 +29,27 @@ dissolved:
     complications: >
       Knowledge only — no scanner binary yet. Peers (noir endpoint extraction,
       vigolium scanner, fuzz-skill) arrive in later dissolutions.
+
+  - source_repo: bug-reaper
+    origin: https://github.com/gravermistakes/bug-reaper
+    upstream: https://github.com/shaniidev/bug-reaper
+    license: MIT
+    classification: web2-recon-sast
+    rationale: >
+      Bug-reaper recon (subdomain enum, fingerprinting, JS mining, endpoint
+      discovery) is surface discovery, and source-code-audit is white-box SAST —
+      both probes/. The detection ruleset rounds out the probe knowledge.
+    placed:
+      - unit: recon methodology
+        verb: discover surface (subdomains, tech, JS, endpoints)
+        files: web2/bug-reaper/recon.md
+      - unit: white-box SAST methodology
+        verb: audit source for sinks
+        files: web2/bug-reaper/source-code-audit.md
+      - unit: detection ruleset
+        verb: enumerate what to check
+        files: web2/bug-reaper/audit-rules.md
+    cross_refs:
+      int: int/web2/bug-reaper
+      picks: picks/web2/bug-reaper
+      proofs: proofs/web2/bug-reaper

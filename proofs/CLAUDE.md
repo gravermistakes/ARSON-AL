@@ -11,6 +11,10 @@ without a PoC.
   triage rules); `templates/` (per-platform report templates + finding schema);
   `scripts/` (scoring_engine, triage_simulator, generate_web3_report,
   invariant_output_adapter); `agents/` (per-agent skill adapters).
+- `web2/bug-reaper/` — the Web2 4-phase spine (`SKILL.md`), validation refs
+  (exploit/false-positive/severity), the exploit-chain builder (`chaining.md`,
+  ARSENAL's Chain loop), platform triage (HackerOne/Bugcrowd/Intigriti/YWH),
+  and `generate_report.py`.
 
 ## Build
 Python scripts + markdown, no build. `python3 web3/lance/scripts/scoring_engine.py --help`.

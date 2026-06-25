@@ -44,3 +44,37 @@ dissolved:
       scripts/normalize_targets.py, which dissolved to int/web3/lance/scripts/.
       Paths left stale on purpose (rewriting couples dirs); MANIFEST cross-links
       record the true locations. Python kept as-is.
+
+  - source_repo: bug-reaper
+    origin: https://github.com/gravermistakes/bug-reaper
+    upstream: https://github.com/shaniidev/bug-reaper
+    license: MIT
+    classification: web2-validation-report
+    rationale: >
+      Bug-reaper Phase 3 (Validation) + Phase 4 (Report) gate findings to
+      reportable P2+, plus the exploit-chain builder. Center of gravity → proofs/.
+      The 4-phase SKILL spine lives here; scope → int/web2, recon/SAST →
+      probes/web2, exploitation → picks/web2.
+    placed:
+      - unit: 4-phase methodology spine
+        verb: orchestrate recon→detect→validate→report
+        files: web2/bug-reaper/SKILL.md
+      - unit: validation gate references
+        verb: prove exploitability / reject FPs / score severity
+        files: web2/bug-reaper/refs/   # exploit-validation, false-positive-elimination, severity-guide
+      - unit: exploit chain builder
+        verb: braid low-sev findings into a critical chain
+        files: web2/bug-reaper/refs/chaining.md
+      - unit: platform triage rules
+        verb: simulate per-platform triage
+        files: web2/bug-reaper/platforms/   # hackerone, bugcrowd, intigriti, yeswehack
+      - unit: report generator
+        verb: render platform-ready report
+        files: web2/bug-reaper/scripts/generate_report.py
+    dropped:
+      - README.md, CHANGELOG.md, .gitignore
+    reason_dropped: upstream packaging.
+    complications: >
+      SKILL spine references scripts/analyze_scope.py (now int/web2) and the
+      recon/SAST refs (now probes/web2) by old paths — cross-linked, not
+      rewritten. chaining.md realizes ARSENAL's "Chain loop". Python kept.

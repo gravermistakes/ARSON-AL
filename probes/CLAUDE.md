@@ -9,6 +9,9 @@ detection knowledge that says *what to look for*. The engine of the scan loop.
   — reentrancy, oracle manipulation, flash-loan, bridge replay, signature
   replay, AMM/vault/accounting invariants, upgradeability, Move capability/race),
   and `chains/` (EVM, Sui Move, cross-chain bridge, L2-specific risks).
+- `web2/bug-reaper/` — Web2 recon (`recon.md`: subdomain enum, fingerprinting,
+  JS mining, endpoint discovery), white-box SAST (`source-code-audit.md`), and
+  the detection ruleset (`audit-rules.md`).
 
 ## Build
 Reference knowledge — nothing compiles. Detection playbooks are read by the

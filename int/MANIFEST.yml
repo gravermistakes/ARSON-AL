@@ -30,3 +30,21 @@ dissolved:
       Python scripts kept as-is (no-Python rule is for new code). SKILL.md (in
       proofs/) references these by their old scripts/ path; not rewritten to
       avoid coupling dirs — recombination onto OPACK reunifies.
+
+  - source_repo: bug-reaper
+    origin: https://github.com/gravermistakes/bug-reaper
+    upstream: https://github.com/shaniidev/bug-reaper
+    license: MIT
+    classification: web2-scope
+    rationale: >
+      Bug-reaper Phase-1 scope analysis is target/scope modeling → int/.
+      Recon/SAST methodology → probes/web2, exploitation → picks/web2,
+      validation/report → proofs/web2.
+    placed:
+      - unit: scope analyzer
+        verb: parse Web2 program scope (wildcard/apex/nested rules)
+        files: web2/bug-reaper/scripts/analyze_scope.py
+    cross_refs:
+      probes: probes/web2/bug-reaper
+      picks: picks/web2/bug-reaper
+      proofs: proofs/web2/bug-reaper
