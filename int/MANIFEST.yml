@@ -150,3 +150,27 @@ dissolved:
       C++ handles branch/merge/prune/state, LLM for triage/paths/prose. Not yet
       recombined; lives as int/ recon for now.
     dropped: [_config/site scaffolding if any]
+
+  - source_repo: awesome-bugbounty-tools
+    origin: https://github.com/gravermistakes/awesome-bugbounty-tools
+    upstream: https://github.com/vavkamil/awesome-bugbounty-tools
+    license: see int/awesome-bugbounty-tools/LICENSE
+    classification: bugbounty-tool-index
+    rationale: >
+      Curated index of bug-bounty tooling across recon/scan/exploit. A meta
+      reference for sourcing tools — research/dossier support -> int/.
+    placed:
+      - unit: bug-bounty tool index
+        verb: look up tooling by task
+        files: int/awesome-bugbounty-tools/README.md
+
+  - source_repo: awesome-hacking
+    origin: https://github.com/gravermistakes/awesome-hacking
+    license: see int/awesome-hacking/LICENSE
+    classification: hacking-resource-index
+    rationale: >
+      Curated hacking/security resource index. Research reference -> int/.
+    placed:
+      - unit: hacking resource index
+        verb: look up security resources/topics
+        files: int/awesome-hacking/README.md

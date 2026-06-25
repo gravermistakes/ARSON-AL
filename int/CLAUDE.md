@@ -25,6 +25,8 @@ the recon loop. Models a target so probes/ know what surface to hit.
 - `shodansnipe/` — agentic recon/OSINT toolkit (agents/core/tools/skills).
   **OPACK-migration target**: its agents+modules become ECS cells (see root
   CLAUDE.md "OPACK Migration"); lives as recon here until recombined.
+- `awesome-bugbounty-tools/`, `awesome-hacking/` — curated tool/resource
+  indexes; meta-references for sourcing tooling by task.
 
 ## Build
 - Knowledge/scripts (web3/web2): Python, no build.
