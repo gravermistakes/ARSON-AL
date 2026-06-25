@@ -1,0 +1,46 @@
+# proofs/ dissolution manifest
+# generated: 1782416571
+category: proofs
+purpose: exploit validation, economic models, triage, scoring, report generation
+
+dissolved:
+  - source_repo: lance
+    origin: https://github.com/gravermistakes/lance
+    upstream: https://github.com/shaniidev/lance
+    license: MIT
+    classification: web3-validation-report
+    rationale: >
+      Lance's center of gravity is validation: 4 of its 7 gates (G3 Exploit,
+      G4 Economic, G5 False-Positive, G6 Triage/Report) gate findings down to
+      reportable. That, plus the 7-gate orchestration spine and the report
+      generators, is proofs/. Scope/intake → int/web3, detection → probes/web3.
+    placed:
+      - unit: 7-gate methodology spine
+        verb: orchestrate scope→detection→validation→report
+        files: [web3/lance/SKILL.md, web3/lance/workflow.md]
+      - unit: validation gate references (G3-G6)
+        verb: prove exploitability / economics / reject FPs / simulate triage
+        files: web3/lance/refs/   # exploit, economic, false-positive, triage, severity-guide
+      - unit: platform triage rules
+        verb: simulate per-platform triage
+        files: web3/lance/platforms/   # immunefi, hackenproof, hackerone-web3, bugcrowd-web3
+      - unit: report templates + finding schema
+        verb: render platform-ready reports
+        files: web3/lance/templates/
+      - unit: scoring/triage/report/adapter scripts
+        verb: score CVSS, simulate triage, generate report, adapt invariant output
+        files: web3/lance/scripts/   # scoring_engine, triage_simulator, generate_web3_report, invariant_output_adapter
+      - unit: per-agent skill adapters
+        verb: deliver the lance skill to agents
+        files: web3/lance/agents/
+    cross_refs:
+      int: int/web3/lance        # G0/G1 scope + intake
+      probes: probes/web3/lance  # G2 detection knowledge
+    dropped:
+      - README.md, CHANGELOG.md, CONTRIBUTING.md, lance.png, .gitignore
+    reason_dropped: upstream packaging / marketing.
+    complications: >
+      The SKILL spine references scripts/parse_web3_scope.py and
+      scripts/normalize_targets.py, which dissolved to int/web3/lance/scripts/.
+      Paths left stale on purpose (rewriting couples dirs); MANIFEST cross-links
+      record the true locations. Python kept as-is.

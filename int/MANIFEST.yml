@@ -1,0 +1,32 @@
+# int/ dissolution manifest
+# generated: 1782416571
+category: int
+purpose: target modeling, threat mapping, scope parsing, dossier building
+
+dissolved:
+  - source_repo: lance
+    origin: https://github.com/gravermistakes/lance
+    upstream: https://github.com/shaniidev/lance
+    license: MIT
+    classification: web3-scope-intake
+    rationale: >
+      Lance is a Web3 audit methodology that spans scope→detection→validation.
+      Its first two gates (G0 Scope, G1 Intake) are pure target modeling and
+      belong in int/. Detection went to probes/web3, validation to proofs/web3.
+    placed:
+      - unit: scope parser (G0)
+        verb: parse bug-bounty scope → manifest
+        files: web3/lance/scripts/parse_web3_scope.py
+      - unit: target normalizer (G1)
+        verb: normalize targets → one manifest shape
+        files: web3/lance/scripts/normalize_targets.py
+      - unit: trust-boundary reference
+        verb: map admin/keeper/oracle/relayer boundaries
+        files: web3/lance/wallet-trust-boundary.md
+    cross_refs:
+      probes: probes/web3/lance  # detection knowledge (G2)
+      proofs: proofs/web3/lance  # validation + report (G3-G6) + the SKILL spine
+    complications: >
+      Python scripts kept as-is (no-Python rule is for new code). SKILL.md (in
+      proofs/) references these by their old scripts/ path; not rewritten to
+      avoid coupling dirs — recombination onto OPACK reunifies.
