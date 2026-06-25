@@ -130,3 +130,23 @@ dissolved:
         files: int/osint-tools/   # README.md (the collection), *_search/*_list.html, weekly_updates/
     dropped: [_config.yml, google-site-verification.html]
     reason_dropped: Jekyll/site-verification scaffolding.
+
+  - source_repo: shodansnipe
+    origin: https://github.com/maaamamia/shodansnipe_crew-v2
+    license: see upstream
+    classification: recon-osint-agentic
+    rationale: >
+      ShodanSnipe is an agentic recon/OSINT toolkit (agents + core + tools +
+      skills + launchers). Reconnaissance -> int/. The root doc's OPACK Migration
+      section names it specifically: its agents and modules become ECS "cells"
+      to recombine onto the OPACK substrate and score.
+    placed:
+      - unit: agentic recon toolkit
+        verb: gather OSINT/recon via agents + modules
+        files: int/shodansnipe/   # agents/, core/, tools/, skills/, launchers/, reports/ (examples), docs/
+    opack_migration: >
+      FLAGGED. Per CLAUDE.md "OPACK Migration" — dissolve, then gamify through
+      OPACK: agents/modules -> cells, recombine onto ops/substrate/opack ECS,
+      C++ handles branch/merge/prune/state, LLM for triage/paths/prose. Not yet
+      recombined; lives as int/ recon for now.
+    dropped: [_config/site scaffolding if any]
