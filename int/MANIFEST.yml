@@ -116,3 +116,17 @@ dissolved:
     build: "npm install (monorepo); ThreatDragonModels/ holds example models."
     dropped: [.github/, lint/CI dotfiles]
     reason_dropped: CI/lint scaffolding. docs + example models kept per policy.
+
+  - source_repo: osint-tools
+    origin: https://github.com/cipher387/osint_stuff_tool_collection
+    license: see upstream
+    classification: osint-tooling-collection
+    rationale: >
+      Curated OSINT tool collection (1000+ tools) plus a few standalone HTML
+      search widgets. OSINT / investigation research -> int/.
+    placed:
+      - unit: OSINT collection + search widgets
+        verb: enumerate OSINT tooling for a target/person/infra
+        files: int/osint-tools/   # README.md (the collection), *_search/*_list.html, weekly_updates/
+    dropped: [_config.yml, google-site-verification.html]
+    reason_dropped: Jekyll/site-verification scaffolding.

@@ -20,6 +20,8 @@ the recon loop. Models a target so probes/ know what surface to hit.
   to ATT&CK techniques.
 - `threat-dragon/` — OWASP Threat Dragon: threat-modeling app (diagrams +
   rule engine) with example models under `ThreatDragonModels/`.
+- `osint-tools/` — curated OSINT tool collection (1000+) + standalone HTML
+  search widgets (court/graves/hashtag) for person/infra research.
 
 ## Build
 - Knowledge/scripts (web3/web2): Python, no build.
