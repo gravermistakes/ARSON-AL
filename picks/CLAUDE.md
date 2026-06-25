@@ -12,6 +12,8 @@ turns a detected surface into a working exploit.
   crash-triage) + `test-vuln/` runnable reference (5 sanitizer-built fuzz
   harnesses, `seeds/` corpus, `fuzz_output/` crashes). `cd fuzz-skill/test-vuln
   && ./build.sh` to rebuild the harnesses.
+- `ssti-research/` — "Successful Errors" SSTI payloads + research (paper,
+  slides, images): server-side template injection techniques.
 
 ## Build
 - Web2 playbooks: nothing compiles — read by the hunting agent to build an
