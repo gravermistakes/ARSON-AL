@@ -8,13 +8,20 @@ turns a detected surface into a working exploit.
   SSRF, IDOR, auth-bypass, RCE, SSTI, LFI, XXE, CORS, CSRF, prototype pollution,
   subdomain takeover, HTTP smuggling, open redirect, API/GraphQL, biz-logic) and
   `waf-bypass.md` (WAF evasion technique).
+- `fuzz-skill/` — C/C++ memory-bug fuzzing: methodology (SKILL, fuzzing-toolchain,
+  crash-triage) + `test-vuln/` runnable reference (5 sanitizer-built fuzz
+  harnesses, `seeds/` corpus, `fuzz_output/` crashes). `cd fuzz-skill/test-vuln
+  && ./build.sh` to rebuild the harnesses.
 
 ## Build
-Reference playbooks — nothing compiles. Read by the hunting agent to build an
-attack from a probe hit.
+- Web2 playbooks: nothing compiles — read by the hunting agent to build an
+  attack from a probe hit.
+- `fuzz-skill/test-vuln/`: `./build.sh` (needs clang + sanitizers/AFL++) rebuilds
+  the fuzz harnesses; prebuilt binaries ship in-tree.
 
 ## Test
-Verify a playbook against a known-vulnerable lab (DVWA/Juice Shop) target.
+- Playbooks: verify against a known-vulnerable lab (DVWA/Juice Shop).
+- Fuzzers: `./fuzz-skill/test-vuln/vuln_parser_libfuzzer -runs=10000 seeds/`.
 
 ## Feeds
 - **Loop:** Scan/Chain — a probe hit picks the matching technique here; a working
@@ -23,6 +30,8 @@ Verify a playbook against a known-vulnerable lab (DVWA/Juice Shop) target.
 - **Emits:** working exploit paths / PoCs → proofs/web2 to gate and report.
 
 ## Issues
-- Knowledge only — no executable fuzzers/payload-runners yet. fuzz-skill,
-  drogonsec, and ssti-research dissolve here next and add teeth.
+- fuzz-skill gives picks/ its first runnable teeth (memory-bug fuzzing).
+  ssti-research, drogonsec attack-extensions, burp-extensions dissolve here next.
 - `subdomain-takeover.md` straddles detect/exploit; kept with its class peers.
+- `test-vuln/` ships ~13M of prebuilt fuzz binaries (kept deliberately); rebuild
+  from source with `build.sh` if you don't trust the prebuilts.

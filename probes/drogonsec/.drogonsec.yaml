@@ -1,0 +1,121 @@
+# DrogonSec Security Scanner - Configuration File
+# Place this file at .drogonsec.yaml in your project root or ~/.drogonsec.yaml
+
+# Scan configuration
+scan:
+  # Minimum severity to report: LOW, MEDIUM, HIGH, CRITICAL
+  min_severity: LOW
+
+  # Number of parallel workers for analysis
+  workers: 4
+
+  # Enable git history scanning for secrets
+  git_history: false
+
+  # Paths to ignore during scanning (in addition to defaults)
+  ignore_paths:
+    - ".git"
+    - "node_modules"
+    - "vendor"
+    - "dist"
+    - "build"
+    - "target"
+    - "__pycache__"
+    - ".gradle"
+    - ".m2"
+    - "coverage"
+    - "*.min.js"
+    # Test directories — contain intentionally vulnerable fixtures
+    - "testdata"
+    - "fixtures"
+    - "test_fixtures"
+
+  # Specific languages to scan (empty = auto-detect all)
+  languages: []
+
+# Analysis engines
+engines:
+  # Static Application Security Testing
+  sast:
+    enabled: true
+
+  # Software Composition Analysis (dependency scanning)
+  sca:
+    enabled: true
+
+  # Secret and credential leak detection
+  leaks:
+    enabled: true
+    # Minimum Shannon entropy for generic secret detection
+    min_entropy: 3.5
+
+# Output configuration
+output:
+  # Format: text, json, sarif, html
+  format: text
+  # Output file path (empty = stdout)
+  file: ""
+  # Show code snippets in text output
+  show_code: true
+
+# AI Integration
+ai:
+  # Enable AI-powered remediation suggestions
+  enabled: false
+  # API key - prefer AI_API_KEY environment variable (not needed for ollama)
+  api_key: ""
+  # AI provider: ollama (local, free) | anthropic | openai | azure | custom
+  provider: "anthropic"
+  # Model name override (leave empty for provider default: deepseek-coder for ollama)
+  model: ""
+  # Custom AI endpoint URL (leave empty for provider default)
+  endpoint: ""
+  # Timeout in seconds (0 = auto: 30s cloud, 120s ollama)
+  timeout: 0
+  # Only enrich HIGH and CRITICAL findings (reduces API calls)
+  high_severity_only: true
+
+# Custom rules (additional to built-in rules)
+custom_rules:
+  # Example:
+  # - id: CUSTOM-001
+  #   language: python
+  #   pattern: "my_dangerous_function"
+  #   severity: HIGH
+  #   title: "Dangerous Function Usage"
+  #   description: "This function is not allowed in production code"
+  #   remediation: "Use safe_function() instead"
+
+# False positive suppression
+# These entries document known false positives in the project's own test suite.
+# The patterns below are deliberately placed in test files to verify the scanner
+# detects them — they are not real credentials or vulnerabilities.
+suppressions:
+  - rule_id: "LEAK-001"
+    file: "internal/leaks/detector_test.go"
+    reason: "Test fixture — official AWS documentation example key (AKIAIOSFODNN7EXAMPLE), not a real credential"
+  - rule_id: "LEAK-020"
+    file: "internal/leaks/detector_test.go"
+    reason: "Test fixture — synthetic GitHub token pattern, not a real token"
+  - rule_id: "LEAK-080"
+    file: "internal/leaks/detector_test.go"
+    reason: "Test fixture — RSA private key header only, no actual key material"
+  - rule_id: "LEAK-030"
+    file: "internal/leaks/detector_test.go"
+    reason: "Test fixture — synthetic Stripe key pattern, not a real key"
+  - rule_id: "LEAK-100"
+    file: "internal/leaks/detector_test.go"
+    reason: "Test fixture — JWT from jwt.io documentation, not a production token"
+  - rule_id: "JAVA-003"
+    file: "internal/engine/engine_test.go"
+    reason: "Test fixture — hardcoded credential embedded in a Java code string to verify JAVA-003 detection"
+  - rule_id: "GO-005"
+    file: "internal/engine/engine_test.go"
+    reason: "Test fixture — InsecureSkipVerify:true embedded in a Go code string to verify GO-005 detection"
+
+# Fail conditions (exit code 1 when true)
+fail_on:
+  critical: true
+  high: true
+  medium: false
+  low: false

@@ -10,6 +10,9 @@ the recon loop. Models a target so probes/ know what surface to hit.
   `wallet-trust-boundary.md` (admin/keeper/oracle/relayer trust boundaries).
 - `web2/bug-reaper/` — Web2 scope analysis: `analyze_scope.py`
   (wildcard/apex/nested-subdomain scope rules).
+- `h1dr4/` — agent-native OSINT/investigation toolkit (MCP): case files,
+  evidence/source verification, contradiction checks; docs incl SKYNET historical
+  bases, case-studies, research. `node index.js` / see `examples/`.
 
 ## Build
 Python scripts, no build. `python3 web3/lance/scripts/parse_web3_scope.py --help`.

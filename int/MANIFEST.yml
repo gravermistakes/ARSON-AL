@@ -48,3 +48,24 @@ dissolved:
       probes: probes/web2/bug-reaper
       picks: picks/web2/bug-reaper
       proofs: proofs/web2/bug-reaper
+
+  - source_repo: h1dr4
+    origin: https://github.com/gravermistakes/h1dr4
+    upstream: https://github.com/nativ3ai/H1DR4
+    license: see int/h1dr4/LICENSE
+    classification: osint-investigation-toolkit
+    rationale: >
+      H1DR4 is an agent-native public-investigation toolkit — case files,
+      evidence/source verification, contradiction checks, OSINT workflows via
+      MCP. That is int/ (investigation case files, dossier building, research).
+    placed:
+      - unit: agent investigation toolkit
+        verb: build + verify public-investigation case files via MCP
+        files: int/h1dr4/   # index.js (MCP), docs/, examples/, llms.txt, package.json
+        detail: >
+          docs/ kept whole incl case-studies/, research/, and skynet/ historical
+          bases; examples/ (agent-prompt, codex-mcp-config, mcp-smoke) kept.
+    build: "node; MCP toolkit — npm install in int/h1dr4 for the smoke client."
+    notes: >
+      Public docs/toolkit repo (private product source stays private). index.js
+      and examples/mcp-smoke.mjs node --check clean.
