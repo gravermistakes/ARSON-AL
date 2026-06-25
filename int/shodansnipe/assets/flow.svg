@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1320 720" width="1320" height="720" font-family="'JetBrains Mono','Courier New',monospace" role="img" aria-label="ShodanSnipe communication flow">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0a0e17"/><stop offset="1" stop-color="#0d1422"/>
+    </linearGradient>
+    <linearGradient id="title" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#39d0d8"/><stop offset="1" stop-color="#5b8cff"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.42" r="0.62">
+      <stop offset="0" stop-color="#39d0d8" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#39d0d8" stop-opacity="0"/>
+    </radialGradient>
+    <marker id="aC" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 Z" fill="#39d0d8"/></marker>
+    <marker id="aG" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 Z" fill="#46d39a"/></marker>
+    <marker id="aA" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 Z" fill="#f2b34a"/></marker>
+    <style>
+      @keyframes flow { to { stroke-dashoffset:-26; } }
+      @keyframes pulse{ 0%,100%{opacity:.55} 50%{opacity:1} }
+      .flow { stroke-dasharray:8 6; animation:flow 1.1s linear infinite; }
+      .sec  { stroke-dasharray:7 7; animation:flow 1.5s linear infinite; opacity:.85; }
+      .stg  { animation:pulse 2.6s ease-in-out infinite; }
+      .s2{animation-delay:.4s}.s3{animation-delay:.8s}.s4{animation-delay:1.2s}
+      .lbl{fill:#c3d0e2;font-size:13px}.sub{fill:#8a98ad;font-size:10.5px}
+      .hd {fill:#fff;font-size:14px;font-weight:700}
+      .tag{fill:#39d0d8;font-size:10px;letter-spacing:.05em}
+      .pillt{fill:#fff;font-size:12.5px;font-weight:700}
+    </style>
+  </defs>
+
+  <rect width="1320" height="720" fill="url(#bg)"/>
+  <ellipse cx="660" cy="370" rx="660" ry="260" fill="url(#glow)"/>
+
+  <text x="660" y="50" text-anchor="middle" font-size="32" font-weight="700" fill="url(#title)" letter-spacing="1">ShodanSnipe — Communication Flow</text>
+  <text x="660" y="76" text-anchor="middle" class="sub" letter-spacing="2.5">SCOPE IN  ·  THE CREW TRIAGES IT  ·  PRIORITISED RECON REPORT OUT</text>
+
+  <text x="140"  y="120" text-anchor="middle" class="tag">YOU DRIVE IT</text>
+  <text x="410"  y="120" text-anchor="middle" class="tag">SERVER · ENGINE</text>
+  <text x="740"  y="120" text-anchor="middle" class="tag">CREWAI PIPELINE</text>
+  <text x="1090" y="120" text-anchor="middle" class="tag">EXTERNAL DATA</text>
+
+  <!-- ===== FRONT DOORS (Web GUI now at the bottom) ===== -->
+  <g>
+    <rect x="40" y="150" width="200" height="58" rx="11" fill="#0d1320" stroke="#5b8cff" stroke-opacity=".55"/>
+    <text x="140" y="176" text-anchor="middle" class="hd">Crew run</text>
+    <text x="140" y="195" text-anchor="middle" class="sub">crewai.bat · poc_crew.py</text>
+
+    <rect x="40" y="262" width="200" height="58" rx="11" fill="#0d1320" stroke="#bf5fff" stroke-opacity=".55"/>
+    <text x="140" y="288" text-anchor="middle" class="hd">MCP client</text>
+    <text x="140" y="307" text-anchor="middle" class="sub">Claude Desktop · Cursor</text>
+
+    <rect x="40" y="374" width="200" height="58" rx="11" fill="#0d1320" stroke="#39d0d8" stroke-opacity=".6"/>
+    <text x="140" y="400" text-anchor="middle" class="hd">Web GUI</text>
+    <text x="140" y="419" text-anchor="middle" class="sub">panels + Control Center</text>
+  </g>
+
+  <!-- ===== SERVER ===== -->
+  <rect x="300" y="150" width="220" height="332" rx="12" fill="#0d1320" stroke="#39d0d8" stroke-opacity=".6"/>
+  <text x="410" y="180" text-anchor="middle" class="hd" fill="#39d0d8">server.py</text>
+  <g class="lbl" text-anchor="middle">
+    <text x="410" y="214">REST API</text>
+    <text x="410" y="244">/mcp · streamable-http</text>
+    <text x="410" y="274">settings · profiles</text>
+    <text x="410" y="304">SQLite + audit log</text>
+    <text x="410" y="334">scope guard · in code</text>
+  </g>
+  <rect x="326" y="372" width="168" height="84" rx="9" fill="#0e1a14" stroke="#46d39a" stroke-opacity=".6"/>
+  <text x="410" y="400" text-anchor="middle" class="hd" fill="#46d39a">Report store</text>
+  <text x="410" y="420" text-anchor="middle" class="sub">prioritised report</text>
+  <text x="410" y="437" text-anchor="middle" class="sub">rendered as HTML</text>
+
+  <!-- ===== CREW PIPELINE ===== -->
+  <rect x="600" y="150" width="280" height="432" rx="12" fill="#0d1320" stroke="#46d39a" stroke-opacity=".55"/>
+  <text x="740" y="180" text-anchor="middle" class="hd" fill="#46d39a">CrewAI crew</text>
+
+  <rect x="636" y="196" width="208" height="40" rx="9" fill="#0e1620" stroke="#39d0d8" stroke-opacity=".75"/>
+  <text x="740" y="221" text-anchor="middle" class="pillt" fill="#39d0d8">Manager — orchestrates</text>
+
+  <rect class="stg"    x="650" y="262" width="180" height="38" rx="9" fill="#10172a" stroke="#5b8cff"/>
+  <text x="740" y="286" text-anchor="middle" class="pillt">Recon</text>
+  <rect class="stg s2" x="650" y="324" width="180" height="38" rx="9" fill="#1a1606" stroke="#f2b34a"/>
+  <text x="740" y="348" text-anchor="middle" class="pillt">Nmap validate</text>
+  <rect class="stg s3" x="650" y="386" width="180" height="38" rx="9" fill="#1c0c0e" stroke="#ff5a63"/>
+  <text x="740" y="410" text-anchor="middle" class="pillt">Vuln + Threat-Intel</text>
+  <rect class="stg s4" x="650" y="448" width="180" height="38" rx="9" fill="#0e1a14" stroke="#46d39a"/>
+  <text x="740" y="472" text-anchor="middle" class="pillt">Report</text>
+
+  <g stroke="#46d39a" stroke-width="2.4" fill="none" marker-end="url(#aG)">
+    <path d="M740 236 V258"/>
+    <path d="M740 300 V320"/>
+    <path d="M740 362 V382"/>
+    <path d="M740 424 V444"/>
+  </g>
+
+  <text x="740" y="516" text-anchor="middle" class="sub">scope-gated · pick-your-crew · 28 modules</text>
+  <text x="740" y="534" text-anchor="middle" class="sub">optional: OSINT · Auth · Archive personas</text>
+
+  <!-- ===== EXTERNAL ===== -->
+  <g>
+    <rect x="980" y="196" width="220" height="58" rx="11" fill="#0d1320" stroke="#f2b34a" stroke-opacity=".55"/>
+    <text x="1090" y="222" text-anchor="middle" class="hd" fill="#f2b34a">Shodan</text>
+    <text x="1090" y="241" text-anchor="middle" class="sub">passive recon + detection</text>
+
+    <rect x="980" y="296" width="220" height="58" rx="11" fill="#0d1320" stroke="#f2b34a" stroke-opacity=".45"/>
+    <text x="1090" y="322" text-anchor="middle" class="hd" fill="#f2b34a">NVD / InternetDB</text>
+    <text x="1090" y="341" text-anchor="middle" class="sub">CVE + host enrichment</text>
+
+    <rect x="980" y="396" width="220" height="58" rx="11" fill="#0d1320" stroke="#f2b34a" stroke-opacity=".45"/>
+    <text x="1090" y="422" text-anchor="middle" class="hd" fill="#f2b34a">OSINT sources</text>
+    <text x="1090" y="441" text-anchor="middle" class="sub">CT logs · RDAP · Wayback</text>
+  </g>
+
+  <!-- ===== CONNECTORS (crisp, no filters) ===== -->
+  <!-- front doors -> server -->
+  <path class="flow" d="M240 179 H272 V214 H296" fill="none" stroke="#39d0d8" stroke-width="2.4" marker-end="url(#aC)"/>
+  <path class="flow" d="M240 291 H296"           fill="none" stroke="#39d0d8" stroke-width="2.4" marker-end="url(#aC)"/>
+  <path class="flow" d="M240 403 H272 V366 H296" fill="none" stroke="#39d0d8" stroke-width="2.4" marker-end="url(#aC)"/>
+  <text x="268" y="338" text-anchor="middle" class="tag">HTTP</text>
+  <text x="268" y="352" text-anchor="middle" class="tag">REST + MCP</text>
+
+  <!-- server -> crew -->
+  <path class="flow" d="M520 214 H596" fill="none" stroke="#39d0d8" stroke-width="2.6" marker-end="url(#aC)"/>
+  <text x="558" y="204" text-anchor="middle" class="tag">spawn + scope/env</text>
+
+  <!-- crew -> external (queries) / external -> crew (results) -->
+  <path class="flow" d="M880 232 H976" fill="none" stroke="#f2b34a" stroke-width="2.4" marker-end="url(#aA)"/>
+  <text x="928" y="222" text-anchor="middle" class="tag" fill="#f2b34a">queries →</text>
+  <path class="sec"  d="M976 326 H884" fill="none" stroke="#f2b34a" stroke-width="2" marker-end="url(#aA)"/>
+  <text x="930" y="346" text-anchor="middle" class="tag" fill="#f2b34a">← results</text>
+
+  <!-- crew Report -> report store -->
+  <path class="flow" d="M650 467 H556 Q536 467 536 447 V414 H498" fill="none" stroke="#46d39a" stroke-width="2.4" marker-end="url(#aG)"/>
+  <text x="556" y="492" text-anchor="middle" class="tag" fill="#46d39a">prioritised report HTML</text>
+
+  <!-- report store -> Web GUI (now bottom): short clean run along the base -->
+  <path class="sec" d="M410 456 V492 H44 V414 H38" fill="none" stroke="#46d39a" stroke-width="2" marker-end="url(#aG)"/>
+  <text x="150" y="476" text-anchor="middle" class="sub" fill="#46d39a">↺ shown in the Report panel</text>
+
+  <text x="660" y="664" text-anchor="middle" class="sub" letter-spacing="1">You set a scope  →  the crew collects &amp; triages it  →  a prioritised recon report returns to the GUI</text>
+</svg>

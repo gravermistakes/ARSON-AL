@@ -22,6 +22,9 @@ the recon loop. Models a target so probes/ know what surface to hit.
   rule engine) with example models under `ThreatDragonModels/`.
 - `osint-tools/` — curated OSINT tool collection (1000+) + standalone HTML
   search widgets (court/graves/hashtag) for person/infra research.
+- `shodansnipe/` — agentic recon/OSINT toolkit (agents/core/tools/skills).
+  **OPACK-migration target**: its agents+modules become ECS cells (see root
+  CLAUDE.md "OPACK Migration"); lives as recon here until recombined.
 
 ## Build
 - Knowledge/scripts (web3/web2): Python, no build.

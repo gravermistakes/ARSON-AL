@@ -100,3 +100,19 @@ dissolved:
       - CODE_OF_CONDUCT.md, CONTRIBUTING.md, SECURITY.md, aur/, snap/, flake.{nix,lock}, shards.nix
     reason_dropped: governance + distro/nix packaging — not functional units.
     notes: ~75M, mostly vendored tree-sitter grammars (integral, not artifacts).
+
+  - source_repo: blockchain-appsec
+    origin: https://github.com/OWASP/www-project-blockchain-appsec-standard
+    license: CC (see probes/web3/blockchain-appsec/LICENSE.md)
+    classification: web3-audit-standard
+    rationale: >
+      OWASP Blockchain AppSec Standard — verification requirements for blockchain
+      apps. Target-audit knowledge (what to check) -> probes/web3, alongside
+      lance's detection playbooks. (Distinct from ast10, which governs OUR own
+      agent skills in ops/.)
+    placed:
+      - unit: blockchain appsec verification standard
+        verb: enumerate web3 security requirements to audit against
+        files: probes/web3/blockchain-appsec/   # guides/, index, info
+    dropped: [_config.yml, Gemfile, 404.html, CONTRIBUTING.md, SECURITY.md, leaders.md, .github/]
+    reason_dropped: Jekyll site scaffolding + governance.

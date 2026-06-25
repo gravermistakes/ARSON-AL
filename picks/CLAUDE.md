@@ -14,6 +14,8 @@ turns a detected surface into a working exploit.
   && ./build.sh` to rebuild the harnesses.
 - `ssti-research/` — "Successful Errors" SSTI payloads + research (paper,
   slides, images): server-side template injection techniques.
+- `burp-extensions/` — Burp Suite extension examples (Jython): runtime
+  encryption in Intruder/Scanner, editor-tab crypt. Custom attack extensions.
 
 ## Build
 - Web2 playbooks: nothing compiles — read by the hunting agent to build an

@@ -67,3 +67,19 @@ dissolved:
         verb: exploit server-side template injection
         files: picks/ssti-research/   # Payloads.md, README, 2 PDFs (paper+slides), images/
     notes: PDFs + images kept per policy (docs/research/examples).
+
+  - source_repo: burp-extensions
+    origin: https://github.com/netsquare/Burp-Suite-Extension-Development
+    license: see upstream
+    classification: attack-extension-dev
+    rationale: >
+      Burp Suite extension dev examples (IHttpListener intruder/scanner runtime
+      encryption, editor-tab runtime crypt). "Custom attack extension generators"
+      is a named picks/ unit — tooling to bend the proxy into the attack.
+    placed:
+      - unit: burp extension examples
+        verb: extend Burp for custom attack flows (runtime crypto in intruder/scanner)
+        files: picks/burp-extensions/   # *.py (Jython), README
+    notes: >
+      Jython 2.7 scripts (run inside Burp), not python3 — one uses tabs that
+      python3 py_compile rejects; correct under Jython. Kept as-is.
