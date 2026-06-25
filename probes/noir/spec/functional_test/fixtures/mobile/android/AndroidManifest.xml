@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.myapp">
+
+    <application android:label="MyApp">
+
+        <!-- Launcher activity: no <data>, must NOT produce any endpoint.
+             The <nav-graph> reference is resolved by globbing
+             res/navigation/*.xml, not by following this element. -->
+        <activity android:name=".MainActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <nav-graph android:resource="@navigation/nav_graph" />
+        </activity>
+
+        <!-- gradle manifest placeholders: component name from
+             ${applicationId}, scheme/host from manifestPlaceholders -->
+        <activity android:name="${applicationId}.PlaceholderActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="${deepLinkScheme}" android:host="${deepLinkHost}" />
+            </intent-filter>
+        </activity>
+
+        <!-- Placeholder missing from build.gradle: kept verbatim and
+             tagged "unresolved" -->
+        <activity android:name=".UnresolvedActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="myapp" android:host="${missingHost}" />
+            </intent-filter>
+        </activity>
+
+        <!-- Custom scheme deep link with templated path -->
+        <activity android:name=".DeepLinkActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="myapp" android:host="complex" android:path="/{id}" />
+            </intent-filter>
+        </activity>
+
+        <!-- Lifecycle noise before the Intent reads exercises Android callee
+             prioritization: the linked callee cap should keep the deep-link
+             handling calls, not just UI setup. -->
+        <activity android:name=".RouterActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="myapp" android:host="router" />
+            </intent-filter>
+        </activity>
+
+        <!-- Alias deep link: the alias component owns the intent-filter, but
+             Android launches targetActivity. The source linker should use the
+             target activity for callees/params. -->
+        <activity android:name=".AliasTargetActivity" android:exported="false" />
+        <activity-alias
+            android:name=".PublicAliasActivity"
+            android:targetActivity=".AliasTargetActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="myapp" android:host="alias" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- Custom scheme deep link using pathPrefix -->
+        <activity android:name=".AccountActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="myapp" android:host="accounts" android:pathPrefix="/profile" />
+            </intent-filter>
+        </activity>
+
+        <!-- Scheme resolved from @string/ reference -->
+        <activity android:name=".SettingsActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="@string/deep_link_scheme" android:host="settings" />
+            </intent-filter>
+        </activity>
+
+        <!-- Scheme resolved from a non-strings.xml values file (donottranslate.xml) -->
+        <activity android:name=".AltActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="@string/alt_scheme" android:host="alt" />
+            </intent-filter>
+        </activity>
+
+        <!-- Unresolvable @string scheme: stays verbatim and must NOT be
+             rooted into `/@string/...` by the optimizer. -->
+        <activity android:name=".GhostActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="@string/missing_scheme" android:host="ghost" />
+            </intent-filter>
+        </activity>
+
+        <!-- Local-content + bare-wildcard-host handler: file/content are
+             always dropped (on-device content, not a deep link), and a bare
+             `*` host makes http host-less and dropped too. Yields nothing. -->
+        <activity android:name=".ShareActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="content" android:host="*" />
+                <data android:scheme="file" android:host="*" />
+                <data android:scheme="http" android:host="*" />
+            </intent-filter>
+        </activity>
+
+        <!-- Opaque-scheme handler: `mailto:` takes no // authority. -->
+        <activity android:name=".ComposeActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="mailto" />
+            </intent-filter>
+        </activity>
+
+        <!-- `market://details?id=…` (Play Store) DOES use an authority, so it
+             must keep its `//` (not be treated as an opaque scheme). -->
+        <activity android:name=".StoreActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="market" android:host="details" />
+            </intent-filter>
+        </activity>
+
+        <!-- Verified App Link over https (universal-link) -->
+        <activity android:name=".WebActivity" android:exported="true">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="myapp.example.com" android:path="/complex/{id}" />
+            </intent-filter>
+        </activity>
+
+        <!-- Exported component with a data-less custom action (IPC surface) -->
+        <service android:name=".SyncService" android:exported="true">
+            <intent-filter>
+                <action android:name="com.example.ACTION_SYNC" />
+            </intent-filter>
+        </service>
+
+        <!-- App Link declared the common way: scheme and host/path split
+             across separate <data> elements. Android combines them as a
+             cross product, so this yields http/https × the two paths. -->
+        <activity android:name=".SplitLinkActivity" android:exported="true">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="split.example.com" android:pathPrefix="/wiki/" />
+                <data android:host="split.example.com" android:pathPattern="/zh.*" />
+            </intent-filter>
+        </activity>
+
+        <!-- Content-type (mimeType) handler: opens an XML file from a file
+             manager / browser. The scheme-only file/content/https <data>
+             entries are content-source qualifiers, NOT deep links, so this
+             filter must produce no endpoints. -->
+        <activity android:name=".FileImportActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/xml" />
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:scheme="https" />
+            </intent-filter>
+        </activity>
+
+        <!-- Exported component with NO intent-filter: cannot be matched by an
+             implicit intent, but an explicit intent naming the component still
+             reaches it, so it is an IPC surface (android-intent, explicit). The
+             handler source links callees/extras like any other component. -->
+        <activity android:name=".ExportedActivity" android:exported="true" />
+
+        <!-- Exported, filter-less activity-alias: addressed by its own name
+             (kept in the URL), but the handler code is the target activity, so
+             `via` resolves to targetActivity for the code linker. -->
+        <activity-alias
+            android:name=".ExportedAlias"
+            android:targetActivity=".AliasTargetActivity"
+            android:exported="true" />
+
+        <!-- Exported, filter-less service: another explicit-intent surface. -->
+        <service android:name=".ExportedService" android:exported="true" />
+
+        <!-- Exported, filter-less receiver guarded by a custom permission: the
+             permission rides along in metadata but does not suppress it (a
+             normal/dangerous permission is still obtainable by another app). -->
+        <receiver android:name=".ExportedReceiver" android:exported="true"
+            android:permission="com.example.permission.CUSTOM" />
+
+        <!-- NOT exported, no filter: internal only, must NOT be reported. -->
+        <activity android:name=".InternalActivity" android:exported="false" />
+
+        <!-- Implicitly not exported (filter-less default): must NOT be reported. -->
+        <activity android:name=".DefaultActivity" />
+
+        <!-- Exported but explicitly disabled: not a live entry point, so it
+             must NOT be reported even though exported="true". -->
+        <activity android:name=".DisabledActivity" android:exported="true"
+            android:enabled="false" />
+
+        <!-- Exported ContentProvider with no permission: world-reachable via
+             content://authority by any app. The handler source links the
+             query/openFile callees so the SQL sink surfaces in AI context. -->
+        <provider
+            android:name=".ExportedProvider"
+            android:authorities="com.example.myapp.provider"
+            android:exported="true" />
+
+        <!-- Exported provider guarded by read/write permissions and declaring
+             a path-permission override + ad-hoc URI grants (via the child
+             element). All ride in metadata; none suppress the surface. -->
+        <provider
+            android:name=".SecretProvider"
+            android:authorities="com.example.myapp.secret"
+            android:exported="true"
+            android:readPermission="com.example.permission.READ_SECRET"
+            android:writePermission="com.example.permission.WRITE_SECRET">
+            <path-permission android:pathPrefix="/public" />
+            <grant-uri-permission android:pathPattern=".*" />
+        </provider>
+
+        <!-- Multiple authorities: each is an independently addressable surface,
+             so two endpoints are emitted. grantUriPermissions via the attribute. -->
+        <provider
+            android:name=".MultiAuthProvider"
+            android:authorities="com.example.myapp.first;com.example.myapp.second"
+            android:exported="true"
+            android:grantUriPermissions="true" />
+
+        <!-- NOT exported: internal only, must NOT be reported. -->
+        <provider
+            android:name=".InternalProvider"
+            android:authorities="com.example.myapp.internal"
+            android:exported="false" />
+
+        <!-- Default (no exported attribute): API 17+ defaults to not-exported,
+             so it must NOT be reported. -->
+        <provider
+            android:name=".DefaultProvider"
+            android:authorities="com.example.myapp.default" />
+
+    </application>
+</manifest>

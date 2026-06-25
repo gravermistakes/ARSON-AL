@@ -1,0 +1,34 @@
+version: 2.0
+shards:
+  acp:
+    git: https://github.com/hahwul/acp.cr.git
+    version: 0.2.0
+
+  ameba:
+    git: https://github.com/crystal-ameba/ameba.git
+    version: 1.7.0-dev+git.commit.9f217cd4cb673145be81135b763da3b79de083a4
+
+  crest:
+    git: https://github.com/mamantoha/crest.git
+    version: 1.4.1
+
+  har:
+    git: https://github.com/neuralegion/har.git
+    version: 1.2.0
+
+  http-client-digest_auth:
+    git: https://github.com/mamantoha/http-client-digest_auth.git
+    version: 0.6.0
+
+  http_proxy:
+    git: https://github.com/mamantoha/http_proxy.git
+    version: 0.15.1
+
+  sarif:
+    git: https://github.com/hahwul/sarif.cr.git
+    version: 0.2.0
+
+  toml:
+    git: https://github.com/crystal-community/toml.cr.git
+    version: 0.8.1
+

@@ -1,0 +1,41 @@
++++
+title = "Using Noir with Ollama"
+description = "Integrate Noir with Ollama for local LLM-powered code analysis."
+weight = 2
+sort_by = "weight"
+
++++
+
+Run large language models locally using [Ollama](https://ollama.com) for code analysis without sending data to external services.
+
+## Setup
+
+1.  **Install Ollama**: Download from [ollama.com](https://ollama.com)
+2.  **Download a Model**: Pull a model (e.g., `gemma4`)
+
+    ```bash
+    ollama pull gemma4
+    ```
+
+3.  **Start the Server**:
+
+    ```bash
+    ollama serve
+    ```
+
+## Usage
+
+Run Noir with Ollama:
+
+```bash
+noir scan ./spec/functional_test/fixtures/hahwul \
+     --ai-provider=ollama \
+     --ai-model=gemma4
+```
+
+Ollama provides local AI analysis for vulnerability detection, code improvements, and endpoint functionality descriptions.
+
+> **v0 → v1 migration:** The standalone `--ollama` / `--ollama-model`
+> flags were removed in v1.0. Use the unified `--ai-provider ollama
+> --ai-model NAME` form (shown above).
+

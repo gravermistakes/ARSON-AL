@@ -1,0 +1,56 @@
+require "../../func_spec.cr"
+
+expected_endpoints = [
+  Endpoint.new("/", "GET", [
+    Param.new("abcd_token", "", "cookie"),
+  ]),
+  Endpoint.new("/pet", "GET", [
+    Param.new("query", "", "query"),
+    Param.new("X-API-Key", "", "header"),
+  ]),
+  Endpoint.new("/pet", "POST", [
+    Param.new("body", "", "json"),
+  ]),
+  Endpoint.new("/pet_form", "POST", [
+    Param.new("name", "", "form"),
+  ]),
+  Endpoint.new("/public/secret.html", "GET"),
+  Endpoint.new("/public/mob.txt", "GET"),
+  Endpoint.new("/public/coffee.txt", "GET"),
+  Endpoint.new("/admin/users", "GET"),
+  Endpoint.new("/admin/v1/migration", "GET"),
+  Endpoint.new("/mixed-get", "GET"),
+  Endpoint.new("/mixed-post", "POST", [
+    Param.new("field1", "", "form"),
+  ]),
+  Endpoint.new("/mixed-put", "PUT"),
+  Endpoint.new("/mixed-delete", "DELETE"),
+  Endpoint.new("/multiline", "GET", [
+    Param.new("ml_param", "", "query"),
+  ]),
+  # handlers.go: PATCH method with path param
+  Endpoint.new("/users/:id", "PATCH", [
+    Param.new("id", "", "path"),
+  ]),
+  # handlers.go: OPTIONS method
+  Endpoint.new("/cors-check", "OPTIONS"),
+  # handlers.go: multiple query params
+  Endpoint.new("/search", "GET", [
+    Param.new("q", "", "query"),
+    Param.new("page", "", "query"),
+    Param.new("limit", "", "query"),
+  ]),
+  # handlers.go: path param with query param
+  Endpoint.new("/items/:itemId/reviews", "GET", [
+    Param.new("sort", "", "query"),
+  ]),
+  # handlers.go: handler reference (non-inline)
+  Endpoint.new("/health", "GET"),
+  # handlers.go: deeply nested groups
+  Endpoint.new("/v2/admin/cache", "DELETE"),
+]
+
+FunctionalTester.new("fixtures/go/echo/", {
+  :techs     => 1,
+  :endpoints => expected_endpoints.size,
+}, expected_endpoints).perform_tests
