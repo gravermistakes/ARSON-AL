@@ -1,0 +1,56 @@
+using opack
+using adl
+using LogicalConstructor
+using TemporalConstructor
+
+Prefab Root : Activity
+{
+	- Constructor{OR, ORD}
+
+	Prefab Task1 : Task
+	{
+		- Constructor{XOR, SEQ_ORD}
+		TryThis : MyAction
+		OrTryThis : MyAction
+		{
+			- Duration {1}
+		}
+	}
+
+	Prefab Task2 : Task
+	{
+		- Constructor{AND, SEQ_ORD}
+		Task2_Action1 : MyAction
+		Task2_Action2 : MyAction
+		Task2_Action3 : MyAction
+	}
+
+	Prefab Task3 : Task
+	{
+		- Constructor{OR, SEQ_ORD}
+		Task3_Action1 : MyAction
+		Task3_Action2 : MyAction
+		Task3_Action3 : MyAction
+	}
+
+	Prefab Task4 : Task
+	{
+		- Constructor{XOR, ORD}
+		Task4_Action1 : MyAction
+		Task4_Action2 : MyAction
+		Task4_Action3 : MyAction
+	}
+
+	Prefab Task5 : Task
+	{
+		- Constructor{AND, SEQ_ORD}
+		Task5_Action1 : MyAction
+	}
+}
+
+instance : Root
+
+MyAgent : simple.Agent
+{
+	- (Activity, instance)	
+}

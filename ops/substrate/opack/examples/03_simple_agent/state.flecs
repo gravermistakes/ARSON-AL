@@ -1,0 +1,9 @@
+A : simple.Agent
+{
+	- Stressed
+	simple__Sense
+	{
+		-B
+	}
+}
+B : simple.Agent

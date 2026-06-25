@@ -46,3 +46,44 @@ dissolved:
       - README.es/ko.md    # translations
       - .github/{FUNDING,workflows}  # upstream CI + sponsorship
     reason_dropped: not functional units — upstream packaging, marketing, CI.
+
+  - source_repo: opack
+    origin: https://github.com/gravermistakes/opack
+    upstream: https://github.com/TBlauwe/OPACK
+    license: see substrate/opack/LICENSE
+    classification: ecs-substrate
+    rationale: >
+      OPACK is a C++ ECS multi-agent library (built on flecs). It is the
+      compiled substrate ARSENAL recombines tool "cells" onto — C++ handles
+      branching/merging/pruning/state; the LLM layer rides on top for triage
+      and prose. One coherent unit; dissolves wholly into ops/substrate/.
+    placed:
+      - unit: ECS agent-modeling library
+        verb: host + schedule agent/world state
+        files: substrate/opack/{include,src}/
+        detail: >
+          core (action, perception, operation, simulation, world,
+          communication, components, entity, macros), modules (adl, fipa_acl,
+          flows, simple_agent), operations (basic, influence_graph),
+          algorithm/influence_graph, utils (ring_buffer, type_map, type_name,
+          flecs_helper, debug).
+      - unit: build system
+        verb: compile the substrate
+        files: substrate/opack/{CMakeLists.txt,CMakePresets.json,cmake/}
+        detail: >
+          CPM-based. Trimmed dangling add_subdirectory refs to dropped
+          benchmarks/experiments/docs (options removed too).
+      - unit: reference + verification
+        verb: show how to build cells / prove the substrate
+        files: substrate/opack/{examples,tests}/
+        detail: 7 worked examples (world, agent, activity, perception, action) + the test suite.
+    dropped:
+      - benchmarks/        # google-benchmark perf harness
+      - experiments/       # research demos (sensibility, shelling)
+      - docs/              # Doxygen/Sphinx build
+      - Folder.DotSettings # ReSharper IDE config
+      - TODO.md            # upstream scratch notes
+    reason_dropped: not functional units for the substrate role; perf/docs/IDE cruft.
+    complications: >
+      Root CMakeLists referenced the dropped dirs; trimmed those refs and the
+      EXPERIMENTS/BENCHMARKS options so the default configure stays coherent.
