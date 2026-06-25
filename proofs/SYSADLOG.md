@@ -4,6 +4,18 @@
 Sysadmin/dissolution error log for proofs/. Each entry: what broke, how it was
 found, the fix. Newest first. Linked from CLAUDE.md.
 
+## 1782416720b — batch 2 review (drogonsec, fuzz-skill, h1dr4)  [CLEAN]
+
+Review cadence after batch-2 pushes. No errors — nothing to fix, merged.
+- **verify:** `drogonsec` `go build ./...` → exit 0 (go 1.26, all deps resolve);
+  `gofmt` clean; `h1dr4` index.js + mcp-smoke.mjs `node --check` clean; fuzz
+  harnesses are legit ELF (not stripped, debug_info).
+- **security:** no hardcoded credentials in the new Go/JS/MD/JSON; `internal/leaks`
+  hits are detector *signatures*, not secrets; prebuilt fuzz binaries inspected
+  (`file`) — ordinary x86-64 PIE executables.
+- **code-review:** placements coherent; `go.mod/go.sum` already complete (build
+  left the tree clean). Kept docs/corpus/fuzzers per policy.
+
 ## 1782416720 — spine references broken by verb-split  [FIXED]
 
 **Severity:** high (methodology non-navigable).
