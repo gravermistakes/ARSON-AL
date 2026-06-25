@@ -1,0 +1,188 @@
+package infra
+
+import (
+	"fmt"
+	"strings"
+	"sync"
+
+	httputil "github.com/projectdiscovery/utils/http"
+)
+
+var (
+	ErrRateLimited       = fmt.Errorf("rate limited")
+	ErrCloudflareCaptcha = fmt.Errorf("cloudflare captcha")
+	ErrAkamaiIPBlocked   = fmt.Errorf("akamai IP address blocked")
+	ErrCloudFrontError   = fmt.Errorf("amazon cloudfront error")
+	ErrIncapsulaError    = fmt.Errorf("imperva incapsula error")
+	ErrAwsElbError       = fmt.Errorf("aws elb error")
+	ErrChallengePage     = fmt.Errorf("interactive WAF/CDN challenge page")
+)
+
+// ChallengeBodyMarkers are byte needles that appear only on interstitial
+// WAF/CDN challenge ("checking your browser") pages, never in a genuine
+// application response. They let the detector catch a challenge the edge serves
+// with an ordinary 200/202 status — Cloudflare managed and JS challenges
+// routinely do — which the status-code gate alone would pass through and feed to
+// a body-matching module (the motivating false positive: a Cloudflare challenge
+// whose random per-request tokens happened to contain "TiKV" was reported as
+// error-based SQLi). Each marker is specific enough that a real app body cannot
+// plausibly contain it: a login page that merely embeds a Turnstile widget
+// carries "challenges.cloudflare.com" but none of these, so it is not flagged.
+//
+// Exported because modkit's edge-block detector (IsEdgeBlockedResponse) reuses
+// the same set plus CloudFront error-page markers — keeping one source of truth
+// so a new challenge string is added in one place, not two.
+var ChallengeBodyMarkers = [][]byte{
+	[]byte("_cf_chl_opt"),                               // Cloudflare challenge opt object (window._cf_chl_opt)
+	[]byte("/cdn-cgi/challenge-platform/"),              // Cloudflare challenge orchestration script
+	[]byte("Enable JavaScript and cookies to continue"), // Cloudflare managed/JS-challenge noscript text
+	[]byte("_Incapsula_Resource"),                       // Imperva Incapsula interstitial
+	[]byte("Request unsuccessful. Incapsula incident"),  // Imperva Incapsula block page
+}
+
+// challengeBodyMatcher is the single-pass form of ChallengeBodyMarkers, built
+// once so bodyHasChallengeMarker scans the (capped) body a single time instead of
+// once per marker.
+var challengeBodyMatcher = NewByteSetMatcher(ChallengeBodyMarkers)
+
+// challengeBodyScanLimit caps how many leading bytes of the body are scanned for
+// challenge markers. Interstitial pages carry their markers in the first few KB;
+// the cap keeps the check cheap on large application responses.
+const challengeBodyScanLimit = 64 << 10
+
+type BlockDetectionValidator struct{}
+
+var (
+	defaultValidator *BlockDetectionValidator
+	blockDetectOnce  sync.Once
+)
+
+// GetBlockDetectionValidator returns the default BlockDetectionValidator instance (lazy loading)
+func GetBlockDetectionValidator() *BlockDetectionValidator {
+	blockDetectOnce.Do(func() {
+		defaultValidator = &BlockDetectionValidator{}
+	})
+	return defaultValidator
+}
+
+// IsBlockedResponse reports whether resp came from a WAF/CDN challenge, auth
+// gate, rate limiter, or maintenance page rather than the application. A module
+// that flags a vulnerability by matching an error/signature token in the
+// response body MUST skip such a response before matching: a denied, throttled,
+// or challenged page is not the application surfacing a marker, so any token it
+// carries can only be a false positive (the motivating case: a Cloudflare 429 /
+// 200 challenge page behind an SSO wall whose random tokens matched a DBMS error
+// signature). It combines the vendor-aware detector — which also catches
+// status-independent challenge interstitials by header / body marker — with a
+// plain status gate for generic WAFs the detector does not recognize.
+//
+// Do NOT use this in modules whose finding IS a blocking status (e.g. an
+// access-control check that treats 403 as the signal); it would suppress the
+// very response they look for.
+func IsBlockedResponse(resp *httputil.ResponseChain) bool {
+	if resp == nil || resp.Response() == nil {
+		return false
+	}
+	if GetBlockDetectionValidator().Validate(resp) != nil {
+		return true
+	}
+	switch resp.Response().StatusCode {
+	case 401, 403, 429, 503:
+		return true
+	}
+	return false
+}
+
+// IsErrorSurfaceStatus reports whether resp's status is one an application could
+// plausibly use to surface a server-side leak (a DBMS/driver error string, a
+// reflected file's contents, a stack trace, an injected marker). A genuine leak
+// of that kind rides a 5xx (the stack choked) or a 2xx/4xx the app returns with
+// the payload echoed into the body. A 404 means the route never resolved — no
+// query/handler ran — and a 3xx redirect carries no handler output, so a
+// signature substring in either body is page noise (a catch-all/SPA 404 shell,
+// a redirect interstitial), not evidence of the vulnerability.
+//
+// This is the companion gate to IsBlockedResponse: that one rejects WAF/CDN/
+// auth/rate-limit pages (401/403/429/503 + challenge markers), this one rejects
+// the no-handler-ran statuses (404 + 3xx) that IsBlockedResponse deliberately
+// leaves alone. A body-matching module whose finding is NOT itself a status
+// signal should reject a response that fails EITHER gate before matching.
+//
+// Do NOT use this in a module whose finding IS a 404/redirect (e.g. a broken-link
+// or open-redirect check) — it would suppress the very response it looks for.
+func IsErrorSurfaceStatus(resp *httputil.ResponseChain) bool {
+	if resp == nil || resp.Response() == nil {
+		return false
+	}
+	code := resp.Response().StatusCode
+	if code == 404 {
+		return false
+	}
+	if code >= 300 && code < 400 {
+		return false
+	}
+	return true
+}
+
+func (v *BlockDetectionValidator) Validate(resp *httputil.ResponseChain) error {
+	if v == nil || resp == nil || resp.Response() == nil {
+		return nil
+	}
+
+	header := resp.Response().Header
+	statusCode := resp.Response().StatusCode
+	serverHeaderValue := header.Get("Server")
+	cdnHeaderValue := header.Get("X-CDN")
+
+	switch statusCode {
+	case 429:
+		return ErrRateLimited
+	case 403:
+		switch {
+		case strings.HasPrefix(serverHeaderValue, "cloudflare"):
+			return ErrCloudflareCaptcha
+		case strings.HasPrefix(serverHeaderValue, "AkamaiGHost"):
+			return ErrAkamaiIPBlocked
+		case serverHeaderValue == "CloudFront":
+			return ErrCloudFrontError
+		case cdnHeaderValue == "Incapsula":
+			return ErrIncapsulaError
+		case strings.HasPrefix(serverHeaderValue, "awselb/"):
+			return ErrAwsElbError
+		}
+	case 503:
+		if strings.HasPrefix(serverHeaderValue, "cloudflare") {
+			return ErrCloudflareCaptcha
+		}
+	}
+
+	// Status-independent challenge detection. Cloudflare stamps "cf-mitigated"
+	// on any response where it issued a challenge or block — including ones it
+	// returns with a 200/202 the status switch above would let through. The
+	// body-marker scan is the backstop for edges that serve a challenge without
+	// the header. Either signal means the response came from the edge, not the
+	// application, so a body-matching module must not read it as app output.
+	if header.Get("Cf-Mitigated") != "" {
+		return ErrChallengePage
+	}
+	if bodyHasChallengeMarker(resp) {
+		return ErrChallengePage
+	}
+
+	return nil
+}
+
+// bodyHasChallengeMarker reports whether the (capped) response body contains an
+// interstitial WAF/CDN challenge marker. The body slice is read in place and not
+// retained, so it stays valid for the lifetime of this call.
+func bodyHasChallengeMarker(resp *httputil.ResponseChain) bool {
+	body := resp.Body()
+	if body == nil || body.Len() == 0 {
+		return false
+	}
+	b := body.Bytes()
+	if len(b) > challengeBodyScanLimit {
+		b = b[:challengeBodyScanLimit]
+	}
+	return challengeBodyMatcher.MatchAny(b)
+}
