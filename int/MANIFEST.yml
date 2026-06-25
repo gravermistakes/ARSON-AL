@@ -69,3 +69,22 @@ dissolved:
     notes: >
       Public docs/toolkit repo (private product source stays private). index.js
       and examples/mcp-smoke.mjs node --check clean.
+
+  - source_repo: bofhound
+    origin: https://github.com/gravermistakes/bofhound
+    upstream: https://github.com/coffeegist/bofhound
+    license: see int/bofhound/LICENSE
+    classification: ad-recon-bloodhound
+    rationale: >
+      BOFHound parses ldapsearch / BOF / Brute Ratel log files into BloodHound-
+      ingestible data, so operators run their own controlled LDAP queries instead
+      of noisy automated collectors. Active Directory reconnaissance -> int/.
+    placed:
+      - unit: AD log -> BloodHound parser
+        verb: parse LDAP/BOF logs -> BloodHound graph data
+        files: int/bofhound/   # bofhound/ package, tests/ (fixtures = corpus), pyproject, poetry.lock
+    build: "python (poetry install); CLI: bofhound -i <logs> -o <out>"
+    dropped: [.github/, governance]
+    notes: >
+      Upstream fork archived ("no longer active" -> coffeegist/bofhound).
+      tests/ fixtures (~8.9M) kept as corpus per policy. py_compile clean.
