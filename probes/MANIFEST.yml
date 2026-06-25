@@ -116,3 +116,21 @@ dissolved:
         files: probes/web3/blockchain-appsec/   # guides/, index, info
     dropped: [_config.yml, Gemfile, 404.html, CONTRIBUTING.md, SECURITY.md, leaders.md, .github/]
     reason_dropped: Jekyll site scaffolding + governance.
+
+  - source_repo: vigolium
+    origin: https://github.com/gravermistakes/vigolium
+    upstream: https://github.com/j3ssie/vigolium
+    license: see probes/vigolium/LICENSE
+    classification: dast-web-vuln-scanner
+    rationale: >
+      Vigolium is a high-fidelity web vulnerability scanner (Go) — CLI scanner,
+      REST API w/ traffic ingestion, 266 active/passive modules, spider/discovery,
+      plus an in-process agent engine. The flagship probes/ scanner.
+    placed:
+      - unit: scanner + modules + agent engine
+        verb: scan web apps/APIs for vulns; ingest + analyze traffic
+        files: probes/vigolium/   # pkg/ (core+modules), internal/, cmd/, public/presets, docs/, test/ fixtures
+    build: "make build (go 1.26) -> bin/vigolium. See probes/vigolium/CLAUDE.md."
+    dropped: [build/, '*/node_modules', '*/.next', '*/dist']
+    reason_dropped: build artifacts only. test/ corpus, docs/, presets, platform/ UI all kept.
+    notes: ~67M after excluding build output. Largest tool in the arsenal.

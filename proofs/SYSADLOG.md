@@ -4,6 +4,19 @@
 Sysadmin/dissolution error log for proofs/. Each entry: what broke, how it was
 found, the fix. Newest first. Linked from CLAUDE.md.
 
+## 1782416720f — batch 7 / FINAL review (vigolium, awesome-bugbounty-tools, awesome-hacking)  [CLEAN]
+
+Final review cadence. All 19 source materials dissolved. No errors — merged.
+- **verify:** vigolium `gofmt` clean (cmd/internal); go.mod is go 1.26.
+- **accepted observation:** raw `go build ./cmd/...` fails on a missing
+  `//go:embed jsscan/jsscan-linux-amd64`. Confirmed that binary was NEVER
+  in upstream git — vigolium's Makefile generates it via `make deps`/
+  `ensure-jsscan` on first build (its CLAUDE.md mandates `make build`, never
+  raw `go build`). My build/ exclusion did not touch it. Dissolution is
+  faithful; use `make build` per its CLAUDE.md.
+- **security:** no real secrets in vigolium (module detector patterns excluded).
+- awesome-bugbounty-tools / awesome-hacking are curated md indexes.
+
 ## 1782416720e — batch 6 review (shodansnipe, blockchain-appsec, burp-extensions)  [CLEAN]
 
 Review cadence after batch-6 pushes. No errors — merged.

@@ -20,6 +20,9 @@ detection knowledge that says *what to look for*. The engine of the scan loop.
   & deprecated routes. `cd noir && shards build`. Vendors tree-sitter grammars.
 - `web3/blockchain-appsec/` — OWASP Blockchain AppSec Standard: verification
   requirements to audit blockchain apps against (web3 detection knowledge).
+- `vigolium/` — **flagship** Go web vuln scanner: CLI + REST API w/ traffic
+  ingestion, 266 active/passive modules, spider/discovery, in-process agent
+  engine. `cd vigolium && make build`. See its own CLAUDE.md.
 
 ## Build
 - Knowledge (web2/web3): nothing compiles — playbooks read by the scanning agent.
@@ -39,6 +42,6 @@ detection knowledge that says *what to look for*. The engine of the scan loop.
 
 ## Issues
 - Lance/bug-reaper detection knowledge split from their skills (spines in proofs/).
-- drogonsec (SAST/SCA/secrets) + noir (endpoint extraction) give probes/ its
-  teeth. vigolium (Go scanner) still to dissolve here.
+- drogonsec (SAST/SCA/secrets), noir (endpoint extraction), and vigolium
+  (flagship DAST, 266 modules) give probes/ full teeth.
 - noir is ~75M (vendored tree-sitter grammars kept — required to parse code).
