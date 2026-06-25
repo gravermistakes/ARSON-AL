@@ -1,0 +1,32 @@
+# picks/ dissolution manifest
+# generated: 1782416720
+category: picks
+purpose: injection techniques, bypass payloads, exploitation playbooks — ways in
+
+dissolved:
+  - source_repo: bug-reaper
+    origin: https://github.com/gravermistakes/bug-reaper
+    upstream: https://github.com/shaniidev/bug-reaper
+    license: MIT
+    classification: web2-exploitation-techniques
+    rationale: >
+      Bug-reaper is the Web2 4-phase analog of lance. Its per-class
+      vulnerability playbooks describe how to exploit a class (injection,
+      auth bypass, IDOR, SSRF, etc.) — "ways in" — and the root doc names
+      SSTI/SQLi/XSS/XXE + WAF bypass under picks explicitly. So the class
+      playbooks + waf-bypass land here; recon/SAST → probes, scope → int,
+      validation/report → proofs.
+    placed:
+      - unit: exploitation-class playbooks
+        verb: exploit a specific Web2 bug class
+        files: web2/bug-reaper/vulnerabilities/   # 19 classes
+      - unit: WAF bypass technique
+        verb: evade WAF/defenses
+        files: web2/bug-reaper/waf-bypass.md
+    cross_refs:
+      int: int/web2/bug-reaper      # scope parsing
+      probes: probes/web2/bug-reaper # recon + SAST + detection ruleset
+      proofs: proofs/web2/bug-reaper # validation + report + chaining + SKILL spine
+    notes: >
+      subdomain-takeover.md straddles detection/exploitation; kept with its
+      class-playbook peers here rather than split.

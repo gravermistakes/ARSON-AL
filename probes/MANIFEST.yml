@@ -1,0 +1,55 @@
+# probes/ dissolution manifest
+# generated: 1782416571
+category: probes
+purpose: enumeration, fingerprinting, endpoint extraction, detection knowledge
+
+dissolved:
+  - source_repo: lance
+    origin: https://github.com/gravermistakes/lance
+    upstream: https://github.com/shaniidev/lance
+    license: MIT
+    classification: web3-detection-knowledge
+    rationale: >
+      Lance gate G2 (Detection) is "what to scan for" — class-based detection
+      playbooks and chain-specific guidance. That is probe knowledge. Scope/
+      intake went to int/web3, validation/report to proofs/web3.
+    placed:
+      - unit: detection ruleset (G2)
+        verb: enumerate exploit classes to check
+        files: web3/lance/audit-rules.md
+      - unit: vulnerability-class playbooks
+        verb: detect a specific Web3 bug class
+        files: web3/lance/vulnerabilities/   # 13 playbooks
+      - unit: chain-specific detection guidance
+        verb: adjust detection per chain
+        files: web3/lance/chains/   # evm, sui-move, cross-chain-bridge, l2
+    cross_refs:
+      int: int/web3/lance        # scope + intake (G0/G1)
+      proofs: proofs/web3/lance  # validation + report (G3-G6) + SKILL spine
+    complications: >
+      Knowledge only — no scanner binary yet. Peers (noir endpoint extraction,
+      vigolium scanner, fuzz-skill) arrive in later dissolutions.
+
+  - source_repo: bug-reaper
+    origin: https://github.com/gravermistakes/bug-reaper
+    upstream: https://github.com/shaniidev/bug-reaper
+    license: MIT
+    classification: web2-recon-sast
+    rationale: >
+      Bug-reaper recon (subdomain enum, fingerprinting, JS mining, endpoint
+      discovery) is surface discovery, and source-code-audit is white-box SAST —
+      both probes/. The detection ruleset rounds out the probe knowledge.
+    placed:
+      - unit: recon methodology
+        verb: discover surface (subdomains, tech, JS, endpoints)
+        files: web2/bug-reaper/recon.md
+      - unit: white-box SAST methodology
+        verb: audit source for sinks
+        files: web2/bug-reaper/source-code-audit.md
+      - unit: detection ruleset
+        verb: enumerate what to check
+        files: web2/bug-reaper/audit-rules.md
+    cross_refs:
+      int: int/web2/bug-reaper
+      picks: picks/web2/bug-reaper
+      proofs: proofs/web2/bug-reaper
