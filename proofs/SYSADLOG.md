@@ -4,6 +4,16 @@
 Sysadmin/dissolution error log for proofs/. Each entry: what broke, how it was
 found, the fix. Newest first. Linked from CLAUDE.md.
 
+## 1782416720e — batch 6 review (shodansnipe, blockchain-appsec, burp-extensions)  [CLEAN]
+
+Review cadence after batch-6 pushes. No errors — merged.
+- **verify:** shodansnipe 42/42 py files `py_compile` clean; blockchain-appsec is md.
+- **security:** no hardcoded API keys/secrets in shodansnipe (recon tool).
+- **accepted observation:** `picks/burp-extensions/Text-editor_Tab_*.py` uses
+  Jython 2.7 tab indentation that python3 `py_compile` rejects; correct under
+  Burp's Jython runtime. Kept as-is (not our code, not a py3 target).
+- **note:** shodansnipe flagged for OPACK migration (agents/modules -> ECS cells).
+
 ## 1782416720d — batch 5 review (mitre-attack, threat-dragon, ssti-research, osint-tools)  [CLEAN]
 
 Review cadence after batch-5 pushes. No errors — merged.
