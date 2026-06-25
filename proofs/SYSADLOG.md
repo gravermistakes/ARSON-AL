@@ -4,6 +4,18 @@
 Sysadmin/dissolution error log for proofs/. Each entry: what broke, how it was
 found, the fix. Newest first. Linked from CLAUDE.md.
 
+## 1782419851 — SESSION SIGN-OFF
+
+Campaign closed: 19/19 source materials dissolved into the behavior-sorted
+arsenal across 8 merged PRs. Five category dirs, each with CLAUDE.md +
+MANIFEST.yml; six review-cadence passes logged above (one real fix: the
+spine reference maps). The assembled, recombining whole is named
+**Crucible** — the vessel that dissolves raw material and reforges it.
+Forward design for wiring tools/skills as ECS cells (to replace agents):
+see `ops/substrate/opack/ECS-CELLS.md`.
+
+— Crucible, 1782419851
+
 ## 1782416720f — batch 7 / FINAL review (vigolium, awesome-bugbounty-tools, awesome-hacking)  [CLEAN]
 
 Final review cadence. All 19 source materials dissolved. No errors — merged.
