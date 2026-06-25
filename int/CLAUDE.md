@@ -16,6 +16,10 @@ the recon loop. Models a target so probes/ know what surface to hit.
 - `bofhound/` — Active Directory recon: parses ldapsearch/BOF logs into
   BloodHound graph data (operator-controlled LDAP, evades collector honeypots).
   `bofhound -i <logs> -o <out>`.
+- `mitre-attack/` — curated MITRE ATT&CK resource index; map findings/TTPs
+  to ATT&CK techniques.
+- `threat-dragon/` — OWASP Threat Dragon: threat-modeling app (diagrams +
+  rule engine) with example models under `ThreatDragonModels/`.
 
 ## Build
 - Knowledge/scripts (web3/web2): Python, no build.

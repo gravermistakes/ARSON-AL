@@ -1,0 +1,170 @@
+import schema from '@/service/schema/ajv';
+import tmModel from './test-threat-model';
+import otmModel from './otm_example';
+import v1Model from './test-v1-model';
+import v2Model from './test-v2-model';
+import template from './test-template';
+
+describe('service/schema/ajv.js', () => {
+    const invalidV2Model = JSON.parse(JSON.stringify(v2Model));
+    delete invalidV2Model.summary.title;
+    const invalidTmModel = JSON.parse(JSON.stringify(tmModel));
+    invalidTmModel['version'] = 0;
+
+    describe('isValid', () => {
+        it('validates V1 models', () => {
+            expect(schema.isValid(v1Model)).toBe(true);
+        });
+
+        it('validates V2 models', () => {
+            expect(schema.isValid(v2Model)).toBe(true);
+        });
+
+        it('validates TM models', () => {
+            expect(schema.isValid(tmModel)).toBe(true);
+        });
+
+        it('validates OTM models', () => {
+            expect(schema.isValid(otmModel)).toBe(true);
+        });
+
+        it('detects no schema match', () => {
+            expect(schema.isValid({'invalidJson': 'made up'})).toBe(false);
+        });
+
+        it('rejects invalid JSON', () => {
+            expect(schema.isValid('invalidJson')).toBe(false);
+        });
+    });
+
+    describe('checkTmBom', () => {
+        it('reports TM-BOM schema passing', () => {
+            const report = schema.checkTmBom(tmModel);
+            expect(report).toBe(null);
+        });
+
+        it('reports TM-BOM schema errors', () => {
+            const report = schema.checkTmBom(invalidTmModel);
+            expect(report[0].message).toBe('must be string');
+        });
+
+    });
+
+    describe('checkV2', () => {
+        it('reports V2 schema passing', () => {
+            const report = schema.checkV2(v2Model);
+            expect(report).toBe(null);
+        });
+
+        it('reports V2 schema errors', () => {
+            const report = schema.checkV2(invalidV2Model);
+            expect(report[0].message).toContain("required property 'title'");
+        });
+
+    });
+
+    describe('isV1', () => {
+        it('validates V1 Threat Dragon models', () => {
+            expect(schema.isV1(v1Model)).toBe(true);
+        });
+
+        it('rejects invalid V1 Threat Dragon models', () => {
+            const invalidModel = JSON.parse(JSON.stringify(v1Model));
+            delete invalidModel.summary.title;
+            expect(schema.isV1(invalidModel)).toBe(false);
+        });
+
+        it('rejects other models', () => {
+            expect(schema.isV1(tmModel)).toBe(false);
+            expect(schema.isV1(otmModel)).toBe(false);
+            expect(schema.isV1(v2Model)).toBe(false);
+        });
+
+        it('rejects invalid JSON', () => {
+            expect(schema.isV1('invalidJson')).toBe(false);
+        });
+    });
+
+    describe('isV2', () => {
+        it('validates V2 Threat Dragon models', () => {
+            expect(schema.isV2(v2Model)).toBe(true);
+        });
+
+        it('rejects invalid V2 Threat Dragon models', () => {
+            expect(schema.isV2(invalidV2Model)).toBe(false);
+        });
+
+        it('rejects other models', () => {
+            expect(schema.isV2(tmModel)).toBe(false);
+            expect(schema.isV2(otmModel)).toBe(false);
+            expect(schema.isV2(v1Model)).toBe(false);
+        });
+
+        it('rejects invalid JSON', () => {
+            expect(schema.isV2('invalidJson')).toBe(false);
+        });
+    });
+
+    describe('isTmBom', () => {
+        it('validates TM models', () => {
+            expect(schema.isTmBom(tmModel)).toBe(true);
+        });
+
+        it('rejects invalid TM models', () => {
+            expect(schema.isTmBom(invalidTmModel)).toBe(false);
+        });
+
+        it('rejects other models', () => {
+            expect(schema.isTmBom(otmModel)).toBe(false);
+            expect(schema.isTmBom(v1Model)).toBe(false);
+            expect(schema.isTmBom(v2Model)).toBe(false);
+        });
+
+        it('rejects invalid JSON', () => {
+            expect(schema.isTmBom('invalidJson')).toBe(false);
+        });
+    });
+
+    describe('isOtm', () => {
+        it('validates OTM models', () => {
+            expect(schema.isOtm(otmModel)).toBe(true);
+        });
+
+        it('rejects invalid OTM models', () => {
+            const invalidModel = JSON.parse(JSON.stringify(otmModel));
+            invalidModel['otmVersion'] = 0;
+            expect(schema.isOtm(invalidModel)).toBe(false);
+        });
+
+        it('rejects other models', () => {
+            expect(schema.isOtm(tmModel)).toBe(false);
+            expect(schema.isOtm(v1Model)).toBe(false);
+            expect(schema.isOtm(v2Model)).toBe(false);
+        });
+
+        it('rejects invalid JSON', () => {
+            expect(schema.isOtm('invalidJson')).toBe(false);
+        });
+    });
+
+    describe('isTemplate', () => {
+        it('validates templates', () => {
+            expect(schema.isTemplate(template)).toBe(true);
+        });
+
+        it('rejects standard models', () => {
+            expect(schema.isTemplate(v2Model)).toBe(false);
+        });
+    });
+
+    describe('validateTemplateFormat', () => {
+        it('reports valid template format', () => {
+            expect(schema.validateTemplateFormat(template).valid).toBe(true);
+        });
+
+        it('rejects invalid template format', () => {
+            expect(schema.validateTemplateFormat(v2Model).valid).toBe(false);
+        });
+    });
+
+});

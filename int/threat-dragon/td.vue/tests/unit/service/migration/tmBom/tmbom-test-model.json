@@ -1,0 +1,720 @@
+{
+    "$schema": "https://github.com/OWASP/www-project-threat-model-library/blob/v1.0.2/threat-model.schema.json",
+    "version": "2.7.0",
+    "scope": {
+      "title": "Test title scope",
+      "description": "Test description scope",
+      "business_criticality": "low",
+      "data_sensitivity": ["biz"],
+      "exposure": "external",
+      "tier": "non_critical"
+    },
+    "description": "Test description",
+    "frozen": false,
+    "released_at": "2025-05-10",
+    "product_release_date": "2025-05-11",
+    "release_docs_link": "https://example.com/release_docs_link",
+    "reviewed_at": "2025-05-12",
+    "repo_link": "https://example.com/repo_link",
+    "diagrams": [
+        {
+            "title": "Test title diagram0",
+            "type": "plantuml",
+            "source": "Test source diagram0"
+        }
+    ],
+    "trust_zones": [
+        {
+            "symbolic_name": "trust-zone0",
+            "title": "Test title trust-zone0",
+            "description": "Test description trust-zone0"
+        },
+        {
+            "symbolic_name": "trust-zone1",
+            "title": "Test title trust-zone1",
+            "description": "Test description trust-zone1"
+        },
+        {
+            "symbolic_name": "trust-zone2",
+            "title": "Test title trust-zone2",
+            "description": "Test description trust-zone2"
+        },
+        {
+            "symbolic_name": "trust-zone3",
+            "title": "Test title trust-zone3",
+            "description": "Test description trust-zone3, unused"
+        }
+    ],
+    "trust_boundaries": [
+        {
+            "trust_zone_a": "trust-zone0",
+            "trust_zone_b": "trust-zone1",
+            "access_control_methods": ["acl", "rbac", "mac"],
+            "authentication_methods": ["password", "otp", "challenge_response", "public_key"],
+            "access_token_expires": true,
+            "access_token_ttl": 1000,
+            "has_refresh_token": true,
+            "refresh_token_expires": true,
+            "refresh_token_ttl": 1000,
+            "can_user_logout": true,
+            "can_system_logout": true
+        },
+        {
+            "trust_zone_a": "trust-zone2",
+            "trust_zone_b": "trust-zone1",
+            "access_control_methods": ["dac", "abac"],
+            "authentication_methods": ["token", "biometrics", "sso", "social"],
+            "access_token_expires": false,
+            "has_refresh_token": false,
+            "can_user_logout": false,
+            "can_system_logout": false
+        },
+        {
+            "trust_zone_a": "trust-zone2",
+            "trust_zone_b": "trust-zone0",
+            "access_control_methods": ["none"],
+            "authentication_methods": ["none"]
+        },
+        {
+            "trust_zone_a": "trust-zone1",
+            "trust_zone_b": "trust-zone2"
+        }
+    ],
+    "actors": [
+        {
+            "symbolic_name": "actor0",
+            "title": "Test title actor0",
+            "description": "Test description actor0",
+            "type": "system",
+            "permissions": "Test permissions actor0"
+        },
+        {
+            "symbolic_name": "actor1",
+            "title": "Test title actor1",
+            "description": "Test description actor1",
+            "type": "user",
+            "permissions": "Test permissions actor1",
+            "trust_zone": "trust-zone1"
+        },
+        {
+            "symbolic_name": "actor2",
+            "title": "Test title actor2",
+            "description": "Test description actor2",
+            "type": "power_user",
+            "permissions": "Test permissions actor2",
+            "trust_zone": "trust-zone2"
+        },
+        {
+            "symbolic_name": "actor3",
+            "title": "Test title actor3",
+            "description": "Test description actor3",
+            "type": "administrator",
+            "permissions": "Test permissions actor3",
+            "trust_zone": "trust-zone2"
+        },
+        {
+            "symbolic_name": "actor4",
+            "title": "Test title actor4",
+            "description": "Test description actor4",
+            "type": "engineer"
+        },
+        {
+            "symbolic_name": "actor5",
+            "title": "Test title actor5",
+            "description": "Test description actor5",
+            "type": "third_party"
+        }
+    ],
+
+    "components": [
+        {
+            "symbolic_name": "component0",
+            "title": "Test title component0",
+            "description": "Test description component0",
+            "trust_zone": "trust-zone0",
+            "repo_link": "https://example.com/component0"
+        },
+        {
+            "symbolic_name": "component1",
+            "title": "Test title component1",
+            "description": "Test description component1",
+            "trust_zone": "trust-zone1",
+            "repo_link": "https://example.com/component1"
+        },
+        {
+            "symbolic_name": "component2",
+            "title": "Test title component2",
+            "description": "Test description component2",
+            "trust_zone": "trust-zone2",
+            "repo_link": "https://example.com/component2"
+        },
+        {
+            "symbolic_name": "component3",
+            "title": "Test title component3",
+            "description": "Test description component3",
+            "trust_zone": "trust-zone2",
+            "repo_link": "https://example.com/component3"
+        },
+        {
+            "symbolic_name": "component4",
+            "title": "Test title component4",
+            "description": "Test description component4",
+            "trust_zone": "trust-zone2"
+        },
+        {
+            "symbolic_name": "component5",
+            "title": "Test title component5",
+            "description": "Test description component5"
+        }
+    ],
+
+    "data_stores": [
+        {
+            "symbolic_name": "data-store0",
+            "title": "Test title data-store0",
+            "description": "Test description data-store0",
+            "type": "sql",
+            "vendor": "Test vendor data-store0",
+            "product": "Test product data-store0",
+            "trust_zone": "trust-zone1"
+        },
+        {
+            "symbolic_name": "data-store1",
+            "title": "Test title data-store1",
+            "description": "Test description data-store1",
+            "type": "key_value",
+            "vendor": "Test vendor data-store1",
+            "product": "Test product data-store1",
+            "trust_zone": "trust-zone1"
+        },
+        {
+            "symbolic_name": "data-store2",
+            "title": "Test title data-store2",
+            "description": "Test description data-store2",
+            "type": "document",
+            "product": "Test product data-store2",
+            "trust_zone": "trust-zone2"
+        },
+        {
+            "symbolic_name": "data-store3",
+            "title": "Test title data-store3",
+            "description": "Test description data-store3",
+            "type": "object",
+            "product": "Test product data-store3",
+            "trust_zone": "trust-zone2"
+        },
+        {
+            "symbolic_name": "data-store4",
+            "title": "Test title data-store4",
+            "description": "Test description data-store4",
+            "type": "graph",
+            "vendor": "Test vendor data-store4"
+        },
+        {
+            "symbolic_name": "data-store5",
+            "title": "Test title data-store5",
+            "description": "Test description data-store5",
+            "type": "time_series"
+        }
+    ],
+    "data_sets": [
+        {
+            "symbolic_name": "data-set0",
+            "title": "Test title data-set0",
+            "description":  "Test description data-set0",
+            "placements": [
+                {
+                    "data_store": "data-store0",
+                    "encrypted": false
+                }
+            ],
+            "record_count": 100000,
+            "data_sensitivity": ["pii"],
+            "access_control_methods": ["acl"]
+        },
+        {
+            "symbolic_name": "data-set1",
+            "title": "Test title data-set1",
+            "description": "Test description data-set1",
+            "placements": [
+                {
+                    "data_store": "data-store1",
+                    "encrypted": false
+                }
+            ],
+            "record_count": 20,
+            "data_sensitivity": ["phi"],
+            "access_control_methods": ["rbac"]
+        },
+        {
+            "symbolic_name": "data-set2",
+            "title": "Test title data-set2",
+            "description": "Test description data-set2",
+            "placements": [
+                {
+                    "data_store": "data-store3",
+                    "encrypted": false
+                }
+            ],
+            "record_count": 10,
+            "data_sensitivity": ["fin"],
+            "access_control_methods": ["mac"]
+        },
+        {
+            "symbolic_name": "data-set3",
+            "title": "Test title data-set3",
+            "description": "Test description data-set3",
+            "placements": [
+                {
+                    "data_store": "data-store4",
+                    "encrypted": true
+                }
+            ],
+            "record_count": 200,
+            "data_sensitivity": ["ip"],
+            "access_control_methods": ["dac"]
+        },
+        {
+            "symbolic_name": "data-set4",
+            "title": "Test title data-set4",
+            "description": "Test description data-set4",
+            "placements": [
+                {
+                    "data_store": "data-store5",
+                    "encrypted": true
+                }
+            ],
+            "data_sensitivity": ["cred"],
+            "access_control_methods": ["abac"]
+        },
+        {
+            "symbolic_name": "data-set5",
+            "title": "Test title data-set5",
+            "description": "Test description data-set5",
+            "placements": [
+                {
+                    "data_store": "data-store5",
+                    "encrypted": true
+                }
+            ],
+            "data_sensitivity": ["biz"],
+            "access_control_methods": ["none"]
+        },
+        {
+            "symbolic_name": "data-set6",
+            "title": "Test title data-set6",
+            "description": "Test description data-set6",
+            "placements": [
+                {
+                    "data_store": "data-store2",
+                    "encrypted": true
+                }
+            ],
+            "data_sensitivity": ["gov"]
+        },
+        {
+            "symbolic_name": "data-set7",
+            "title": "Test title data-set7",
+            "description": "Test description data-set7",
+            "placements": [
+                {
+                    "data_store": "data-store2",
+                    "encrypted": true
+                }
+            ],
+            "data_sensitivity": ["pci"]
+        },
+        {
+            "symbolic_name": "data-set8",
+            "title": "Test title data-set8",
+            "description": "Test description data-set8",
+            "placements": [
+                {
+                    "data_store": "data-store2",
+                    "encrypted": true
+                }
+            ],
+            "data_sensitivity": ["op"]
+        }
+    ],
+
+    "data_flows": [
+        {
+            "symbolic_name": "data-flow0",
+            "title": "Test title data-flow0",
+            "description": "Test description data-flow0",
+            "source": {"type": "actor", "object": "actor0"},
+            "destination": {"type": "component", "object": "component0"},
+            "has_sensitive_data": true,
+            "encrypted": true
+        },
+        {
+            "symbolic_name": "data-flow1",
+            "title": "Test title data-flow1",
+            "description": "Test description data-flow1",
+            "source": {"type": "actor", "object":"actor1"},
+            "destination": {"type": "data_store", "object": "data-store1"},
+            "has_sensitive_data": false,
+            "encrypted": false
+        },
+        {
+            "symbolic_name": "data-flow2",
+            "title": "Test title data-flow2",
+            "description": "Test description data-flow2",
+            "source": {"type": "actor", "object":"actor2"},
+            "destination": {"type": "actor", "object":"actor3"},
+            "has_sensitive_data": false,
+            "encrypted": false
+        },
+        {
+            "symbolic_name": "data-flow3",
+            "title": "Test title data-flow3",
+            "description": "Test description data-flow3",
+            "source": {"type": "component", "object": "component3"},
+            "destination": {"type": "component", "object": "component4"},
+            "has_sensitive_data": false,
+            "encrypted": false
+        },
+        {
+            "symbolic_name": "data-flow4",
+            "title": "Test title data-flow4",
+            "description": "Test description data-flow4",
+            "source": {"type": "component", "object": "component4"},
+            "destination": {"type": "data_store", "object": "data-store2"},
+            "has_sensitive_data": true,
+            "encrypted": true
+        },
+        {
+            "symbolic_name": "data-flow5",
+            "title": "Test title data-flow5",
+            "description": "Test description data-flow5",
+            "source": {"type": "actor", "object": "actor4"},
+            "destination": {"type": "data_store", "object": "data-store3"},
+            "has_sensitive_data": true,
+            "encrypted": false
+        },
+        {
+            "symbolic_name": "data-flow6",
+            "title": "Test title data-flow6",
+            "description": "Test description data-flow6",
+            "source": {"type": "actor", "object": "no-source"},
+            "destination": {"type": "data_store", "object": "no-destination"},
+            "has_sensitive_data": true,
+            "encrypted": false
+        }
+    ],
+    "assumptions": [
+        {
+            "description": "Test description assumption0",
+            "validity": "unconfirmed",
+            "topics": ["component0", "actor0", "threat-persona0", "trust-zone0", "data-flow0", "data-store0", "data-set0", "risk0"]
+        },
+        {
+            "description": "Test description assumption1",
+            "validity": "confirmed",
+            "topics": ["component0"]
+        },
+        {
+            "description": "Test description assumption2",
+            "validity": "rejected"
+        },
+        {
+            "description": "Test description assumption3",
+            "validity": "unconfirmed"
+        }
+    ],
+    "threat_personas": [
+        {
+            "symbolic_name": "threat-persona0",
+            "title": "Test title threat persona0",
+            "description": "Test description threat persona0",
+            "is_person": true,
+            "skill_level": "script_kid",
+            "access_level": "admin",
+            "malicious_intent": true,
+            "applicability_to_org": "minimal"
+        },
+        {
+            "symbolic_name": "threat-persona1",
+            "title": "Test title threat persona1",
+            "description": "Test description threat persona1",
+            "is_person": true,
+            "skill_level": "insider",
+            "access_level": "admin",
+            "malicious_intent": false,
+            "applicability_to_org": "low"
+        },
+        {
+            "symbolic_name": "threat-persona2",
+            "title": "Test title threat-persona2",
+            "description": "Test description threat persona2",
+            "is_person": true,
+            "skill_level": "engineer",
+            "access_level": "user",
+            "malicious_intent": false,
+            "applicability_to_org": "moderate"
+        },
+        {
+            "symbolic_name": "threat-persona3",
+            "title": "Test title threat persona3",
+            "description": "Test description threat persona3",
+            "is_person": false,
+            "skill_level": "expert_engineer",
+            "access_level": "user",
+            "malicious_intent": false,
+            "applicability_to_org": "high"
+        },
+        {
+            "symbolic_name": "threat-persona4",
+            "title": "Test title threat persona4",
+            "description": "Test description threat persona4",
+            "is_person": false,
+            "skill_level": "oc_sponsored",
+            "access_level": "anonymous",
+            "malicious_intent": true,
+            "applicability_to_org": "maximal"
+        },
+        {
+            "symbolic_name": "threat-persona5",
+            "title": "Test title threat persona5",
+            "description": "Test description threat persona5",
+            "is_person": false,
+            "skill_level": "state_sponsored",
+            "access_level": "anonymous",
+            "malicious_intent": true,
+            "applicability_to_org": "maximal"
+        }
+    ],
+    "threats":[
+        {
+            "symbolic_name": "threat0",
+            "title": "Test title threat0",
+            "description": "Test description threat0",
+            "components_affected": ["actor0", "component0", "component2", "data-store2"],
+            "threat_persona": "threat-persona0",
+            "event": "Test event threat0",
+            "sources": ["adversary", "failure"],
+            "attack_mechanisms": [
+                {
+                    "capec_id": 1,
+                    "capec_title": "Accessing Functionality Not Properly Constrained by acls"
+                }
+            ],
+            "weaknesses": [
+                {
+                    "cwe_id": 276,
+                    "cwe_title": "Incorrect Default Permissions"
+                },
+                {
+                    "cwe_id": 285,
+                    "cwe_title": "Improper Authorization"
+                }
+            ]
+        },
+        {
+            "symbolic_name": "threat1",
+            "title": "Test title threat1",
+            "description": "Test description threat1",
+            "components_affected": ["actor0", "actor3", "component3", "data-store3"],
+            "threat_persona": "threat-persona1",
+            "event": "Test event threat0",
+            "sources": ["human_error"],
+            "attack_mechanisms": [
+                {
+                    "capec_id": 100,
+                    "capec_title": "Overflow Buffers"
+                }
+            ],
+            "weaknesses": [
+                {
+                    "cwe_id": 120,
+                    "cwe_title": "Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')"
+                }
+            ]
+        },
+        {
+            "symbolic_name": "threat2",
+            "title": "Test title threat2",
+            "description": "Test description threat2",
+            "components_affected": ["actor0", "actor4", "component4", "data-store4"],
+            "threat_persona": "threat-persona2",
+            "event": "Test event threat0",
+            "sources": ["failure"]
+        },
+        {
+            "symbolic_name": "threat3",
+            "title": "Test title threat3",
+            "description": "Test description threat3",
+            "components_affected": ["trust-zone3"],
+            "threat_persona": "threat-persona3",
+            "event": "Test event threat0",
+            "sources": ["events_beyond_org_control", "adversary"]
+        },
+        {
+            "symbolic_name": "threat4",
+            "title": "Test title threat4",
+            "description": "Test description threat4",
+            "threat_persona": "threat-persona4",
+            "event": "Test event threat0",
+            "sources": ["failure"]
+        }
+    ],        
+    "controls": [
+        {
+            "symbolic_name": "control0",
+            "title": "Test title control0",
+            "description": "Test description control0",
+            "threats": ["threat0", "threat1", "threat2"],
+            "trust_boundary": {
+                "trust_zone_a": "trust-zone0",
+                "trust_zone_b": "trust-zone1"
+            },
+            "status": "assumed",
+            "priority": "low"
+        },
+        {
+            "symbolic_name": "control1",
+            "title": "Test title control1",
+            "description": "Test description control1",
+            "threats": ["threat1", "threat2"],
+            "trust_boundary": {
+                "trust_zone_a": "trust-zone0",
+                "trust_zone_b": "trust-zone2"
+            },
+            "status": "active",
+            "priority": "medium"
+        },
+        {
+            "symbolic_name": "control2",
+            "title": "Test title control2",
+            "description": "Test description control2",
+            "threats": ["threat3", "threat4"],
+            "trust_boundary": {
+                "trust_zone_a": "trust-zone1",
+                "trust_zone_b": "trust-zone2"
+            },
+            "status": "suggested",
+            "priority": "high"
+        },
+        {
+            "symbolic_name": "control3",
+            "title": "Test title control3",
+            "description": "Test description control3",
+            "threats": ["threat0"],
+            "trust_boundary": {
+                "trust_zone_a": "trust-zone1",
+                "trust_zone_b": "trust-zone0"
+            },
+            "status": "under_review",
+            "priority": "critical"
+        },
+        {
+            "symbolic_name": "control4",
+            "title": "Test title control4",
+            "description": "Test description control4",
+            "threats": ["threat1"],
+            "trust_boundary": {
+                "trust_zone_a": "trust-zone2",
+                "trust_zone_b": "trust-zone0"
+            },
+            "status": "approved",
+            "priority": "medium"
+        },
+        {
+            "symbolic_name": "control5",
+            "title": "Test title control5",
+            "description": "Test description control5",
+            "threats": ["threat2"],
+            "trust_boundary": {
+                "trust_zone_a": "trust-zone2",
+                "trust_zone_b": "trust-zone1"
+            },
+            "status": "scheduled",
+            "priority": "high"
+        },
+        {
+            "symbolic_name": "control6",
+            "title": "Test title control6",
+            "description": "Test description control6",
+            "threats": ["threat4"],
+            "status": "retired",
+            "priority": "none"
+        },
+        {
+            "symbolic_name": "control7",
+            "title": "Test title control7",
+            "description": "Test description control7",
+            "threats": ["threat4"],
+            "status": "wont_do",
+            "priority": "none"
+        }
+    ],
+    "risks": [
+        {
+            "symbolic_name": "risk0",
+            "title": "Test title risk0",
+            "description": "Test description risk0",
+            "threats": ["threat0", "threat1","threat2", "threat3", "threat4"],
+            "likelihood": "rare",
+            "impact": "negligible",
+            "impact_description": "Test impact description risk0",
+            "score": 0,
+            "level": "very_low"
+        },
+        {
+            "symbolic_name": "risk1",
+            "title": "Test title risk1",
+            "description": "Test description risk1",
+            "threats": ["threat0"],
+            "likelihood": "unlikely",
+            "impact": "minor",
+            "impact_description": "Test impact description risk1",
+            "score": 5,
+            "level": "low"
+        },
+        {
+            "symbolic_name": "risk2",
+            "title": "Test title risk2",
+            "description": "Test description risk2",
+            "threats": ["threat1"],
+            "likelihood": "possible",
+            "impact": "moderate",
+            "impact_description": "Test impact description risk2",
+            "score": 10,
+            "level": "medium"
+        },
+        {
+            "symbolic_name": "risk3",
+            "title": "Test title risk3",
+            "description": "Test description risk3",
+            "threats": ["threat2"],
+            "likelihood": "possible",
+            "impact": "major",
+            "impact_description": "Test impact description risk3",
+            "score": 15,
+            "level": "high"
+        },
+        {
+            "symbolic_name": "risk4",
+            "title": "Test title risk4",
+            "description": "Test description risk4",
+            "threats": ["threat3"],
+            "likelihood": "likely",
+            "impact": "severe",
+            "impact_description": "Test impact description risk4",
+            "score": 20,
+            "level": "very_high"
+        },
+        {
+            "symbolic_name": "risk5",
+            "title": "Test title risk5",
+            "description": "Test description risk5",
+            "threats": ["threat4"],
+            "likelihood": "certain",
+            "impact": "severe",
+            "impact_description": "Test impact description risk5",
+            "score": 25,
+            "level": "critical"
+        }
+    ]
+}
