@@ -35,7 +35,7 @@ request smuggling tools, prototype pollution, custom attack extension generators
 economic impact models, OAST blind confirmations, CVSS scorers,
 platform-specific report generators (Immunefi/Bugcrowd/Intigriti/YWH).
 
-A tool's *name* and *origin repo* are irrelevant to placement. Only the verb matters.
+A tool's *name* and *origin repo* are irrelevant to placement. Only the behavior matters.
 
 ## Dissolution
 
@@ -45,6 +45,7 @@ a reference doc — gets one question: **ops, int, probe, pick, or proof?**
 
 If a component does two things, split it. A WAF bypass doc with both
 bypass techniques (pick) and detection signatures (probe) becomes two files.
+If it does something new, hold that until the end.
 
 After dissolution, `staging/` can be deleted.
 
@@ -78,11 +79,11 @@ findings refine the model → probes/ extract more.
 **Scan loop** — probes/ scan what's exposed → findings spawn new
 targets → loop. A hit feeds adjacent probes a new path.
 
-**Validation loop** — proofs/ gate for exploitability → failed
-validation feeds back to recon or scan. Nothing exits without PoC.
+**Validation loop** — proofs/ gate for exploitability → ops/ check
+ feeds back to recon or scan. Nothing exits without PoC.
 
 **Chain loop** — background. Collects low-severity findings from
-any loop, braids into critical chains. Success spawns report.
+scope. Failed any loop, braids into critical chains. Success = report.
 
 **Branching:** new surface → spawn probe. finding implies adjacent
 surface → branch to recon. source found → spawn SAST probe.
@@ -94,17 +95,17 @@ Loops run concurrently. probes/ doesn't finish before picks/ starts.
 
 ## Bounty Work
 
-- **Immunefi** (Web3), **Bugcrowd** (Web2). Not HackerOne.
+- **Immunefi** (Web3), **Bugcrowd** (Web2). (Other sources are valid)
 - Start recon loop. Other loops join early.
 - lance 7-gate for Web3. bug-reaper 4-phase for Web2.
-- PoC or it didn't happen.
+- PoC's or it didn't happen.
 
 ## OPACK Migration
 
-Dissolve shodansnipe the same way as everything else.
-Its agents and modules become cells. Recombine onto OPACK ECS.
+Dissolve shodansnipe the same way as everything else. Gamify thru OPACK.
+Its agents and modules become cells. Recombine onto OPACK ECS. Score it.
 Compiled C++ handles branching/merging/pruning/state.
-LLM only for triage, attack paths, report prose.
+LLM for triage, attack paths, report prose, problem solving.
 
 ## Deeper claude.md
 
