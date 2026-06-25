@@ -30,3 +30,27 @@ dissolved:
     notes: >
       subdomain-takeover.md straddles detection/exploitation; kept with its
       class-playbook peers here rather than split.
+
+  - source_repo: fuzz-skill
+    origin: https://github.com/gravermistakes/fuzz-skill
+    upstream: https://github.com/0xazanul/fuzz-skill
+    license: see upstream (no LICENSE in tree)
+    classification: memory-bug-fuzzing
+    rationale: >
+      Fuzzing C/C++ for memory-safety bugs (ASan/UBSan/MSan harnesses, corpus
+      planning, crash triage/minimization, exploitability). Fuzzers are "ways
+      in" → picks/. Placed whole.
+    placed:
+      - unit: fuzzing methodology
+        verb: harness + fuzz + triage memory bugs
+        files: [fuzz-skill/SKILL.md, fuzz-skill/fuzzing-toolchain.md, fuzz-skill/crash-triage.md]
+      - unit: worked fuzzer + corpus
+        verb: demonstrate the toolchain end to end
+        files: fuzz-skill/test-vuln/
+        detail: >
+          vuln_parser.c + build.sh and 5 sanitizer/coverage builds
+          (asan, msan, afl_asan, libfuzzer, cov, prod), seeds/ corpus, and
+          fuzz_output/ crash artifacts. KEPT per policy (don't cut fuzzers/corpus).
+    notes: >
+      test-vuln/ carries ~13M of compiled fuzz harnesses + corpus + crash
+      output — intentionally retained as the runnable reference, not stripped.
