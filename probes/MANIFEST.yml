@@ -53,3 +53,27 @@ dissolved:
       int: int/web2/bug-reaper
       picks: picks/web2/bug-reaper
       proofs: proofs/web2/bug-reaper
+
+  - source_repo: drogonsec
+    origin: https://github.com/gravermistakes/drogonsec
+    upstream: https://github.com/filipi86/drogonsec
+    license: Apache-2.0
+    classification: sast-sca-secrets-scanner
+    rationale: >
+      Drogonsec is an executable Go security scanner — SAST (20+ langs), SCA
+      (CVE deps), secret leak detection (50+ patterns), and IaC misconfig. That
+      is the literal probes/ charter (SAST analyzers, SCA, secret detectors).
+      The arsenal's first real scanner binary; placed whole as a coherent unit.
+    placed:
+      - unit: scanner binary + engines
+        verb: statically scan source for vulns/CVEs/secrets/IaC
+        files: drogonsec/   # cmd/, internal/{engine,analyzer,sca,leaks,ai,reporter,...}, configs, docs/, go.mod, Makefile
+        detail: >
+          SARIF 2.1 / CWE / CVSS 3.1 output, OWASP Top 10:2025. Internal AI
+          remediation (Ollama/cloud) kept with the scanner; it feeds proofs-style
+          remediation but is integral to the tool. docs/ kept (install, usage,
+          modules, ai-remediation, ci-cd, branch-monitoring, faq, security).
+    build: "make build (or go build ./cmd/drogonsec) — go 1.26"
+    dropped:
+      - report.html, CHANGELOG.md, CLA.md, CODE_OF_CONDUCT.md, CONTRIBUTING.md, SECURITY.md, .claude/
+    reason_dropped: generated sample output + governance/IDE files. docs/ kept per policy (keep docs/corpus/examples).
