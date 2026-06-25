@@ -1,0 +1,48 @@
+# ops/ dissolution manifest
+# Each entry: a functional unit placed here, its origin, and why it is ops.
+# generated: 1782415219
+
+category: ops
+purpose: standards, substrate, orchestration — the perpetual loop
+
+dissolved:
+  - source_repo: ponytail
+    origin: https://github.com/DietrichGebert/ponytail
+    license: MIT
+    classification: coding-standards
+    rationale: >
+      The "ponytail ladder" — the coding standard ARSENAL writes every tool
+      under. Pure standards + the orchestration that enforces them. No
+      int/probe/pick/proof material; dissolves wholly into ops/.
+    placed:
+      - unit: ponytail ladder + enforcement modes
+        verb: enforce coding standard
+        files: standards/ponytail/skills/
+        detail: >
+          6 skills — ponytail (the ladder: YAGNI/reuse/stdlib/native/dep/
+          one-line/minimum), ponytail-review (diff over-engineering review),
+          ponytail-audit (repo-wide bloat audit), ponytail-debt (ponytail:
+          comment ledger), ponytail-help, ponytail-gain.
+      - unit: lifecycle hooks
+        verb: auto-activate + enforce
+        files: standards/ponytail/hooks/
+        detail: >
+          activate, runtime, instructions, mode-tracker, subagent, config,
+          statusline (sh/ps1) + claude/codex/copilot hook wiring JSON.
+      - unit: multi-agent delivery
+        verb: deliver standard to agents
+        files: standards/ponytail/integration/
+        detail: >
+          pi-extension (+ tests), claude-plugin manifests, per-agent rule
+          adapters (cline, cursor, windsurf, copilot).
+      - unit: reference docs
+        verb: illustrate standard applied
+        files: standards/ponytail/examples/
+        detail: 12 before/after "survivor" examples.
+    dropped:
+      - assets/            # marketing logos, banners, trendshift badges (1.1M)
+      - benchmarks/        # upstream npm-package measurement harness (304K)
+      - scripts/           # npm publish/build/rule-copy-sync tooling
+      - README.es/ko.md    # translations
+      - .github/{FUNDING,workflows}  # upstream CI + sponsorship
+    reason_dropped: not functional units — upstream packaging, marketing, CI.
