@@ -49,7 +49,7 @@ ahem
 
 ---
 
-**Status:** COMPLETE. 3 functional units extracted (secret patterns, security headers, gamification model + orchestration). Full Next.js product dropped. PLACEMENT.md created for reference.
+**Status:** 3 functional units extracted (secret patterns, security headers, gamification model + orchestration). Full Next.js next. PLACEMENT.md created for reference.
 
 ## Retention update (nothing dropped)
 The Next.js app + Supabase product code, previously listed as a drop, is
