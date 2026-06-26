@@ -1,398 +1,269 @@
-//! Synaptic Neural Mesh - Coordination layer for distributed AI agents
-//!
-//! This crate provides the mesh coordination infrastructure for managing
-//! distributed neural agents in a self-organizing network.
+//! Neural Mesh - Distributed cognition layer for Synaptic Neural Mesh
+//! 
+//! This crate provides the distributed neural cognition capabilities that connect
+//! QuDAG networking with ruv-FANN neural networks and DAA swarm intelligence.
+
+pub mod agent;
+pub mod cognition;
+pub mod coordinator;
+pub mod distributed;
+pub mod error;
+pub mod mesh;
+pub mod sync;
+
+pub use agent::{NeuralAgent, AgentConfig, AgentState, AgentMetrics};
+pub use cognition::{CognitionEngine, CognitionTask, CognitionResult, ThoughtPattern};
+pub use coordinator::{MeshCoordinator, CoordinationStrategy, TaskDistribution};
+pub use distributed::{DistributedTraining, TrainingStrategy, ModelSync};
+pub use error::{NeuralMeshError, Result};
+pub use mesh::{NeuralMesh, MeshNode, MeshTopology, ConnectionStrength};
+pub use sync::{ModelSynchronizer, SyncStrategy, ConflictResolution};
 
 use std::sync::Arc;
-use std::collections::HashMap;
-use async_trait::async_trait;
-use dashmap::DashMap;
-use parking_lot::RwLock;
-use serde::{Serialize, Deserialize};
-use thiserror::Error;
+use tokio::sync::RwLock;
 use uuid::Uuid;
-use chrono::{DateTime, Utc};
-use synaptic_qudag_core::{QuDAGNode, QuDAGNetwork};
 
-/// Neural mesh errors
-#[derive(Error, Debug)]
-pub enum MeshError {
-    #[error("Agent error: {0}")]
-    AgentError(String),
-    
-    #[error("Coordination error: {0}")]
-    CoordinationError(String),
-    
-    #[error("Network error: {0}")]
-    NetworkError(String),
-    
-    #[error("Synchronization error: {0}")]
-    SynchronizationError(String),
+/// Main neural mesh instance that coordinates distributed cognition
+#[derive(Debug)]
+pub struct SynapticNeuralMesh {
+    mesh: Arc<NeuralMesh>,
+    coordinator: Arc<MeshCoordinator>,
+    agents: Arc<RwLock<std::collections::HashMap<Uuid, NeuralAgent>>>,
+    cognition_engine: Arc<CognitionEngine>,
+    config: MeshConfig,
 }
 
-pub type Result<T> = std::result::Result<T, MeshError>;
+impl SynapticNeuralMesh {
+    /// Create a new Synaptic Neural Mesh
+    pub async fn new(config: MeshConfig) -> Result<Self> {
+        let mesh = Arc::new(NeuralMesh::new(config.mesh_topology.clone()).await?);
+        let coordinator = Arc::new(MeshCoordinator::new(config.coordination_strategy.clone()).await?);
+        let agents = Arc::new(RwLock::new(std::collections::HashMap::new()));
+        let cognition_engine = Arc::new(CognitionEngine::new(config.cognition_config.clone()).await?);
 
-/// Agent capabilities
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Capabilities {
-    pub compute_power: f64,
-    pub memory_available: usize,
-    pub specializations: Vec<String>,
-    pub latency_ms: f64,
-}
+        Ok(Self {
+            mesh,
+            coordinator,
+            agents,
+            cognition_engine,
+            config,
+        })
+    }
 
-impl Default for Capabilities {
-    fn default() -> Self {
-        Self {
-            compute_power: 1.0,
-            memory_available: 1024 * 1024 * 1024, // 1GB
-            specializations: vec!["general".to_string()],
-            latency_ms: 10.0,
+    /// Start the neural mesh
+    pub async fn start(&self) -> Result<()> {
+        // Start mesh networking
+        self.mesh.start().await?;
+        
+        // Start coordination
+        self.coordinator.start().await?;
+        
+        // Start cognition engine
+        self.cognition_engine.start().await?;
+        
+        // Spawn initial agents
+        self.spawn_initial_agents().await?;
+        
+        tracing::info!("Synaptic Neural Mesh started successfully");
+        Ok(())
+    }
+
+    /// Stop the neural mesh
+    pub async fn stop(&self) -> Result<()> {
+        // Stop all agents
+        let mut agents = self.agents.write().await;
+        for agent in agents.values_mut() {
+            agent.stop().await?;
         }
+        agents.clear();
+
+        // Stop cognition engine
+        self.cognition_engine.stop().await?;
+        
+        // Stop coordinator
+        self.coordinator.stop().await?;
+        
+        // Stop mesh
+        self.mesh.stop().await?;
+        
+        tracing::info!("Synaptic Neural Mesh stopped");
+        Ok(())
     }
-}
 
-/// Neural agent in the mesh
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Agent {
-    pub id: Uuid,
-    pub name: String,
-    pub capabilities: Capabilities,
-    pub status: AgentStatus,
-    pub created_at: DateTime<Utc>,
-    pub last_heartbeat: DateTime<Utc>,
-}
+    /// Create a new neural agent
+    pub async fn create_agent(&self, config: AgentConfig) -> Result<Uuid> {
+        let agent = NeuralAgent::new(config, Arc::clone(&self.mesh)).await?;
+        let agent_id = agent.id();
 
-/// Agent status
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
-pub enum AgentStatus {
-    Active,
-    Idle,
-    Busy,
-    Offline,
-}
+        // Add to mesh
+        self.mesh.add_agent(agent_id, agent.get_node()).await?;
 
-impl Agent {
-    /// Create a new agent
-    pub fn new(name: impl Into<String>) -> Self {
-        let now = Utc::now();
-        Self {
-            id: Uuid::new_v4(),
-            name: name.into(),
-            capabilities: Capabilities::default(),
-            status: AgentStatus::Idle,
-            created_at: now,
-            last_heartbeat: now,
+        // Register with coordinator
+        self.coordinator.register_agent(agent_id, agent.capabilities()).await?;
+
+        // Store agent
+        {
+            let mut agents = self.agents.write().await;
+            agents.insert(agent_id, agent);
         }
-    }
-    
-    /// Update heartbeat
-    pub fn heartbeat(&mut self) {
-        self.last_heartbeat = Utc::now();
-    }
-    
-    /// Check if agent is healthy
-    pub fn is_healthy(&self) -> bool {
-        let elapsed = Utc::now().signed_duration_since(self.last_heartbeat);
-        elapsed.num_seconds() < 30 // 30 second timeout
-    }
-}
 
-/// Coordination task
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Task {
-    pub id: Uuid,
-    pub name: String,
-    pub requirements: TaskRequirements,
-    pub status: TaskStatus,
-    pub assigned_agent: Option<Uuid>,
-    pub created_at: DateTime<Utc>,
-    pub completed_at: Option<DateTime<Utc>>,
-}
-
-/// Task requirements
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct TaskRequirements {
-    pub min_compute_power: f64,
-    pub min_memory: usize,
-    pub required_specializations: Vec<String>,
-    pub max_latency_ms: f64,
-}
-
-/// Task status
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
-pub enum TaskStatus {
-    Pending,
-    Assigned,
-    InProgress,
-    Completed,
-    Failed,
-}
-
-/// Neural mesh coordinator
-pub struct NeuralMesh {
-    agents: Arc<DashMap<Uuid, Agent>>,
-    tasks: Arc<DashMap<Uuid, Task>>,
-    dag_network: Arc<QuDAGNetwork>,
-    topology: Arc<RwLock<MeshTopology>>,
-}
-
-/// Mesh topology
-#[derive(Debug, Clone)]
-pub struct MeshTopology {
-    connections: HashMap<Uuid, Vec<Uuid>>,
-}
-
-impl NeuralMesh {
-    /// Create a new neural mesh
-    pub fn new() -> Self {
-        Self {
-            agents: Arc::new(DashMap::new()),
-            tasks: Arc::new(DashMap::new()),
-            dag_network: Arc::new(QuDAGNetwork::new()),
-            topology: Arc::new(RwLock::new(MeshTopology {
-                connections: HashMap::new(),
-            })),
-        }
-    }
-    
-    /// Add an agent to the mesh
-    pub async fn add_agent(&self, agent: Agent) -> Result<Uuid> {
-        let agent_id = agent.id;
-        
-        // Create DAG node for agent registration
-        let node_data = serde_json::to_vec(&agent)
-            .map_err(|e| MeshError::AgentError(format!("Serialization failed: {}", e)))?;
-        let dag_node = QuDAGNode::new(&node_data);
-        
-        self.dag_network.add_node(dag_node).await
-            .map_err(|e| MeshError::NetworkError(e.to_string()))?;
-        
-        self.agents.insert(agent_id, agent);
-        
-        // Update topology
-        self.update_topology(agent_id).await?;
-        
+        tracing::info!("Created neural agent: {}", agent_id);
         Ok(agent_id)
     }
-    
-    /// Remove an agent from the mesh
-    pub async fn remove_agent(&self, agent_id: &Uuid) -> Result<()> {
-        self.agents.remove(agent_id);
-        
-        // Clean up topology
-        let mut topology = self.topology.write();
-        topology.connections.remove(agent_id);
-        for connections in topology.connections.values_mut() {
-            connections.retain(|id| id != agent_id);
+
+    /// Remove a neural agent
+    pub async fn remove_agent(&self, agent_id: Uuid) -> Result<bool> {
+        let mut agents = self.agents.write().await;
+        if let Some(mut agent) = agents.remove(&agent_id) {
+            agent.stop().await?;
+            self.mesh.remove_agent(agent_id).await?;
+            self.coordinator.unregister_agent(agent_id).await?;
+            tracing::info!("Removed neural agent: {}", agent_id);
+            Ok(true)
+        } else {
+            Ok(false)
         }
-        
-        Ok(())
     }
-    
-    /// Get an agent by ID
-    pub fn get_agent(&self, agent_id: &Uuid) -> Option<Agent> {
-        self.agents.get(agent_id).map(|a| a.clone())
+
+    /// Submit a cognition task to the mesh
+    pub async fn think(&self, task: CognitionTask) -> Result<CognitionResult> {
+        // Distribute task through coordinator
+        let assignment = self.coordinator.assign_task(task.clone()).await?;
+        
+        // Execute distributed cognition
+        let result = self.cognition_engine.process_distributed(task, assignment).await?;
+        
+        // Update mesh based on results
+        self.mesh.update_connections(&result).await?;
+        
+        Ok(result)
     }
-    
-    /// List all agents
-    pub fn list_agents(&self) -> Vec<Agent> {
-        self.agents.iter().map(|a| a.clone()).collect()
-    }
-    
-    /// Submit a task to the mesh
-    pub async fn submit_task(&self, name: impl Into<String>, requirements: TaskRequirements) -> Result<Uuid> {
-        let task = Task {
-            id: Uuid::new_v4(),
-            name: name.into(),
-            requirements,
-            status: TaskStatus::Pending,
-            assigned_agent: None,
-            created_at: Utc::now(),
-            completed_at: None,
-        };
-        
-        let task_id = task.id;
-        self.tasks.insert(task_id, task);
-        
-        // Try to assign the task
-        self.assign_task(task_id).await?;
-        
-        Ok(task_id)
-    }
-    
-    /// Assign a task to an appropriate agent
-    async fn assign_task(&self, task_id: Uuid) -> Result<()> {
-        let task = self.tasks.get(&task_id)
-            .ok_or_else(|| MeshError::CoordinationError("Task not found".to_string()))?;
-        
-        // Find suitable agent
-        let suitable_agent = self.find_suitable_agent(&task.requirements);
-        
-        if let Some(agent_id) = suitable_agent {
-            drop(task); // Release the read lock
-            
-            // Update task assignment
-            if let Some(mut task) = self.tasks.get_mut(&task_id) {
-                task.assigned_agent = Some(agent_id);
-                task.status = TaskStatus::Assigned;
-            }
-            
-            // Update agent status
-            if let Some(mut agent) = self.agents.get_mut(&agent_id) {
-                agent.status = AgentStatus::Busy;
-            }
-        }
-        
-        Ok(())
-    }
-    
-    /// Find a suitable agent for task requirements
-    fn find_suitable_agent(&self, requirements: &TaskRequirements) -> Option<Uuid> {
-        self.agents.iter()
-            .filter(|entry| {
-                let agent = entry.value();
-                agent.status == AgentStatus::Idle &&
-                agent.is_healthy() &&
-                agent.capabilities.compute_power >= requirements.min_compute_power &&
-                agent.capabilities.memory_available >= requirements.min_memory &&
-                agent.capabilities.latency_ms <= requirements.max_latency_ms &&
-                requirements.required_specializations.iter().all(|spec| {
-                    agent.capabilities.specializations.contains(spec)
-                })
-            })
-            .min_by_key(|entry| {
-                // Prefer agents with lower latency
-                (entry.value().capabilities.latency_ms * 1000.0) as i64
-            })
-            .map(|entry| entry.key().clone())
-    }
-    
-    /// Update mesh topology
-    async fn update_topology(&self, new_agent_id: Uuid) -> Result<()> {
-        let mut topology = self.topology.write();
-        
-        // Simple mesh topology: connect to 3 nearest agents
-        let agents: Vec<Uuid> = self.agents.iter()
-            .map(|entry| entry.key().clone())
-            .filter(|id| id != &new_agent_id)
-            .take(3)
-            .collect();
-        
-        topology.connections.insert(new_agent_id, agents.clone());
-        
-        // Add bidirectional connections
-        for agent_id in agents {
-            topology.connections.entry(agent_id)
-                .or_insert_with(Vec::new)
-                .push(new_agent_id);
-        }
-        
-        Ok(())
-    }
-    
+
     /// Get mesh statistics
-    pub fn get_stats(&self) -> MeshStats {
-        let total_agents = self.agents.len();
-        let active_agents = self.agents.iter()
-            .filter(|a| a.status == AgentStatus::Active || a.status == AgentStatus::Busy)
-            .count();
-        let total_tasks = self.tasks.len();
-        let completed_tasks = self.tasks.iter()
-            .filter(|t| t.status == TaskStatus::Completed)
-            .count();
-        
+    pub async fn get_stats(&self) -> MeshStats {
+        let agents = self.agents.read().await;
+        let mesh_stats = self.mesh.get_stats().await;
+        let coordinator_stats = self.coordinator.get_stats().await;
+        let cognition_stats = self.cognition_engine.get_stats().await;
+
         MeshStats {
-            total_agents,
-            active_agents,
-            total_tasks,
-            completed_tasks,
-            dag_nodes: self.dag_network.node_count(),
+            total_agents: agents.len(),
+            active_agents: agents.values().filter(|a| a.is_active()).count(),
+            mesh_connections: mesh_stats.connections,
+            total_thoughts: cognition_stats.total_tasks,
+            coordinator_load: coordinator_stats.load_factor,
+            avg_response_time: cognition_stats.avg_response_time,
+        }
+    }
+
+    /// Get agent by ID
+    pub async fn get_agent(&self, agent_id: Uuid) -> Option<NeuralAgent> {
+        let agents = self.agents.read().await;
+        agents.get(&agent_id).cloned()
+    }
+
+    /// List all agents
+    pub async fn list_agents(&self) -> Vec<Uuid> {
+        let agents = self.agents.read().await;
+        agents.keys().cloned().collect()
+    }
+
+    /// Spawn initial agents based on configuration
+    async fn spawn_initial_agents(&self) -> Result<()> {
+        for i in 0..self.config.initial_agent_count {
+            let config = AgentConfig {
+                name: format!("agent-{}", i),
+                neural_config: self.config.default_neural_config.clone(),
+                capabilities: vec![
+                    "pattern_recognition".to_string(),
+                    "memory_formation".to_string(),
+                    "decision_making".to_string(),
+                ],
+                max_connections: 10,
+                learning_rate: 0.01,
+            };
+            
+            self.create_agent(config).await?;
+        }
+        
+        Ok(())
+    }
+}
+
+/// Configuration for the neural mesh
+#[derive(Debug, Clone)]
+pub struct MeshConfig {
+    pub mesh_topology: MeshTopology,
+    pub coordination_strategy: CoordinationStrategy,
+    pub cognition_config: cognition::CognitionConfig,
+    pub initial_agent_count: usize,
+    pub default_neural_config: ruv_fann::NetworkConfig,
+    pub sync_interval: std::time::Duration,
+    pub max_agents: usize,
+}
+
+impl Default for MeshConfig {
+    fn default() -> Self {
+        Self {
+            mesh_topology: MeshTopology::SmallWorld { k: 6, p: 0.1 },
+            coordination_strategy: CoordinationStrategy::Adaptive,
+            cognition_config: cognition::CognitionConfig::default(),
+            initial_agent_count: 5,
+            default_neural_config: ruv_fann::NetworkConfig::default(),
+            sync_interval: std::time::Duration::from_secs(30),
+            max_agents: 100,
         }
     }
 }
 
-impl Default for NeuralMesh {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-/// Mesh statistics
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Statistics about the neural mesh
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct MeshStats {
     pub total_agents: usize,
     pub active_agents: usize,
-    pub total_tasks: usize,
-    pub completed_tasks: usize,
-    pub dag_nodes: usize,
-}
-
-/// Coordination protocol trait
-#[async_trait]
-pub trait CoordinationProtocol {
-    /// Negotiate task assignment
-    async fn negotiate_task(&self, task: &Task, agents: &[Agent]) -> Result<Option<Uuid>>;
-    
-    /// Synchronize state across mesh
-    async fn synchronize(&self) -> Result<()>;
-    
-    /// Handle agent failure
-    async fn handle_failure(&self, agent_id: Uuid) -> Result<()>;
+    pub mesh_connections: usize,
+    pub total_thoughts: u64,
+    pub coordinator_load: f64,
+    pub avg_response_time: f64,
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[tokio::test]
     async fn test_mesh_creation() {
-        let mesh = NeuralMesh::new();
-        let stats = mesh.get_stats();
-        assert_eq!(stats.total_agents, 0);
-        assert_eq!(stats.total_tasks, 0);
+        let config = MeshConfig::default();
+        let mesh = SynapticNeuralMesh::new(config).await;
+        assert!(mesh.is_ok());
     }
-    
+
+    #[tokio::test]
+    async fn test_mesh_lifecycle() {
+        let config = MeshConfig::default();
+        let mesh = SynapticNeuralMesh::new(config).await.unwrap();
+        
+        assert!(mesh.start().await.is_ok());
+        assert!(mesh.stop().await.is_ok());
+    }
+
     #[tokio::test]
     async fn test_agent_management() {
-        let mesh = NeuralMesh::new();
+        let config = MeshConfig::default();
+        let mesh = SynapticNeuralMesh::new(config).await.unwrap();
         
-        let agent = Agent::new("test-agent");
-        let agent_id = mesh.add_agent(agent.clone()).await.unwrap();
-        
-        assert_eq!(mesh.get_stats().total_agents, 1);
-        
-        let retrieved = mesh.get_agent(&agent_id).unwrap();
-        assert_eq!(retrieved.name, "test-agent");
-        
-        mesh.remove_agent(&agent_id).await.unwrap();
-        assert_eq!(mesh.get_stats().total_agents, 0);
-    }
-    
-    #[tokio::test]
-    async fn test_task_submission() {
-        let mesh = NeuralMesh::new();
-        
-        // Add an agent
-        let mut agent = Agent::new("worker");
-        agent.capabilities.compute_power = 2.0;
-        mesh.add_agent(agent).await.unwrap();
-        
-        // Submit a task
-        let requirements = TaskRequirements {
-            min_compute_power: 1.0,
-            min_memory: 1024,
-            required_specializations: vec!["general".to_string()],
-            max_latency_ms: 100.0,
+        let agent_config = AgentConfig {
+            name: "test-agent".to_string(),
+            neural_config: ruv_fann::NetworkConfig::default(),
+            capabilities: vec!["test".to_string()],
+            max_connections: 5,
+            learning_rate: 0.01,
         };
         
-        let task_id = mesh.submit_task("test-task", requirements).await.unwrap();
+        let agent_id = mesh.create_agent(agent_config).await.unwrap();
+        assert!(mesh.get_agent(agent_id).await.is_some());
         
-        assert_eq!(mesh.get_stats().total_tasks, 1);
-        
-        // Check task was assigned
-        let task = mesh.tasks.get(&task_id).unwrap();
-        assert!(task.assigned_agent.is_some());
-        assert_eq!(task.status, TaskStatus::Assigned);
+        assert!(mesh.remove_agent(agent_id).await.unwrap());
+        assert!(mesh.get_agent(agent_id).await.is_none());
     }
 }
