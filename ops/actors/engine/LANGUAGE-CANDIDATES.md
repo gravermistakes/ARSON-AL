@@ -2,6 +2,20 @@
 # Candidate languages for the swarm-engine refactor
 
 > **DECISION: OCaml 5 + Riot** (effects/domains runtime, Erlang-style actors + supervision).
+> 
+> 
+> 
+>
+> 
+>
+> 
+>
+> 
+>
+> 
+
+
+# **DECISION: OCaml 5 + Riot**
 
 Scored against `SWARM-ECS-SPEC.md`. The decision that matters is **Layer 1 (the
 swarm engine)** — R1–R8. Layers 2/3 (native cells, AI peers) can be polyglot, so
