@@ -19,16 +19,14 @@ the recon loop. Models a target so probes/ know what surface to hit.
 - `threat-dragon/` — OWASP Threat Dragon: threat-modeling app (diagrams + rule engine) with example models under `ThreatDragonModels/`.
 - `osint-tools/` — curated OSINT tool collection (1000+) + standalone HTML search widgets (court/graves/hashtag) for person/infra research. (really taking most ofvm this)
 - `shodansnipe/` — actor recon/OSINT toolkit (agents/core/tools/skills).
-  **OPACK-migration target**: its agents+modules become ECS cells (see root
+  **Opaca coordination-migration target**: its agents+modules become ECS cells (see root
   CLAUDE.md "OPACK Migration"); lives here until recombined.
-- `awesome-bugbounty-tools/`, `awesome-hacking/` — curated tool/resource index. (gimme all ofbit)
+- `awesome-bugbounty-tools/`, `awesome-hacking/` — curated tool/resource index. (gimme all of it)
 
 ## Feeds
-- **Loop:** Recon — int/ models the target → probes/ extract surface → findings
-  refine the model.
-- **Consumes:** scope files, target lists.
-- **Emits:** a normalized target manifest + trust-boundary map → probes/web3.
+- **Consumes:** constraints, architectures, target lists.
+- **Provides:** Actors with stimuli towards next steps.
 
 ## Issues
-- Lance scope/intake split out of the lance skill, whose SKILL.md (now in proofs/web3/lance/) still references these by their old `scripts/` path. Cross-referenced in MANIFEST; recombination onto Opaca reunifies.
+- Lance scope/intake split out of the lance skill, whose SKILL.md (now in proofs/web3/lance/) still references these by their old `scripts/` path. Cross-referenced in MANIFEST; recombination onto Opaca reunifies. (not an issue)
 - Python (against the "no Python when practical" rule) — inherited, not rewritten yet, must be resolved.
