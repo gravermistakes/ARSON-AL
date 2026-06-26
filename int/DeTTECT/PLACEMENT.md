@@ -15,7 +15,7 @@ The following DeTTECT components are large or asset-heavy and should be copied o
 ## Recommended Follow-Up Dissolution
 
 After initial placement, copy these items into:
-- `mitre-data/` → `/home/user/ARSON-AL/int/DeTTECT/actor-corpus/mitre-data` (reference data for actor->technique mapping)
+- `mitre-data/` → `/home/user/ARSON-AL/int/mitre` (reference data for actor->technique mapping)
 - `sample-data/` → `/home/user/ARSON-AL/batteries
 
 
