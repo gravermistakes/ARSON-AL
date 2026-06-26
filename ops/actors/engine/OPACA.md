@@ -1,13 +1,13 @@
 # Opaca
 
-Opaca is a compiled daemon that runs security engagement loops.
+Opaca is a compiled daemon-frame for concurrent actor processes that run security engagement loops via kits and procedurally stochastic workflows.
 Built on OCaml 5 and the Riot actor framework. Replaces the C++ OPACK
 library entirely.
 
 It does three things as one unified system:
 
-1. **Simulates agents** — actors with perception, reasoning, actuation
-2. **Orchestrates loops** — the recon/scan/validation/chain topology
+1. **Runs actors** — deterministic rudimentary 'AI', with biases, tendencies, perception, state based reasoning, and actuation
+2. **Orchestrates loops** — the exploit chaining topology and mentality
 3. **Coordinates swarms** — multiple actors working the same target concurrently
 
 ## Core concept: Kits
@@ -17,9 +17,10 @@ A **kit** is a bundle of tools for a purpose. Examples:
 - A web2-recon kit: scope parser + subdomain enumerator + endpoint extractor
 - A web3-validation kit: lance 7-gate + triage simulator + scoring engine
 - A sast-probe kit: drogonsec + noir + secret detector
-- A chain-builder kit: PoC templates + chain templates + report generator
+- A chain-builder kit: PoC templates + chain templates + impact record
+> note: **the above is way off but premise is there**
 
-Kits map directly to the dissolved ARSON-AL directories. A kit's tools
+Kits map directly to the dissolved ARSON-AL component directories. A kit's tools
 come from probes/, picks/, proofs/, int/ — wherever they landed by action.
 A kit doesn't care what repo a tool came from. It cares what the tools
 do together.
@@ -29,9 +30,10 @@ do together.
 An **actor** is one engagement thread — a Riot process running a kit.
 
 When the actor gets a hit (a finding, a new surface, a failed hypothesis),
-it **switches kits**. It doesn't die and spawn a new actor. It changes
-its loadout and keeps going.
+it makes a choice as to if it **switches kits**. It doesn't die and spawn a new actor. It changes its loadout and keeps going. At end of engagement its processes are added to the mesh, and its seed uid and **success score** are stored.
 
+
+Example:
 - Actor starts with a recon kit (int/ tools) → finds endpoints
 - Switches to a scanning kit (probes/ tools) → finds a vuln
 - Switches to an exploitation kit (picks/ tools) → builds a PoC
@@ -75,44 +77,28 @@ tree:
 
 ```
 Opaca (root supervisor)
-├── TargetSupervisor (per-target)
+├── TargetSupervisor (per-surface)
 │   ├── Actor (recon loop, currently in int/ kit)
 │   ├── Actor (scan loop, currently in probes/ kit)
 │   ├── Actor (validation, currently in proofs/ kit)
 │   └── ChainActor (background, listening)
-├── TargetSupervisor (another target)
+├── TargetSupervisor (another surface)
 │   └── ...
-└── KitRegistry (knows what kits exist and what tools they contain)
+└── KitRegistry (knows what kits exist and their domain)
 ```
 
-If an actor crashes (tool segfaults, network timeout, OOM), the
-supervisor restarts it with its last known kit and state. The
-engagement doesn't die because one probe failed.
+If an actor crashes (tool segfaults, network timeout, OOM), the supervisor restarts it with its last known kit and state. The engagement doesn't die because one probe failed. 
 
 ## Actor seeding
 
-Multiple actors work the same engagement simultaneously. Each gets a
-different PRNG seed. The seed influences:
+Multiple actors work the same engagement simultaneously. Each gets a different seed. The seed influences a variety of difficult to "solve" "traits". 
 
-- **Kit-switch tiebreaking** — when two kits could apply, the seed picks
-- **Tool ordering within a kit** — which probe runs first
-- **Exploration depth** — how long an actor stays in a kit before switching
-- **Target element selection** — which endpoint to probe next when many exist
-
-Same target, same kits, same rules — different traversal. One actor
-goes deep on the API surface. Another skims wide across subdomains.
-A third hammers auth endpoints. The coverage is broader than any
-single deterministic path.
-
-Seeds are logged. Replay a seed to reproduce an actor's exact path.
-Useful for:
+Seeds are logged.
 - Debugging (why did actor 3 chain but actor 1 didn't?)
 - Regression (re-run seeds after a kit change, verify same findings)
 - Coverage proof (show N distinct paths were explored)
 
-Seed quality: not cryptographic. A simple splittable PRNG (SplitMix64
-or similar) seeded from a root engagement seed. Reproducible, fast,
-forkable when an actor spawns a child.
+Seed quality: something esoterically derived.
 
 ## LLM connection
 
@@ -134,7 +120,7 @@ autonomously — compiled OCaml executing the deterministic parts
 (scope gating, evidence checks, severity scoring, dedup, state
 management). The LLM gets called only when:
 
-- **Triage judgment** — is this finding real or a false positive?
+- **Triage judgment** — is this finding real or a false positive? (pushes to human)
 - **Attack path generation** — given these surfaces, what's the play?
 - **Report prose** — write the narrative for a human reviewer
 - **Problem solving** — a tool failed in a way the rules don't cover
