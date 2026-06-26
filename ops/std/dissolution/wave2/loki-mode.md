@@ -140,3 +140,7 @@ Currently copied: SKILL.md + autonomy core (run.sh excerpt) + quality-gates.md +
 - `skills/quality-gates.md` → ops/standards/loki-mode/
 - `memory/*.py` → ops/substrate/loki-mode-memory/
 - `README.md` → ops/orchestration/loki-mode/README-loki-mode.md
+
+## Duplicates & homomorphs
+Homomorphs: RARV loop (engagement loop), swarm (orchestration), token-economics (scoring), quality-gates (adversarial verification), episodic/semantic memory.
+Full dedup index: ../DUPLICATES.md

@@ -44,3 +44,7 @@
 ---
 
 **Status:** COMPLETE. 7 functional units placed. No bulk items. All logic and methodology preserved; example domain context kept for reference.
+
+## Duplicates & homomorphs
+Homomorph of loki quality-gates / Scorpio sentinel-auditor / lance+bug-reaper gates (gated adversarial verification).
+Full dedup index: ../DUPLICATES.md

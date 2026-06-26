@@ -62,3 +62,7 @@ The Vue.js editor (`editor/`), previously listed as a drop, is **retained as
 reference** at `ops/DeTTECT/editor/` (src + public + manifest; `node_modules`/
 `dist` excluded). It is authoring tooling for the ATT&CK YAML data model — kept
 for reference per "every repo was added for a reason; nothing dropped".
+
+## Duplicates & homomorphs
+Homomorph of int/mitre-attack (ATT&CK technique mapping).
+Full dedup index: ../DUPLICATES.md

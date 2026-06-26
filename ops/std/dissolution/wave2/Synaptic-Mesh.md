@@ -70,3 +70,7 @@ Currently copied: Cargo.toml + README + core crate manifests (structure captured
 2. **Integrate DAA-swarm** for distributed probe/pick/proof coordination
 3. **Implement neural-mesh weight sync** (learned kit-selection propagates)
 4. **Test on 5-10 node cluster** (consensus latency, gossip overhead)
+
+## Duplicates & homomorphs
+LITERAL DUP HOTSPOT (4,493 dup file instances): re-vendors QuDAG (>=3x), ruv-swarm, claude-flow. Homomorphs: daa-swarm (orchestration), synaptic-neural-wasm (inference), QuDAG (consensus), claude_market (scoring).
+Full dedup index: ../DUPLICATES.md

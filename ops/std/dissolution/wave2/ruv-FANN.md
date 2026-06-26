@@ -51,3 +51,7 @@ Currently copied: Core Cargo.toml + lib.rs + README (structure captured, light).
 1. **Validate Opaca neural layer** against ruv-FANN patterns (scoring networks, forecasting models, WASM deployment)
 2. **Integrate ml-training evolver** (learn optimal kit mutations)
 3. **Port ruv-swarm reference** into Opaca's swarm runtime (topologies, consensus)
+
+## Duplicates & homomorphs
+LITERAL DUP HOTSPOT (1,599 dup file instances): nested ruv-swarm copies under npm/ + tests/. Homomorphs: ruv-swarm (orchestration), ruv-fann core (inference).
+Full dedup index: ../DUPLICATES.md

@@ -50,3 +50,7 @@ Currently copied: Core lib.rs + Cargo.toml + SIMD config + README (structure cap
 1. **Wire neural-bridge into Opaca's scoring loop** — Every finding triage decision uses WASM inference
 2. **Validate <100ms latency** target (critical for real-time engagement)
 3. **Integrate model versioning** (which trained model is deployed? A/B test scoring strategies)
+
+## Duplicates & homomorphs
+Homomorph of ruv-fann core + synaptic-neural-wasm (neural inference) -> one mem/ scoring engine.
+Full dedup index: ../DUPLICATES.md

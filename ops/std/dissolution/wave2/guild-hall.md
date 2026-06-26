@@ -61,3 +61,7 @@ The Next.js app + Supabase product code, previously listed as a drop, is
 (src + public + supabase + manifest; `node_modules`/`.next` excluded). It is the
 gamification product UI that the engagement-scoring model came from — kept for
 reference per "nothing dropped".
+
+## Duplicates & homomorphs
+Homomorph: gamification scoring == Opaca severity score / loki token-economics.
+Full dedup index: ../DUPLICATES.md

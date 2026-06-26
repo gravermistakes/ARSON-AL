@@ -199,3 +199,6 @@ bulk: clone /home/user/loki-mode -> /home/user/ARSON-AL/ops/orchestration/loki-m
 ---
 
 **Wave 2 Complete.** All 5 repos dissolved into ops/ hierarchy by verb. No repos deleted; sources remain at `/home/user/<repo>`. Opaca substrate now has integrated reference implementations for neural compute, swarm orchestration, distributed consensus, kit evolution, and autonomous methodology.
+
+## Duplicates & homomorphs
+Content-hash dedup found 6,841 redundant file instances (29% of files), concentrated in synaptic-mesh (4,493) and ruv-fann (1,599). See DUPLICATES.md for literal duplicates + homomorph recombination targets.

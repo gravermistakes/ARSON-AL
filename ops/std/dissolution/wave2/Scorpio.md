@@ -53,3 +53,7 @@ The React UI / build scaffold, previously listed as a drop, is **retained as
 reference** at `probes/scorpio/ui-reference/` (src + index.html + manifests;
 `node_modules`/`dist` excluded). It is the frontend of the LLM-SAST tool — kept
 for reference per "nothing dropped".
+
+## Duplicates & homomorphs
+Homomorph: sentinel->auditor is a gated verification pipeline (see ruvn, loki quality-gates).
+Full dedup index: ../DUPLICATES.md
