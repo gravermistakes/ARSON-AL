@@ -21,19 +21,20 @@
 
 - `.git/`, `.github/workflows/` — Version control
 - `temp-publish/`, `publish-ready/`, staging dirs — Not active units
-- Test harness + standalone-crates ported in full (~118M after dedup; the "100+ GB" estimate was wrong).
+- Test harness + standalone-crates ported in full (~118M after dedup; the "100+ GB" estimate was wrong). > we rebuilding so mbd
 - `test-workspace/`, `test-synaptic/` — Dev scaffolding
 
 ## Rationale
 
 Synaptic-Mesh is the **reference architecture for distributed Opaca** — multi-node swarms voting on threat models, scoring collaboratively, and earning reputation for contributions.
 
-Verb-based decomposition:
 
-1. **QuDAG consensus**: Multiple nodes propose next action (spawn probe, escalate finding), vote via DAG, achieve immutable agreement
-2. **DAA-Swarm self-organization**: Nodes discover each other, agents autonomously dispatch to specialized peers (e.g., "SQLi expert" node gets the SQL probe)
-3. **Neural-Mesh scoring**: Each node trains local scoring model, periodically sync weights, ensemble voting for high-stakes decisions
-4. **Marketplace settlement**: Track which nodes contributed to findings, assign reputation/credits, enable multi-team arsenal operations (one org runs probes, another runs picks, third validates)
+Op-based decomposition:
+
+1. **QuDAG consensus**: Multiple nodes propose next action (spawn probe, escalate finding), vote via DAG, achieve immutable agreement (p2p)
+2. **DAA-Swarm self-organization**: Nodes discover each other, actors autonomously dispatch to specialized peers
+3. **Neural-Mesh scoring**: Each bloodline trains a scoring model, periodically sync weights, ensemble voting for high-stakes decisions making.
+4. **Marketplace settlement**: Track which actors contributed to findings, assign reputation/credits, enable multi-** arsenal operations (one org runs probes, another runs picks, third validates)
 
 **Key pattern overlap with Opaca**: 
 - QuDAG's **branch-vote-merge** directly maps to Opaca's kit-switch consensus (should we escalate? pivot probes? start chain braiding?)
@@ -47,17 +48,13 @@ Synaptic-Mesh is a **working prototype**, not production-ready:
 - Neural-mesh weight sync is hand-rolled (not tested at scale >5 nodes)
 - Marketplace escrow/settlement is incomplete
 
-**Treat as inspiration, not verbatim import.** When implementing Opaca's multi-node mode:
-1. Adopt QuDAG's consensus structure (vote → DAG → finality)
-2. Use DAA-swarm's gossip protocol for peer discovery
-3. Wire neural-mesh's ensemble voting for high-confidence decisions
-4. Skip marketplace escrow initially (implement reputation tracking first)
+**Treat as inspiration after import.** When implmm?)ǰ&y
 
 ## Ported in full
 
 Full repo vendored at `ops/actors/synaptic-mesh` (~118M after dedup; PR #12, see ../PORT-LOG.md) - .git and build artifacts excluded. Nothing deferred.
 
-## Next Steps (Multi-Node Opaca)
+## Next Steps (Multi-Actorb"€7》7⁶5⁵⁵ Opaca)
 
 1. **Validate QuDAG consensus** against Opaca's kit-switch decisions
 2. **Integrate DAA-swarm** for distributed probe/pick/proof coordination
@@ -65,5 +62,13 @@ Full repo vendored at `ops/actors/synaptic-mesh` (~118M after dedup; PR #12, see
 4. **Test on 5-10 node cluster** (consensus latency, gossip overhead)
 
 ## Duplicates & homomorphs
-LITERAL DUP HOTSPOT (4,493 dup file instances): re-vendors QuDAG (>=3x), ruv-swarm, claude-flow. Homomorphs: daa-swarm (orchestration), synaptic-neural-wasm (inference), QuDAG (consensus), claude_market (scoring).
-Full dedup index: ../DUPLICATES.md
+LITERAL DUP HOTSPOT (4,493 dup file instances): re-vendors QuDAG (>=3x), ruv-swarm, claude-flow. sudo install -d -m 0755 /etc/apt/keyrings
+sudo curl -fsSL https://downloads.claude.ai/keys/claude-code.asc \
+  -o /etc/apt/keyrings/claude-code.asc
+echo "deb [signed-by=/etc/apt/keyrings/claude-code.asc] https://downloads.claude.ai/claude-code/apt/stable stable main" \
+  | sudo tee /etc/apt/sources.list.d/claude-code.list
+sudo apt update
+sudo apt install claude-code
+
+
+... /DUPLICATES.md
