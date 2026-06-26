@@ -63,3 +63,18 @@ Literal-dup rows prune to one copy (most of synaptic-mesh's and ruv-fann's
 redundant bytes). Homomorph rows collapse to one canonical on the OPACK/Opaca
 substrate. This file is the dedup index; the per-repo wave-2 manifests
 cross-reference it.
+
+## Pruned — pass 1 (synaptic-mesh)
+
+Content-hash dedup within `ops/actors/synaptic-mesh` (keep first copy of each
+identical content, remove later byte-identical copies, drop emptied dirs):
+**1,848 redundant files removed, 248M -> 148M (~100M reclaimed), 7,252 -> 5,404
+files.** Dominated by the duplicate QuDAG bundle (1,366 files): `QuDAG-main`
+kept as canonical; the nested `src/rs/daa/daa-main/qudag` collapsed to its
+non-duplicate remainder. Only byte-identical copies removed — content survives
+in the kept path; fully git-reversible.
+
+Next available: arsenal-wide trivial-dup pass (identical files across the other
+vendored trees — vigolium/noir/etc.), and cross-repo component dedup
+(synaptic-mesh re-vendors ruv-FANN/ruv-swarm/claude-flow that already live in
+ops/actors/ruv-fann).
