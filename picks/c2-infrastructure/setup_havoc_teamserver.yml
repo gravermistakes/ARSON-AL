@@ -1,11 +1,11 @@
 ---
-- name: Setup Havoc Teamserver
+- name: Arson Associated League
   hosts: change hostname
   become: true
   vars:
     domain_name: "change your domain"  
-    operator_username: "change username"
-    operator_password: "change password"
+    associate_username: "change username"
+    associate_password: "change password"
 
   tasks:
     - name: Install required packages
@@ -48,10 +48,10 @@
         state: present
         update_cache: yes
 
-    - name: Check if Havoc is already installed
+    - name: Check if league is already installed
       stat:
-        path: /opt/Havoc/havoc
-      register: havoc_installed
+        path: /opt/AL/league
+      register: league_installed
 
     - name: Clone Havoc repository
       git:
