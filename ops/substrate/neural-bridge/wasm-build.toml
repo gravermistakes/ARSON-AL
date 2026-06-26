@@ -1,0 +1,57 @@
+# WASM Build Configuration for ruv-FANN Neural Compilation
+# Optimized for <100ms inference latency with SIMD acceleration
+
+[build]
+# Primary WASM target with maximum optimization
+target = "wasm32-unknown-unknown"
+rustflags = [
+    # SIMD optimizations
+    "-C", "target-feature=+simd128,+bulk-memory,+reference-types",
+    # Size optimization for faster loading
+    "-C", "opt-level=s",
+    "-C", "lto=fat",
+    "-C", "codegen-units=1",
+    # Memory optimization
+    "-C", "panic=abort",
+]
+
+[wasm-pack]
+# Production build settings
+[wasm-pack.profile.release]
+wasm-opt = [
+    "-Oz",                    # Maximum size optimization
+    "--enable-simd",          # Enable SIMD instructions
+    "--enable-bulk-memory",   # Enable bulk memory operations
+    "--enable-reference-types", # Enable reference types
+    "--enable-threads",       # Enable threading support
+    "--strip-debug",          # Remove debug information
+    "--vacuum",               # Remove unused sections
+]
+
+# Development build settings
+[wasm-pack.profile.dev]
+wasm-opt = [
+    "-O1",
+    "--enable-simd",
+    "--enable-bulk-memory",
+    "--debuginfo",
+]
+
+[features]
+# Neural network optimizations
+neural-simd = ["simd", "parallel"]
+inference-fast = ["neural-simd", "gpu", "minimal-binary"]
+production = ["inference-fast", "compression"]
+
+# Browser compatibility targets
+[browsers]
+chrome = ">=90"    # SIMD support from Chrome 90+
+firefox = ">=89"   # SIMD support from Firefox 89+
+safari = ">=16.4"  # SIMD support from Safari 16.4+
+edge = ">=90"      # SIMD support from Edge 90+
+
+# Performance targets
+[performance]
+inference_latency_target = "100ms"  # <100ms requirement
+memory_limit = "2GB"                # <2GB for 25+ agents
+browser_compatibility = "95%"       # 95%+ browser support
