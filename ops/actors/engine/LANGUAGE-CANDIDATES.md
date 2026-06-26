@@ -2,17 +2,17 @@
 # Candidate languages for the swarm-engine refactor
 
 > **DECISION: OCaml 5 + Riot** (effects/domains runtime, Erlang-style actors + supervision).
-> 
-> 
-> 
->
-> 
->
-> 
->
-> 
->
-> 
+> .
+> .
+> .
+> .
+> .
+> .
+> .
+> .
+> .
+> .
+> .
 
 
 # **DECISION: OCaml 5 + Riot**
