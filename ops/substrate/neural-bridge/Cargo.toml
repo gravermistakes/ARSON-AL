@@ -1,0 +1,158 @@
+[package]
+name = "ruv-fann-neural-bridge"
+version = "0.2.0"
+edition = "2021"
+description = "High-performance WASM neural network bridge for ruv-FANN with SIMD optimization"
+license = "MIT"
+repository = "https://github.com/ruvnet/claude-flow"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+# WASM bindings and utilities
+wasm-bindgen = "0.2"
+js-sys = "0.3"
+web-sys = "0.3"
+console_error_panic_hook = "0.1"
+
+# Serialization and data handling
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Time and utilities
+chrono = { version = "0.4", features = ["serde"] }
+fastrand = "2.0"
+
+# Error handling
+thiserror = "1.0"
+
+[dependencies.web-sys]
+version = "0.3"
+features = [
+  "console",
+  "Performance",
+  "Window",
+  "Navigator",
+  "WebAssembly",
+  "WebAssemblyModule",
+  "WebAssemblyInstance",
+  "Float32Array",
+  "Uint8Array",
+  "SharedArrayBuffer",
+]
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen-futures = "0.4"
+
+[features]
+default = ["simd", "performance-monitoring"]
+
+# Core features
+simd = []
+performance-monitoring = []
+neural-optimization = []
+memory-pooling = []
+batch-inference = []
+
+# Development features
+debug-logging = []
+benchmark-mode = []
+
+# Optimization features
+quantization = []
+pruning = []
+knowledge-distillation = []
+
+[profile.release]
+# Maximum optimization for production builds
+opt-level = "s"        # Optimize for size
+lto = true            # Link-time optimization
+codegen-units = 1     # Single codegen unit for better optimization
+panic = "abort"       # Abort on panic (smaller binary)
+strip = true          # Strip debug symbols
+
+# WASM-specific optimizations
+[profile.release.package."*"]
+opt-level = "s"
+overflow-checks = false
+
+[profile.dev]
+# Development build settings
+opt-level = 1         # Some optimization for reasonable performance
+debug = true          # Debug information for development
+overflow-checks = true # Runtime checks for development
+
+# Custom profile for benchmarking
+[profile.bench]
+inherits = "release"
+debug = true          # Keep debug info for profiling
+lto = "thin"         # Faster linking for iterative benchmarking
+
+# WASM build configuration
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = [
+    "-Oz",                      # Maximum size optimization
+    "--enable-simd",            # Enable SIMD instructions
+    "--enable-bulk-memory",     # Enable bulk memory operations
+    "--enable-reference-types", # Enable reference types
+    "--enable-threads",         # Enable threading support (where available)
+    "--strip-debug",            # Remove debug information
+    "--vacuum",                 # Remove unused sections
+    "--dce",                    # Dead code elimination
+    "--flatten",                # Flatten control flow
+    "--rse",                    # Remove unused stack elements
+]
+
+[package.metadata.wasm-pack.profile.dev]
+wasm-opt = [
+    "-O1",
+    "--enable-simd",
+    "--enable-bulk-memory",
+    "--debuginfo",
+]
+
+# Benchmark configuration
+[[bench]]
+name = "neural_inference"
+harness = false
+path = "benches/neural_inference.rs"
+
+[[bench]]
+name = "simd_operations"
+harness = false
+path = "benches/simd_operations.rs"
+
+[[bench]]
+name = "memory_management"
+harness = false
+path = "benches/memory_management.rs"
+
+# Example binaries
+[[bin]]
+name = "benchmark_runner"
+path = "src/bin/benchmark_runner.rs"
+
+[[bin]]
+name = "performance_profiler"
+path = "src/bin/performance_profiler.rs"
+
+# Documentation settings
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+targets = ["wasm32-unknown-unknown"]
+
+# Workspace configuration (if part of larger project)
+[workspace]
+members = [
+    ".",
+    "examples/neural-demo",
+    "benchmarks",
+    "tools/wasm-profiler"
+]
+exclude = ["target", "node_modules", "pkg"]
+
+# Build dependencies
+[build-dependencies]
+cc = "1.0"

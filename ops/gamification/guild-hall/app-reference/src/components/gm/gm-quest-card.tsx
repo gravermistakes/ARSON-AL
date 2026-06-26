@@ -1,0 +1,189 @@
+'use client'
+
+import Link from 'next/link'
+import Image from 'next/image'
+import { Clock, Award, Edit, MoreVertical, Archive, Trash2, Sparkles, Star } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { CategoryBadge } from '@/components/quests/category-badge'
+import { DifficultyBadge } from '@/components/quests/difficulty-badge'
+import type { Quest, QuestDbStatus } from '@/lib/types/quest'
+import { cn } from '@/lib/utils'
+
+interface GMQuestCardProps {
+  quest: Quest
+  className?: string
+  onArchive?: (questId: string) => void
+  onDelete?: (questId: string) => void
+}
+
+function getStatusBadgeVariant(status: QuestDbStatus): 'default' | 'secondary' | 'destructive' | 'outline' {
+  switch (status) {
+    case 'published':
+      return 'default'
+    case 'draft':
+      return 'secondary'
+    case 'archived':
+      return 'outline'
+    default:
+      return 'secondary'
+  }
+}
+
+function getStatusLabel(status: QuestDbStatus): string {
+  switch (status) {
+    case 'published':
+      return 'Published'
+    case 'draft':
+      return 'Draft'
+    case 'archived':
+      return 'Archived'
+    default:
+      return status
+  }
+}
+
+function formatDate(dateString: string): string {
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  })
+}
+
+export function GMQuestCard({ quest, className, onArchive, onDelete }: GMQuestCardProps) {
+  const displayDescription =
+    quest.short_description ||
+    (quest.description
+      ? `${quest.description.substring(0, 100)}${quest.description.length > 100 ? '...' : ''}`
+      : 'No description available')
+
+  const status = quest.status as QuestDbStatus
+
+  return (
+    <Link href={`/gm/quests/${quest.id}`} className="block">
+    <Card className={cn('h-full transition-colors hover:bg-muted/50', className)}>
+      <CardHeader className="pb-3">
+        <div className="flex gap-4">
+          {/* Left column: badges and title */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between gap-3 mb-1.5">
+              <div className="flex items-center gap-2 flex-wrap">
+                {quest.category && <CategoryBadge category={quest.category} className="flex-shrink-0" />}
+                {/* Show Side Quest badge instead of difficulty for side quests */}
+                {quest.is_side_quest ? (
+                  <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-300 dark:bg-amber-950/50 dark:text-amber-400 dark:border-amber-700 flex-shrink-0">
+                    <Star className="h-3 w-3 mr-1 fill-amber-500 text-amber-500" />
+                    Side Quest
+                  </Badge>
+                ) : (
+                  quest.difficulty && <DifficultyBadge difficulty={quest.difficulty} className="flex-shrink-0" />
+                )}
+                {quest.featured && (
+                  <Badge variant="outline" className="border-amber-500 text-amber-600 bg-amber-50 flex-shrink-0">
+                    <Sparkles className="h-3 w-3 mr-1" />
+                    Featured
+                  </Badge>
+                )}
+              </div>
+              <div className="flex items-center gap-1 flex-shrink-0">
+                <Badge variant={getStatusBadgeVariant(status)}>
+                  {getStatusLabel(status)}
+                </Badge>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <MoreVertical className="h-4 w-4" />
+                      <span className="sr-only">Actions</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem asChild>
+                      <Link href={`/gm/quests/${quest.id}`}>
+                        <Edit className="mr-2 h-4 w-4" />
+                        Edit Quest
+                      </Link>
+                    </DropdownMenuItem>
+                    {status !== 'archived' && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() => onArchive?.(quest.id)}
+                          className="text-muted-foreground"
+                        >
+                          <Archive className="mr-2 h-4 w-4" />
+                          Archive
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => onDelete?.(quest.id)}
+                      className="text-destructive focus:text-destructive"
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
+            <CardTitle className="text-lg leading-tight line-clamp-2">{quest.title}</CardTitle>
+          </div>
+          {/* Right column: badge image */}
+          {quest.badge_url && (
+            <div className="flex-shrink-0">
+              <div className="w-16 h-16 relative">
+                <Image
+                  src={quest.badge_url}
+                  alt="Quest badge"
+                  fill
+                  className="object-contain"
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="flex gap-4">
+          {/* Left column: description and stats */}
+          <div className="flex-1 min-w-0">
+            <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+              {displayDescription}
+            </p>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4 text-sm">
+                <div className="flex items-center gap-1.5 text-amber-600">
+                  <Award className="h-4 w-4" />
+                  <span className="font-medium">{quest.points} pts</span>
+                </div>
+                {quest.time_limit_days && (
+                  <div className="flex items-center gap-1.5 text-muted-foreground">
+                    <Clock className="h-4 w-4" />
+                    <span>{quest.time_limit_days} days</span>
+                  </div>
+                )}
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {quest.published_at
+                  ? `Published ${formatDate(quest.published_at)}`
+                  : `Created ${formatDate(quest.created_at)}`}
+              </div>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+    </Link>
+  )
+}
