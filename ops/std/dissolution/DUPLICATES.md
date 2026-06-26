@@ -78,3 +78,24 @@ Next available: arsenal-wide trivial-dup pass (identical files across the other
 vendored trees — vigolium/noir/etc.), and cross-repo component dedup
 (synaptic-mesh re-vendors ruv-FANN/ruv-swarm/claude-flow that already live in
 ops/actors/ruv-fann).
+
+## Pruned — pass 2 (trivial intra-tree dedup, arsenal-wide)
+
+Same content-dedup applied within each remaining vendored tree (keep one copy of
+each identical content per component — no cross-tree coupling). Removed:
+ruv-fann -186, vigolium -239, noir -138, fuzz-skill -42, loki-mode -18, DeTTECT
+-3, advanced_evolution -2, neural-bridge -1 files. Mostly repeated `.claude`
+command packs, READMEs, and configs; bytes modest (trees are already mostly
+unique code). vigolium 67M->62M, noir 75M->73M.
+
+## Pruned — pass 3 (cross-repo pointers; surface copies are canon)
+
+synaptic-mesh re-vendored the ruv-fann family that lives at the surface in
+`ops/actors/ruv-fann/`. The shallow (surface) copy is canonical; the deep nested
+copies were replaced with `*.POINTER.md` stubs:
+- `src/rs/ruv-FANN` (19M) -> `ops/actors/ruv-fann`
+- `src/rs/cuda-wasm` (4.6M) -> `ops/actors/ruv-fann/cuda-wasm`
+- `src/js/ruv-swarm` (6.7M) -> `ops/actors/ruv-fann/ruv-swarm`
+
+synaptic-mesh 148M -> 118M. Cumulative synaptic-mesh 248M -> 118M. `claude-flow`
+(21M) left intact — no surface canon, so not a cross-repo duplicate.
