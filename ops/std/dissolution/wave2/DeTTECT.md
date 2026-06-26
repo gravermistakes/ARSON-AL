@@ -19,22 +19,10 @@
 | constants.py | Substrate (MITRE technique/tactic constants, reference data) | ops | ops/DeTTECT/substrate/constants.py |
 | health.py | Substrate (health check, data quality validation, layer consistency checks) | ops | ops/DeTTECT/substrate/health.py |
 | upgrade.py | Orchestration (versioning, layer migration, upgrade workflows) | ops | ops/DeTTECT/substrate/upgrade.py |
+| mitre-data/ | STIX/JSON technique mappings | int/DeTTECT/actor-corpus/mitre-data |
+| sample-data/ | Detection layers for testing | int/DeTTECT/threat-mapping/sample-data |
+| editor/ (Vue SPA) | Consumer UI for layer visualization | make sure we port parts as needed by dashboard |
 
-## Bulk/Deferred Items
-
-| Item | Reason | Destination (Follow-Up) |
-|------|--------|------------------------|
-| mitre-data/ | Pre-computed STIX/JSON technique mappings; ~2-5 MB | int/DeTTECT/actor-corpus/mitre-data (copy on follow-up) |
-| sample-data/ | Example detection layers for testing; ~500 KB | int/DeTTECT/threat-mapping/sample-data (copy on follow-up) |
-| editor/ (Vue SPA) | Consumer UI for layer visualization; ~3+ MB; product wrapper | DROP (remains in source repo) |
-
-## Drop List
-
-- LICENSE (boilerplate)
-- README.md (project intro)
-- requirements.txt (dependency list, reference only)
-- Dockerfile (deployment wrapper)
-- .git/, .github/, .gitignore (repository metadata)
 
 ## Rationale
 
@@ -44,25 +32,25 @@
 
 **Arsenal Use:** "Which techniques have weak detection coverage?" → Attack path planning. "Which actors use technique X?" → Threat mimicry. "What data sources detect this technique?" → Evasion surface analysis.
 
-**Sorted by verb:**
+**Sorted by action:**
 - **Threat model** (actor profiles, group mapping) → **int/** (offensive threat intel)
 - **Detection coverage** (technique→detection, data source→technique) → **probes/** (reframed as "what detection gaps exist?" for evasion planning)
 - **Query engine + CLI** (dettect.py, interactive_menu.py) → **ops/** (orchestration/tooling)
 - **Constants + parsing** (generic.py, constants.py, eql_yaml.py) → **ops/substrate/** (codec/reference data)
 - **Health + upgrade** → **ops/substrate/** (versioning/validation)
 
-**Split noted:** technique_mapping.py and data_source_mapping.py remain in **probes/** under two subdirs to emphasize the evasion-surface-map framing: "detection-coverage" (what detections exist), "visibility" (what data sources are available). An attacker queries these to find blind spots.
+**Split notes:** technique_mapping.py and data_source_mapping.py remain in **probes/** under two subdirs to emphasize the evasion-surface-map framing: "detection-coverage" (what detections exist), "visibility" (what data sources are available). An attacker queries these to find blind spots.
 
 ---
 
 **Status:** COMPLETE. 11 functional units placed. 3 bulk items deferred for follow-up (PLACEMENT.md link created).
 
-## Retention update (nothing dropped)
+## Retention
 The Vue.js editor (`editor/`), previously listed as a drop, is **retained as
 reference** at `ops/DeTTECT/editor/` (src + public + manifest; `node_modules`/
 `dist` excluded). It is authoring tooling for the ATT&CK YAML data model — kept
 for reference per "every repo was added for a reason; nothing dropped".
 
 ## Duplicates & homomorphs
-Homomorph of int/mitre-attack (ATT&CK technique mapping).
+Homomorph of int/mitre-attack (ATT&CK technique mapping). UNVERIFIED
 Full dedup index: ../DUPLICATES.md
