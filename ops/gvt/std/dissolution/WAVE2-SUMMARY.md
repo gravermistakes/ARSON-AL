@@ -1,6 +1,6 @@
 # Wave 2 Dissolution Summary (2026-06-26)
 
-**Status: COMPLETE** — All 5 repos placed into ops/ hierarchy by verb (what it mechanically does).
+**Status: COMPLETE** — All 5 repos placed into ops/ hierarchy by action (what it mechanically does).
 
 ## Repos Dissolved
 
@@ -22,7 +22,7 @@ Full repo (1.8GB+, 70+ crates) on follow-up clone
   Include: ml-training/, benches/, examples/, neuro-divergent/ full codebase
 ```
 
-**Key Verbs Captured:**
+**Key Actions Captured:**
 - Compute neural networks (src/)
 - Forecast time-series (neuro-divergent/)
 - Transpile GPU→WASM (cuda-wasm/)
@@ -47,7 +47,7 @@ Full repo + build artifacts on follow-up clone
   Include: wasm-loader.js, benchmarks, optimized .wasm modules
 ```
 
-**Key Verbs Captured:**
+**Key Actions Captured:**
 - Export neural inference to WASM (lib.rs)
 - Optimize weights post-training (neural/optimizer.rs)
 - Detect CPU features, enable SIMD (simd-config.rs)
@@ -74,7 +74,7 @@ Full Synaptic-Mesh repo (100+ GB test harness) on follow-up clone
   Drop: Test suites, Docker layer (unless building mesh validation)
 ```
 
-**Key Verbs Captured:**
+**Key Actions Captured:**
 - Byzantine-fault-tolerant consensus (QuDAG)
 - Self-organize agents across nodes (DAA-swarm)
 - Mesh-based scoring / ensemble voting (neural-mesh)
@@ -100,7 +100,7 @@ Full Python codebase on follow-up clone
   Include: darwinian_evolver/, example_problems/, imbue_experiments/
 ```
 
-**Key Verbs Captured:**
+**Key Actions Captured:**
 - Run genetic algorithm loop (evolver.py)
 - Manage candidate kit configurations (population.py)
 - Score kit variants (problem.py)
@@ -134,7 +134,7 @@ Full loki-mode repo (370K+ lines, Playwright test suite) on follow-up
     - web-app/ is reference only (frontend not core to Opaca)
 ```
 
-**Key Verbs Captured:**
+**Key Actions Captured:**
 - Execute RARV cycle (autonomy/run.sh)
 - Dispatch commands & phases (autonomy/loki CLI)
 - Multi-agent consensus voting (completion-council.sh)
@@ -184,7 +184,7 @@ Full loki-mode repo (370K+ lines, Playwright test suite) on follow-up
 
 ### Immediate (Opaca Substrate Design)
 1. Review PLACEMENT.md files (understanding each repo's role)
-2. Use dissolution manifests to identify key verbs
+2. Use dissolution manifests to identify key actions
 3. Plan Opaca substrate layers from reference implementations
 
 ### Follow-Up (Wave 3 / Bulk Defer)
@@ -198,7 +198,7 @@ bulk: clone /home/user/loki-mode -> /home/user/ARSON-AL/ops/orchestration/loki-m
 
 ---
 
-**Wave 2 Complete.** All 5 repos dissolved into ops/ hierarchy by verb. No repos deleted; sources remain at `/home/user/<repo>`. Opaca substrate now has integrated reference implementations for neural compute, swarm orchestration, distributed consensus, kit evolution, and autonomous methodology.
+**Wave 2 Complete.** All 5 repos dissolved into ops/ hierarchy by action. No repos deleted; sources remain at `/home/user/<repo>`. Opaca substrate now has integrated reference implementations for neural compute, swarm orchestration, distributed consensus, kit evolution, and autonomous methodology.
 
 ## Duplicates & homomorphs
 Content-hash dedup found 6,841 redundant file instances (29% of files), concentrated in synaptic-mesh (4,493) and ruv-fann (1,599). See DUPLICATES.md for literal duplicates + homomorph recombination targets.

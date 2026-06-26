@@ -6,7 +6,7 @@
 
 ## Units Table
 
-| Unit Path | Verb | Category | Destination |
+| Unit Path | Action | Category | Destination |
 |-----------|------|----------|-------------|
 | smuggler.py | Generate payloads (HTTP request smuggling attack templates) | picks | picks/red-team-scripts/payloads/ |
 | gen-chm.py | Generate payloads (CHM/help file attack vector payloads) | picks | picks/red-team-scripts/payloads/ |
@@ -29,7 +29,7 @@
 
 ## Rationale
 
-**red-team-scripts** is a collection of **attack payloads, evasion techniques, and C2 infrastructure templates**. Dissolution sorted by verb:
+**red-team-scripts** is a collection of **attack payloads, evasion techniques, and C2 infrastructure templates**. Dissolution sorted by action:
 
 - **Generate/Craft payloads** (smuggler, gen-chm, LNK) → **picks/** (attack payload toolkit)
 - **Bypass AV/EDR/ASR** (VBA bypass, BYOVD, profiles) → **picks/evasion/** (detection evasion methods)
@@ -39,7 +39,7 @@
 
 The sliver.md file is a **split unit**: server-provisioning sections go to ops/ (infrastructure), post-exploitation sections go to picks/ (evasion/persistence playbooks). Invoke-AtomicEnterpriseLayer.ps1 is also **split**: the mapping logic (fetch + parse MITRE layer) goes to int/ (threat modeling), the execution loop goes to picks/ (orchestrated technique invocation).
 
-**Key principle applied:** The repo's origin/name is irrelevant. Only the **verb** (what it mechanically does) matters. A tool named "red team scripts" is sorted into arsenal categories by its functional behavior, not its package name.
+**Key principle applied:** The repo's origin/name is irrelevant. Only the **action** (what it mechanically does) matters. A tool named "red team scripts" is sorted into arsenal categories by its functional behavior, not its package name.
 
 ---
 

@@ -1,10 +1,10 @@
 # Dissolution: loki-mode → ops/orchestration + ops/standards + ops/substrate
 
-**Wave:** 2 | **Date:** 2026-06-26 | **Verb-Based Sorting:** Autonomous engagement loop + Quality gates + Memory/state system
+**Wave:** 2 | **Date:** 2026-06-26 | **Action-Based Sorting:** Autonomous engagement loop + Quality gates + Memory/state system
 
 ## Functional Units Table
 
-| Unit | Verb (What It Does) | Category | Destination |
+| Unit | Action (What It Does) | Category | Destination |
 |------|---------------------|----------|-------------|
 | `autonomy/run.sh` | **Execute RARV cycle** — Reason → Act → Reflect → Verify loop | ops/orchestration | `ops/orchestration/loki-mode/autonomy/run.sh` |
 | `autonomy/loki` (CLI dispatcher) | **Dispatch commands** — Phase selection, human intervention, approval gates | ops/orchestration | `ops/orchestration/loki-mode/autonomy/loki` |

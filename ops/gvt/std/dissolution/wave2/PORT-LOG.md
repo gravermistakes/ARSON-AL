@@ -17,7 +17,7 @@ Excluded everywhere (regenerable / VCS metadata, per the arsenal's wave-1
 
 ## Cross-reference dirs (not duplicates)
 
-The verb-split secondary placements from the wave-2 manifests are
+The action-split secondary placements from the wave-2 manifests are
 cross-reference pointers into the canonical trees above, not separate copies:
 
 - `ops/orchestration/ruv-fann/` → `ops/substrate/ruv-fann/ruv-swarm/`

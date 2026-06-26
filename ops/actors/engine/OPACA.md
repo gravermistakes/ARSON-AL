@@ -20,7 +20,7 @@ A **kit** is a bundle of tools for a purpose. Examples:
 - A chain-builder kit: PoC templates + chain templates + report generator
 
 Kits map directly to the dissolved ARSON-AL directories. A kit's tools
-come from probes/, picks/, proofs/, int/ — wherever they landed by verb.
+come from probes/, picks/, proofs/, int/ — wherever they landed by action.
 A kit doesn't care what repo a tool came from. It cares what the tools
 do together.
 

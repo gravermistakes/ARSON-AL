@@ -57,7 +57,7 @@ The outside drives Opaca through, in priority order:
 2. **Plugin / stdio bridge** — JSON-lines in/out for direct piping. (i.e marketplace.json plugin.json)
 3. **custom API**.
 
-All three are thin shells over the same engine verbs; none of them *is* the
+All three are thin shells over the same engine actions; none of them *is* the
 engine. Riot provides the socket/TCP IO and structured output.
 
 ## 5. How it fits together

@@ -6,7 +6,7 @@
 
 ## Units Table
 
-| Unit Path | Verb | Category | Destination |
+| Unit Path | Action | Category | Destination |
 |-----------|------|----------|-------------|
 | src/agents/scout.ts | Decompose research question into subqueries (research orchestration) | int | int/ruvn/research-pipeline/scout.ts |
 | src/agents/web-searcher.ts | Gather raw intelligence via WebSearch MCP (research execution) | int | int/ruvn/research-pipeline/web-searcher.ts |
@@ -28,7 +28,7 @@
 
 ## Rationale
 
-**ruvn** is a **research evidence pipeline**: decompose question → gather sources → grade evidence → synthesize → verify → cite. Dissolution sorted by verb + output type:
+**ruvn** is a **research evidence pipeline**: decompose question → gather sources → grade evidence → synthesize → verify → cite. Dissolution sorted by action + output type:
 
 **Research pipeline (int/):**
 - scout, web-searcher, source-grader, synthesizer, fact-checker all remain in **int/ruvn/research-pipeline/** because they collectively form an **intelligence-gathering and verification system**. Each agent processes the previous agent's output through a **quality gate** (grading → filtering → verification), forcing information to flow through adversarial checks. This discipline is a core arsenal capability: **gather → grade → verify → synthesize**.

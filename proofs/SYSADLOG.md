@@ -73,13 +73,13 @@ Review cadence after batch-2 pushes. No errors — nothing to fix, merged.
 - **code-review:** placements coherent; `go.mod/go.sum` already complete (build
   left the tree clean). Kept docs/corpus/fuzzers per policy.
 
-## 1782416720 — spine references broken by verb-split  [FIXED]
+## 1782416720 — spine references broken by action-split  [FIXED]
 
 **Severity:** high (methodology non-navigable).
 **Found by:** review-cadence VERIFY step — grepped the dissolved `SKILL.md`
 spines for `references/` + `scripts/` paths after splitting lance/bug-reaper.
 
-**Error:** Dissolving lance (7-gate) and bug-reaper (4-phase) by verb moved each
+**Error:** Dissolving lance (7-gate) and bug-reaper (4-phase) by action moved each
 SKILL spine into `proofs/` while its referenced files scattered to `int/`,
 `probes/`, and `picks/`. Result: ~30 inline links per spine resolved to nothing.
 Self-inflicted aggravation — proofs-local refs were placed under `refs/` but the

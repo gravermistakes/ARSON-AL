@@ -6,7 +6,7 @@
 
 ## Units Table
 
-| Unit Path | Verb | Category | Destination |
+| Unit Path | Action | Category | Destination |
 |-----------|------|----------|-------------|
 | src/lib/gemini.ts (SENTINEL prompt) | Analyze code; identify attack surfaces; sequence exploits (LLM-SAST logic) | probes | probes/scorpio/llm-sast/gemini-prompts.ts |
 | src/lib/gemini.ts (AUDITOR prompt) | Track findings; generate threat-intel prose; behavioral risk profiles (LLM report generation) | proofs | proofs/scorpio/llm-report-generation/gemini-prompts.ts |
@@ -36,7 +36,7 @@ None. Prompts and schemas are text files (~1 KB each).
 
 3. **Vulnerability schema** (ID, severity, vector, remediation, status, timestamp) + **AuditLog** (audit trail with agent/timestamp/type) + **ExploitScenario** (steps, probability) → **proofs/** (structured finding model for report generation).
 
-**Dissolved by verb:**
+**Dissolved by action:**
 - SENTINEL (Analyze code) → **probes/scorpio/llm-sast/** (LLM-powered code analysis)
 - AUDITOR + Schemas (Generate findings report) → **proofs/scorpio/llm-report-generation/** (LLM-powered dossier generation)
 
