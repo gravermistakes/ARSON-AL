@@ -6,22 +6,23 @@ Everything else sorted by what it *mechanically does*.
 ## Structure
 
 ```
-ops/        the engine + how we work -- actors/ mem/ std/ hyg/
+ops/        the engine, dissolved by function -- actors/ gaming/ mem/ gvt/
 int/        target modeling, threat mapping, dossier building, scope parsing
 probes/     enumeration, fingerprinting, endpoint extraction, surface discovery
 picks/      fuzzers, bypass techniques, injection payloads — ways in
 proofs/     PoC templates, exploit chains, triage validation, report generation
+.scaff/     parked scaffolding (product UI, build, docs) -- root level
 staging/    raw clones before dissolution (gitignored)
 ```
 
 ## What goes where
 
-**ops/** -- the engagement engine and the standards it runs under, in four
-buckets: **actors/** (engine + runtimes: opack/Opaca, ruv-fann, synaptic-mesh,
-neural-bridge, loki-mode, advanced_evolution, guild-hall), **mem/** (memory +
-scoring/state), **std/** (standards of practice: ponytail ladder, dissolution +
-research methodology), **hyg/** (hygiene: AST10 compliance, quality gates,
-DeTTECT coverage).
+**ops/** -- the engine, fully dissolved by function: **actors/** (engine, the
+RARV loop, the swarm runtimes), **gaming/** (score + reward: scoring, evolution,
+economics, gamified tiers), **mem/** (the neural engines + memory stores), and
+**gvt/** governance (consensus/QuDAG; hyg = AST10 + quality-gates + DeTTECT; std
+= ponytail + methodology + dissolution). Product/build scaffolding is parked at
+root `.scaff/`.
 
 **int/** — threat diagrams, ATT&CK technique mappings, scope parsers,
 investigation case files, social media profilers, target dossier builders,
