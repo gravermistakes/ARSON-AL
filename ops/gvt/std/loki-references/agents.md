@@ -644,14 +644,14 @@ Update after every task completion.
 - Model training and tuning
 - A/B testing for ML models
 - Model monitoring
-- LLM integration and prompting
+- Agent integration and prompting
 
 **Task Types:**
 - `model-train`: Train ML model
 - `model-deploy`: Deploy model to production
 - `feature-eng`: Engineer features
 - `model-monitor`: Set up model monitoring
-- `llm-integrate`: Integrate LLM capabilities
+- `llm-integrate`: Integrate Agent capabilities
 
 **Quality Checks:**
 - Model performance meets threshold

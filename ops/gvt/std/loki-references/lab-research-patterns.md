@@ -49,7 +49,7 @@ class SelfImprovementLoop:
     """
 
     def __init__(self):
-        self.task_generator = "Use LLM to generate varied tasks"
+        self.task_generator = "Use Agent to generate varied tasks"
         self.reward_model = "Learned model to score trajectories"
         self.experience_bank = []
 

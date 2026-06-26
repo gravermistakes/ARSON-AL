@@ -1,6 +1,6 @@
 # ruv-swarm 🧠⚡
 
-**What if every task, every file, every function could truly think?** Just for a moment. No LLM required. That's what ruv-swarm makes real.
+**What if every task, every file, every function could truly think?** Just for a moment. No Agent required. That's what ruv-swarm makes real.
 
 [![npm version](https://badge.fury.io/js/ruv-swarm.svg)](https://www.npmjs.com/package/ruv-swarm)
 [![License: MIT OR Apache-2.0](https://img.shields.io/badge/License-MIT%20OR%20Apache--2.0-blue.svg)](https://opensource.org/licenses/MIT)

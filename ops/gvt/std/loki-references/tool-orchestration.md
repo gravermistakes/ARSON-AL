@@ -23,7 +23,7 @@ Every operation is wrapped in a typed span for observability:
 ```yaml
 span_types:
   agent_span:     # Wraps entire agent execution
-  generation_span: # Wraps LLM API calls
+  generation_span: # Wraps Agent API calls
   function_span:  # Wraps tool/function calls
   guardrail_span: # Wraps validation checks
   handoff_span:   # Wraps agent-to-agent transfers

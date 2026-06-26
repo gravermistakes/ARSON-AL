@@ -1,6 +1,6 @@
 """PRD Complexity Classifier - Rule-based project complexity analysis.
 
-Analyzes PRD text to determine project complexity without LLM calls.
+Analyzes PRD text to determine project complexity without Agent calls.
 Uses keyword matching and feature extraction for fast classification.
 
 Tiers:
@@ -92,7 +92,7 @@ class PRDClassifier:
     """Classifies PRD complexity based on content analysis.
 
     Uses rule-based keyword matching for fast, deterministic classification
-    without requiring any LLM calls.
+    without requiring any Agent calls.
     """
 
     TIERS = ["simple", "standard", "complex", "enterprise"]

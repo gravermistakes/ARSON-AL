@@ -5,7 +5,7 @@
 [![License: MIT OR Apache-2.0](https://img.shields.io/crates/l/ruv-swarm-core.svg)](#license)
 [![CI](https://github.com/ruvnet/ruv-FANN/workflows/CI/badge.svg)](https://github.com/ruvnet/ruv-FANN/actions)
 
-**What if every task, every file, every function could truly think?** Just for a moment. No LLM required. That's what ruv-swarm makes real.
+**What if every task, every file, every function could truly think?** Just for a moment. No Agent required. That's what ruv-swarm makes real.
 
 ## 🐝 Ephemeral Intelligence, Engineered in Rust
 

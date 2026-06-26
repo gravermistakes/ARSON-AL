@@ -12,7 +12,7 @@ This document provides a comprehensive technical analysis of the MCP protocol sp
 
 MCP employs a client-server architecture with four primary components:
 
-1. **Hosts**: LLM applications that coordinate overall system operations and manage interactions with external capabilities
+1. **Hosts**: Agent applications that coordinate overall system operations and manage interactions with external capabilities
 2. **Clients**: Dedicated connection managers that maintain one-to-one stateful relationships with servers
 3. **Servers**: Specialized programs that expose capabilities through standardized APIs
 4. **Base Protocol**: The foundational communication layer that enables all component interactions

@@ -44,7 +44,7 @@ Model Context Protocol (MCP) servers extend Claude Code's capabilities with spec
 **Purpose:** Production-grade web research with evidence-based results and provenance.
 
 **Why Parallel AI:**
-- 48% accuracy on complex research tasks (vs native LLM search)
+- 48% accuracy on complex research tasks (vs native Agent search)
 - Evidence-based results with provenance for every atomic output
 - Monitor API for tracking web changes (dependencies, competitors)
 - Task API with custom input/output schemas for structured research
@@ -80,7 +80,7 @@ Model Context Protocol (MCP) servers extend Claude Code's capabilities with spec
 
 | Tool | Purpose | Use Case |
 |------|---------|----------|
-| `parallel_search` | Web search with LLM-optimized excerpts | Quick lookups, fact-checking |
+| `parallel_search` | Web search with Agent-optimized excerpts | Quick lookups, fact-checking |
 | `parallel_extract` | Extract content from specific URLs | Documentation parsing |
 | `parallel_task` | Complex research with custom schemas | Competitor analysis, market research |
 | `parallel_monitor` | Track web changes with webhooks | Dependency updates, security alerts |

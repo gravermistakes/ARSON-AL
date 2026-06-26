@@ -8,7 +8,7 @@ Practitioner-tested patterns from Hacker News discussions and real-world deploym
 
 This reference consolidates battle-tested insights from:
 - HN discussions on autonomous agents in production (2025)
-- Coding with LLMs practitioner experiences
+- Coding with Agents practitioner experiences
 - Simon Willison's Superpowers coding agent patterns
 - Multi-agent orchestration real-world deployments
 
@@ -129,14 +129,14 @@ classification_first:
 ```python
 def deterministic_validation_loop(task, max_attempts=3):
     """
-    Use LLMs only where genuine ambiguity exists.
+    Use Agents only where genuine ambiguity exists.
     Wrap with deterministic rules.
     """
     for attempt in range(max_attempts):
-        # LLM handles the ambiguous part
+        # Agent handles the ambiguous part
         output = agent.execute(task)
 
-        # Deterministic validation (NOT LLM)
+        # Deterministic validation (NOT Agent)
         validation_errors = []
 
         # Rule: Must have tests
@@ -457,7 +457,7 @@ simulation_layer:
 
 ### Problems with Current Benchmarks
 
-**Key Insight:** LLM-as-judge creates shared blind spots.
+**Key Insight:** Agent-as-judge creates shared blind spots.
 
 ```yaml
 benchmark_problems:
@@ -497,7 +497,7 @@ def evaluate_agent_change(before_agent, after_agent, task_set):
         before_result = before_agent.execute(task)
         after_result = after_agent.execute(task)
 
-        # Objective metrics (NOT LLM-judged)
+        # Objective metrics (NOT Agent-judged)
         results["before"].append({
             "tests_pass": run_tests(before_result),
             "lint_clean": run_linter(before_result),
@@ -554,7 +554,7 @@ cost_patterns:
 
 **Hacker News Discussions:**
 - [What Actually Works in Production for Autonomous Agents](https://news.ycombinator.com/item?id=44623207)
-- [Coding with LLMs in Summer 2025](https://news.ycombinator.com/item?id=44623953)
+- [Coding with Agents in Summer 2025](https://news.ycombinator.com/item?id=44623953)
 - [Superpowers: How I'm Using Coding Agents](https://news.ycombinator.com/item?id=45547344)
 - [Claude Code Experience After Two Weeks](https://news.ycombinator.com/item?id=44596472)
 - [AI Agent Benchmarks Are Broken](https://news.ycombinator.com/item?id=44531697)

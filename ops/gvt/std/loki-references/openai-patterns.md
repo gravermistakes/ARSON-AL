@@ -28,7 +28,7 @@ span_types:
     - Contains: agent_name, instructions_hash, model
 
   generation_span:
-    - Wraps LLM API calls
+    - Wraps Agent API calls
     - Contains: model, tokens_in, tokens_out, latency_ms
 
   function_span:

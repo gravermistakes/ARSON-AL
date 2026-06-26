@@ -382,7 +382,7 @@ async function aiResearchSwarmWorkflow(client) {
     
     // Orchestrate research swarm
     const research = await client.orchestrate(
-        'Conduct comprehensive research on LLM optimization techniques',
+        'Conduct comprehensive research on Agent optimization techniques',
         {
             strategy: 'research',
             mode: 'mesh',  // Mesh network for collaborative research

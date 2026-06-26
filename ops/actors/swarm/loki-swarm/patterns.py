@@ -657,7 +657,7 @@ class EmergencePattern(SwarmPattern):
         Synthesize an insight from multiple observations.
 
         This is a simplified implementation. In production, this could use
-        LLM-based synthesis for more sophisticated insight generation.
+        Agent-based synthesis for more sophisticated insight generation.
         """
         import uuid
 
@@ -666,7 +666,7 @@ class EmergencePattern(SwarmPattern):
         contributors = list(set(obs.get("agent_id", "") for obs in observations))
 
         # Simple pattern detection: find common themes
-        # In production, this would use more sophisticated NLP/LLM
+        # In production, this would use more sophisticated NLP/Agent
         word_counts: Dict[str, int] = {}
         for text in obs_texts:
             for word in text.lower().split():

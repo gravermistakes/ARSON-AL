@@ -707,7 +707,7 @@ class SwarmCoordinator:
             Combined insight or None
         """
         # This is a placeholder for more sophisticated combination logic
-        # In production, this would use LLM-based synthesis
+        # In production, this would use Agent-based synthesis
         return None
 
     # -------------------------------------------------------------------------

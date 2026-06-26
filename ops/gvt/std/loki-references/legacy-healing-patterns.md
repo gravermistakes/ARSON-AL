@@ -13,7 +13,7 @@ Every pattern in this document is traced to a specific source. If a pattern is o
 | 5 | arXiv:2602.22518, RepoMod-Bench | 2026 | System-boundary testing for behavioral equivalence |
 | 6 | arXiv:2602.04341, Model-Driven Modernization | 2026 | Observability + contract tests for conformance |
 | 7 | arXiv:2506.02290, HEC | 2025 | Equivalence verification via equality saturation |
-| 8 | arXiv:2502.12466, EquiBench | 2025 | LLM code equivalence reasoning benchmarks |
+| 8 | arXiv:2502.12466, EquiBench | 2025 | Agent code equivalence reasoning benchmarks |
 | 9 | arXiv:2510.18509, VAPU | 2025 | Multi-agent pipeline for autonomous legacy updates |
 | 10 | arXiv:2504.11335, Code Reborn | 2025 | COBOL-to-Java AI-driven, 93% accuracy |
 | 11 | arXiv:2501.19204, Multi-Agent Web App Upgrades | 2025 | Autonomous legacy web application upgrades |
@@ -204,7 +204,7 @@ observability_verification:
 
 ### Formal Equivalence (Research Stage)
 
-HEC (arXiv:2506.02290) uses e-graphs and equality saturation for formal equivalence checking. EquiBench (arXiv:2502.12466) benchmarks LLM ability to reason about code equivalence.
+HEC (arXiv:2506.02290) uses e-graphs and equality saturation for formal equivalence checking. EquiBench (arXiv:2502.12466) benchmarks Agent ability to reason about code equivalence.
 
 **Honest assessment:** Formal equivalence verification is research-stage. Loki uses system-boundary testing and observability, not formal verification.
 
