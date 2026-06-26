@@ -1,13 +1,10 @@
 #!/bin/bash
-# Surface the ponytail coding standard at session start so the ladder is
-# active for the whole session. SessionStart adds stdout to session context.
+# Activate the ponytail coding standard at session start. Emits a short pointer,
+# not the full SKILL — the /ponytail skill loads the whole ladder on demand, so
+# this keeps the per-session context cost to a few lines.
 set -euo pipefail
 
 STD="${CLAUDE_PROJECT_DIR:-.}/ops/standards/ponytail/skills/ponytail/SKILL.md"
-[ -f "$STD" ] || exit 0   # standard not present in this tree — nothing to load
+[ -f "$STD" ] || exit 0   # standard not present in this tree — nothing to activate
 
-echo "The ponytail coding standard is ACTIVE for this session (default intensity: full). Follow the ladder; build the laziest solution that actually works."
-echo
-
-# Print the SKILL body, skipping the YAML frontmatter block if present.
-awk 'NR==1 && $0=="---"{f=1; next} f && $0=="---"{f=0; next} !f' "$STD"
+echo "Ponytail coding standard is ACTIVE for this session (default intensity: full). Build the laziest solution that actually works — climb only to the first rung that holds: YAGNI -> reuse what's here -> stdlib -> native feature -> installed dep -> one line -> minimum code. Read the problem fully before climbing; a bug fix targets the root cause, not the symptom. Full standard: ${STD#"${CLAUDE_PROJECT_DIR:-.}/"} (or run /ponytail)."
