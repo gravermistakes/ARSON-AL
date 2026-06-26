@@ -7,14 +7,14 @@ an ephemeral memory CLI is not. Read before the next dissolution/dedup pass.
 
 ## Dissolution
 
-- **Sort by verb, not by name or origin repo.** Only what a component
-  *mechanically does* decides its bucket (ops/int/probes/picks/proofs).
-- **Split two-job units.** A WAF doc with bypass (pick) + detection signatures
+- **Sort by function - not by name or origin repo.** Only what a component
+  *mechanically does* decides its home (ops/int/probes/picks/proofs).
+- **Split multi-job units.** A WAF doc with bypass (pick) + detection signatures
   (probe) becomes two files.
 - **Hold-then-place, never skip.** Odd-fit / "not a security tool" material is
   *held until the end, then placed* — it is not dropped. The rule is written in
   the root CLAUDE.md; "skip non-security repos" was an agent-invented heuristic
-  and was wrong. Every repo was added for a reason.
+  and was wrong. Every repo was added for a reason. (create a misc folder)
 - **Defensive→offensive reframe.** A defensive tool earns an offensive home:
   DeTTECT detection-coverage → an *evasion-surface* map (probes/); ATT&CK
   group→technique → an attack playbook (int/).
@@ -30,7 +30,7 @@ an ephemeral memory CLI is not. Read before the next dissolution/dedup pass.
   groups duplicate-content lines directly.
 - **Two kinds:** *literal* (identical bytes — prune to one copy) and
   *homomorph* (functionally equivalent, different bytes — not hashable; a
-  recombination target, pick one canonical).
+  recombination target, pick one canonical and integrate the rest).
 - **Trivial dups dominate by count, components by bytes.** Most duplicate *files*
   are repeated `.claude` command packs / READMEs / configs that ride inside every
   vendored monorepo; most duplicate *bytes* are whole re-vendored components
@@ -44,15 +44,14 @@ an ephemeral memory CLI is not. Read before the next dissolution/dedup pass.
 
 ## ops/ structure (four buckets)
 
-- **actors/** — the engine + agent/swarm runtimes (opack/Opaca, ruv-fann,
-  synaptic-mesh, neural-bridge, loki-mode, advanced_evolution, guild-hall).
-- **mem/** — memory / state / scoring (loki-mode memory; advanced_evolution
+- **actors/** — the engine + swarm runtimes (opack/Opaca, ruv-fann, synaptic-mesh, neural-bridge, loki-mode, advanced_evolution, guild-hall).
+- **mem/** — memory / state / scoring (loki-mode memory; advanced_evolution, synaptic-mesh, neural-bridge, 
   learning loop pointer).
 - **std/** — standards of practice (ponytail ladder, research + dissolution
   methodology, this file).
 - **hyg/** — hygiene / compliance / coverage (ast10, loki quality-gates, DeTTECT).
 - Placement calls that stuck: *gamification + substrate → actors; optimizer →
-  actors (canonical) + mem (pointer); C2 → picks* (ways in, not engine meta).
+  actors + mem; C2 → picks* (ways in, not engine meta).
 
 ## Working method
 
