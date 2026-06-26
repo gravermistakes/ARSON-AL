@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC2034  # Many variables are used by sourced scripts
+# shellcheck disable=SC2155  # Declare and assign separately (acceptable in this codebase)
+# shellcheck disable=SC2329  # Functions may be invoked indirectly or via dynamic dispatch
+# shellcheck disable=SC2086  # Word splitting is intentional in some contexts
+#===============================================================================
+# Loki Mode - Autonomous Runner
+# Single script that handles prerequisites, setup, and autonomous execution
+#
+# Usage:
+#   ./autonomy/run.sh [OPTIONS] [PRD_PATH]
+#   ./autonomy/run.sh ./docs/requirements.md
+#   ./autonomy/run.sh                          # Interactive mode
+#   ./autonomy/run.sh --parallel               # Parallel mode with git worktrees
+#   ./autonomy/run.sh --parallel ./prd.md      # Parallel mode with PRD
+#
+# Environment Variables:
+#   LOKI_PROVIDER       - AI provider: claude (default), codex, gemini
+#   LOKI_MAX_RETRIES    - Max retry attempts (default: 50)
+#   LOKI_BASE_WAIT      - Base wait time in seconds (default: 60)
+#   LOKI_MAX_WAIT       - Max wait time in seconds (default: 3600)
+#   LOKI_SKIP_PREREQS   - Skip prerequisite checks (default: false)
+#   LOKI_DASHBOARD      - Enable web dashboard (default: true)
+#   LOKI_DASHBOARD_PORT - Dashboard port (default: 57374)
+#   LOKI_TLS_CERT       - Path to PEM certificate (enables HTTPS for dashboard)
+#   LOKI_TLS_KEY        - Path to PEM private key (enables HTTPS for dashboard)
+#
+# Resource Monitoring (prevents system overload):
+#   LOKI_RESOURCE_CHECK_INTERVAL - Check resources every N seconds (default: 300 = 5min)
+#   LOKI_RESOURCE_CPU_THRESHOLD  - CPU % threshold to warn (default: 80)
+#   LOKI_RESOURCE_MEM_THRESHOLD  - Memory % threshold to warn (default: 80)
+#
+# Budget / Cost Limits (opt-in):
+#   LOKI_BUDGET_LIMIT            - Max USD spend before auto-pause (default: empty = unlimited)
+#                                  Example: "50.00" pauses session when estimated cost >= $50
+#
+# Security & Autonomy Controls (Enterprise):
+#   LOKI_STAGED_AUTONOMY    - Require approval before execution (default: false)
+#   LOKI_AUDIT_LOG          - Enable audit logging (default: true)
+#   LOKI_AUDIT_DISABLED     - Disable audit logging (default: false)
+#   LOKI_MAX_PARALLEL_AGENTS - Limit concurrent agent spawning (default: 10)
+#   LOKI_SANDBOX_MODE       - Run in sandboxed container (default: false, requires Docker)
+#   LOKI_ALLOWED_PATHS      - Comma-separated paths agents can modify (default: all)
+#   LOKI_BLOCKED_COMMANDS   - Comma-separated blocked shell commands (default: rm -rf /)
+#
+# OIDC / SSO Authentication (optional, works alongside token auth):
+#   LOKI_OIDC_ISSUER        - OIDC issuer URL (e.g., https://accounts.google.com)
+#   LOKI_OIDC_CLIENT_ID     - OIDC client/application ID
+#   LOKI_OIDC_AUDIENCE      - Expected JWT audience (default: same as client_id)
+#
+# SDLC Phase Controls (all enabled by default, set to 'false' to skip):
+#   LOKI_PHASE_UNIT_TESTS      - Run unit tests (default: true)
+#   LOKI_PHASE_API_TESTS       - Functional API testing (default: true)
+#   LOKI_PHASE_E2E_TESTS       - E2E/UI testing with Playwright (default: true)
+#   LOKI_PHASE_SECURITY        - Security scanning OWASP/auth (default: true)
+#   LOKI_PHASE_INTEGRATION     - Integration tests SAML/OIDC/SSO (default: true)
+#   LOKI_PHASE_CODE_REVIEW     - 3-reviewer parallel code review (default: true)
+#   LOKI_PHASE_WEB_RESEARCH    - Competitor/feature gap research (default: true)
+#   LOKI_PHASE_PERFORMANCE     - Load/performance testing (default: true)
+#   LOKI_PHASE_ACCESSIBILITY   - WCAG compliance testing (default: true)
+#   LOKI_PHASE_REGRESSION      - Regression testing (default: true)
+#   LOKI_PHASE_UAT             - UAT simulation (default: true)
+#
+# Autonomous Loop Controls (Ralph Wiggum Mode):
+#   LOKI_COMPLETION_PROMISE    - EXPLICIT stop condition text (default: none - runs forever)
+#                                Example: "ALL TESTS PASSING 100%"
+#                                Only stops when the AI provider outputs this EXACT text
+#   LOKI_MAX_ITERATIONS        - Max loop iterations before exit (default: 1000)
+#   LOKI_PERPETUAL_MODE        - Ignore ALL completion signals (default: false)
+#                                Set to 'true' for truly infinite operation
+#
+# Completion Council (v5.25.0) - Multi-agent completion verification:
+#   LOKI_COUNCIL_ENABLED          - Enable completion council (default: true)
+#   LOKI_COUNCIL_SIZE             - Number of council members (default: 3)
+#   LOKI_COUNCIL_THRESHOLD        - Votes needed for completion (default: 2)
+#   LOKI_COUNCIL_CHECK_INTERVAL   - Check every N iterations (default: 5)
+#   LOKI_COUNCIL_MIN_ITERATIONS   - Min iterations before council runs (default: 3)
+#   LOKI_COUNCIL_STAGNATION_LIMIT - Max iterations with no git changes (default: 5)
+#
+# Model Selection:
+#   LOKI_ALLOW_HAIKU           - Enable Haiku model for fast tier (default: false)
+#                                When false: Opus for dev/bugfix, Sonnet for tests/docs
+#                                When true:  Sonnet for dev, Haiku for tests/docs (original)
+#                                Use --allow-haiku flag or set to 'true'
+#
+# 2026 Research Enhancements:
+#   LOKI_PROMPT_REPETITION     - Enable prompt repetition for Haiku agents (default: true)
+#                                arXiv 2512.14982v1: Improves accuracy 4-5x on structured tasks
+#   LOKI_CONFIDENCE_ROUTING    - Enable confidence-based routing (default: true)
+#                                HN Production: 4-tier routing (auto-approve, direct, supervisor, escalate)
+#   LOKI_AUTONOMY_MODE         - Autonomy level (default: perpetual)
+#                                Options: perpetual, checkpoint, supervised
+#                                Tim Dettmers: "Shorter bursts of autonomy with feedback loops"
+#
+# Parallel Workflows (Git Worktrees):
+#   LOKI_PARALLEL_MODE         - Enable git worktree-based parallelism (default: false)
+#                                Use --parallel flag or set to 'true'
+#   LOKI_MAX_WORKTREES         - Maximum parallel worktrees (default: 5)
+#   LOKI_MAX_PARALLEL_SESSIONS - Maximum concurrent AI sessions (default: 3)
+#   LOKI_PARALLEL_TESTING      - Run testing stream in parallel (default: true)

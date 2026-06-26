@@ -1,0 +1,204 @@
+'use client'
+
+import Image from 'next/image'
+import { User, Trophy, ScrollText, Award, Star, Zap, Target, Crown, Medal, Flame, Sparkles } from 'lucide-react'
+import { TIER_COLOR_STYLES } from '@/lib/types/engagement'
+import { getTierIcon } from '@/lib/utils/tier-icons'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { QuestBadgeShowcase } from '@/components/profile/quest-badge-showcase'
+import { cn } from '@/lib/utils'
+import type { PublicProfile } from '@/lib/types/public-profile'
+
+interface AvatarProps {
+  url: string | null
+  name: string
+  size?: 'sm' | 'md' | 'lg'
+}
+
+/**
+ * Avatar component with fallback to initials
+ */
+function Avatar({ url, name, size = 'md' }: AvatarProps) {
+  const sizeClasses = {
+    sm: 'h-12 w-12 text-lg',
+    md: 'h-20 w-20 text-2xl',
+    lg: 'h-28 w-28 text-3xl',
+  }
+
+  const sizePx = {
+    sm: 48,
+    md: 80,
+    lg: 112,
+  }
+
+  const initials = name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
+
+  if (url) {
+    return (
+      <Image
+        src={url}
+        alt={`${name}'s avatar`}
+        width={sizePx[size]}
+        height={sizePx[size]}
+        className={cn(
+          'rounded-full object-cover ring-2 ring-border',
+          sizeClasses[size]
+        )}
+      />
+    )
+  }
+
+  return (
+    <div
+      className={cn(
+        'flex items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/60 font-semibold text-primary-foreground ring-2 ring-border',
+        sizeClasses[size]
+      )}
+    >
+      {initials || <User className="h-1/2 w-1/2" />}
+    </div>
+  )
+}
+
+interface StatCardProps {
+  icon: React.ReactNode
+  label: string
+  value: string | number
+  iconColorClass?: string
+}
+
+/**
+ * Small stat display component
+ */
+function StatCard({ icon, label, value, iconColorClass }: StatCardProps) {
+  return (
+    <div className="flex flex-col items-center gap-1 rounded-lg bg-muted/50 p-3">
+      <div className={iconColorClass || 'text-muted-foreground'}>{icon}</div>
+      <span className="text-xl font-bold">{value}</span>
+      <span className="text-xs text-muted-foreground">{label}</span>
+    </div>
+  )
+}
+
+/**
+ * Map achievement icon names to Lucide icons
+ */
+function getAchievementIcon(iconName: string, className?: string) {
+  const icons: Record<string, React.ReactNode> = {
+    trophy: <Trophy className={className} />,
+    star: <Star className={className} />,
+    zap: <Zap className={className} />,
+    target: <Target className={className} />,
+    crown: <Crown className={className} />,
+    medal: <Medal className={className} />,
+    flame: <Flame className={className} />,
+    sparkles: <Sparkles className={className} />,
+    award: <Award className={className} />,
+  }
+  return icons[iconName.toLowerCase()] || <Trophy className={className} />
+}
+
+interface PublicProfileCardProps {
+  profile: PublicProfile
+  highlightBadgeId?: string
+  className?: string
+}
+
+/**
+ * Public profile display card
+ * Shows user avatar, name, bio, stats, and achievements (if allowed)
+ */
+export function PublicProfileCard({ profile, highlightBadgeId, className }: PublicProfileCardProps) {
+  // Get tier icon and color styling
+  const TierIcon = getTierIcon(profile.tier_icon ?? 'Swords')
+  const tierColor = profile.tier_color ?? 'green'
+  const tierColorStyles = TIER_COLOR_STYLES[tierColor] ?? TIER_COLOR_STYLES.green
+
+  return (
+    <Card className={cn('overflow-hidden', className)}>
+      {/* Header with gradient background */}
+      <div className="h-24 bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20" />
+
+      <CardHeader className="-mt-12 flex flex-col items-center pb-4">
+        <Avatar url={profile.avatar_url} name={profile.display_name} size="lg" />
+        <CardTitle className="mt-4 text-2xl">{profile.display_name}</CardTitle>
+        {profile.bio && (
+          <CardDescription className="mt-2 max-w-md text-center">
+            {profile.bio}
+          </CardDescription>
+        )}
+      </CardHeader>
+
+      <CardContent className="space-y-6">
+        {/* Stats Grid */}
+        <div className="grid grid-cols-3 gap-4">
+          <StatCard
+            icon={<TierIcon className="h-5 w-5" />}
+            label="Skill Tier"
+            value={profile.tier_name ?? 'Apprentice'}
+            iconColorClass={tierColorStyles.text}
+          />
+          <StatCard
+            icon={<Trophy className="h-5 w-5" />}
+            label="Points"
+            value={profile.total_points.toLocaleString()}
+          />
+          <StatCard
+            icon={<ScrollText className="h-5 w-5" />}
+            label="Quests"
+            value={profile.quests_completed}
+          />
+        </div>
+
+        {/* Achievements Section */}
+        {profile.achievements && profile.achievements.length > 0 && (
+          <div className="space-y-3 pt-4 border-t">
+            <h3 className="flex items-center gap-2 font-semibold">
+              <Star className="h-5 w-5 text-yellow-500" />
+              Achievements
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {profile.achievements.map((achievement) => (
+                <div
+                  key={achievement.id}
+                  className="flex items-center gap-2 rounded-full bg-gradient-to-r from-yellow-100 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30 px-3 py-1.5 text-sm border border-yellow-200 dark:border-yellow-800"
+                  title={achievement.description}
+                >
+                  <span className="text-yellow-600 dark:text-yellow-400">
+                    {getAchievementIcon(achievement.icon, 'h-4 w-4')}
+                  </span>
+                  <span className="font-medium text-yellow-800 dark:text-yellow-200">
+                    {achievement.name}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Quest Badges Section */}
+        {profile.quest_badges && profile.quest_badges.length > 0 && (
+          <div className="space-y-3 pt-4 border-t">
+            <h3 className="flex items-center gap-2 font-semibold">
+              <Award className="h-5 w-5 text-amber-500" />
+              Quest Badges
+            </h3>
+            <QuestBadgeShowcase
+              badges={profile.quest_badges}
+              size="sm"
+              maxDisplay={10}
+              highlightBadgeId={highlightBadgeId}
+            />
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  )
+}
+
+export { Avatar, StatCard }
