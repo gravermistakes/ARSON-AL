@@ -101,7 +101,7 @@ purpose: target modeling, threat mapping, dossier building
     opack_migration: >
       FLAGGED. Per CLAUDE.md "OPACK Migration" — dissolve, then gamify through
       OPACK: agents/modules -> cells, recombine onto ops/substrate/opack ECS,
-      C++ handles branch/merge/prune/state, LLM for triage/paths/prose. Not yet
+      C++ handles branch/merge/prune/state, Agent for triage/paths/prose. Not yet
       recombined; lives as int/ recon for now.
     dropped: [_config/site scaffolding if any]
 

@@ -3,11 +3,11 @@
 
 Design proposals for the OPACK Migration (root `CLAUDE.md`). Goal: let the
 compiled flecs ECS own orchestration, state, branching/merging/pruning — so we
-stop spending an LLM **agent** on every coordination step. Agents are expensive,
+stop spending an Agent **agent** on every coordination step. Agents are expensive,
 drift, and serialize work; ECS systems are deterministic, parallel, and free.
 
 **The thesis:** most of what we'd use agents for is *dispatch and state*, not
-*reasoning*. Move dispatch/state into the ECS. Reserve the LLM for the few steps
+*reasoning*. Move dispatch/state into the ECS. Reserve the Agent for the few steps
 that genuinely need judgment. One reasoning service replaces a swarm.
 
 ## Vocabulary (how the arsenal maps onto flecs)
@@ -61,16 +61,16 @@ score crosses critical. No agent re-reads a transcript — it's a graph query.
 **Replaces:** every per-phase "validation agent" / "triage coordinator". One
 system per gate, running on all findings in parallel.
 
-## Proposal 3 — LLM as a scarce component (the one place agents survive)
+## Proposal 3 — Agent as a scarce component (the one place agents survive)
 
-Don't give every cell an LLM. A system that hits genuine ambiguity attaches
+Don't give every cell an Agent. A system that hits genuine ambiguity attaches
 `NeedsLLM{kind, prompt_ctx}` and stops. A **single reasoning drain system**
 batches every `NeedsLLM` entity per tick, makes one batched call, writes the
 verdict back as components, removes the tag.
 
 ```
 system anyGate ... if undecidable -> +NeedsLLM{kind: "triage", ctx: finding_id}
-system ReasoningDrain query: NeedsLLM   -> batch N, one LLM call, write verdicts, -NeedsLLM
+system ReasoningDrain query: NeedsLLM   -> batch N, one Agent call, write verdicts, -NeedsLLM
 ```
 
 Only four `kind`s ever need the model (per the root doc): **triage**,
@@ -124,7 +124,7 @@ control moves from prompt discipline to typed components.
 |---|---|
 | 1 dispatcher + 1 agent per module | systems matched by query (0 dispatch agents) |
 | 1 agent per phase/gate, serialized | 1 system per gate, parallel over all findings |
-| every agent holds an LLM | 1 batched `ReasoningDrain`, throttleable |
+| every agent holds an Agent | 1 batched `ReasoningDrain`, throttleable |
 | 1 agent per vuln class/skill | 1 detection system + N rule rows |
 | orchestration in transcripts | orchestration in tags + relationships (C++) |
 
@@ -136,7 +136,7 @@ bounded — instead of N agents each free-running.
 
 Build one vertical slice in `opack`: `Target -> Surface -> Candidate -> Finding`
 with Proposals 1–3 only (tool-as-system, tag gates, one ReasoningDrain). Wire
-exactly one probe (drogonsec), one gate (G3 exploit), one LLM kind (triage).
+exactly one probe (drogonsec), one gate (G3 exploit), one Agent kind (triage).
 Prove the loop runs with a single model call per ambiguous finding, then widen.
 
 — Crucible, 1782419851

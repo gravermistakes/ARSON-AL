@@ -100,25 +100,25 @@ Seeds are logged.
 
 Seed quality: something esoterically derived.
 
-## LLM connection
+## Agent connection
 
-Opaca connects to the LLM layer through multiple interfaces, in
+Opaca connects to the Agent layer through multiple interfaces, in
 priority order:
 
-1. **MCP server** — Opaca exposes its kits as MCP tools. The LLM
+1. **MCP server** — Opaca exposes its kits as MCP tools. The Agent
    can call `switch_kit`, `get_findings`, `submit_report`, `spawn_actor`.
    This is the primary interface for Claude Code integration.
 
 2. **Stdin/stdout** — For direct Claude Code piping. Opaca reads
    structured commands, emits structured results. JSON lines.
 
-3. **HTTP** — REST API for non-Claude LLMs or dashboards. POST to
+3. **HTTP** — REST API for non-Claude Agents or dashboards. POST to
    `/actor/{id}/switch_kit`, GET `/findings`, etc.
 
-The LLM does NOT run every step. The actors run their kits
+The Agent does NOT run every step. The actors run their kits
 autonomously — compiled OCaml executing the deterministic parts
 (scope gating, evidence checks, severity scoring, dedup, state
-management). The LLM gets called only when:
+management). The Agent gets called only when:
 
 - **Triage judgment** — is this finding real or a false positive? (pushes to human)
 - **Attack path generation** — given these surfaces, what's the play?

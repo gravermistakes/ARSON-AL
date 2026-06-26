@@ -52,7 +52,7 @@ A kit is a bundle of tools for a purpose plus the rules for when to leave it. (t
 
 The outside drives Opaca through, in priority order:
 
-1. **MCP server (primary)** — kits exposed as tools; the LLM calls `switch_kit`,
+1. **MCP server (primary)** — kits exposed as tools; the Agent calls `switch_kit`,
    `get_findings`, `submit_report`, `spawn_actor`. This is the Claude Code path.
 2. **Plugin / stdio bridge** — JSON-lines in/out for direct piping. (i.e marketplace.json plugin.json)
 3. **custom API**.

@@ -1,6 +1,6 @@
 # Dissolution: advanced_evolution → ops/optimizer
 
-**Wave:** 2 | **Date:** 2026-06-26 | **Verb-Based Sorting:** Genetic algorithm + LLM-guided mutation + Configuration evolution
+**Wave:** 2 | **Date:** 2026-06-26 | **Action-based sorting:** Genetic algorithm + autonomous mutation + configuration evolution
 
 ## Functional Units Table
 
@@ -52,20 +52,10 @@ Finding arrives: "SQLi in login, standard payloads blocked"
 ## Implementation Notes
 
 **Python caveat:** Uses Python (violates ARSON-AL's "no Python when practical" rule). Justification:
-- Genetic algorithm + LLM-guided mutation is naturally expressive in Python
+- Genetic algorithm + mutation/scoring loop is naturally expressive in Python
 - Evolved configs (JSON/TOML) are language-agnostic
 - Can be called via subprocess from Rust/Go Opaca core
 - Alternative: Rewrite in Rust (higher effort, less readable)
-
-**LLM guidance**: The evolver can be enhanced with LLM-driven mutation suggestions:
-```python
-# Future enhancement
-suggestion = llm.suggest_mutation(
-    problem_type="SQLi WAF bypass",
-    previous_winners=[payload1, payload2],
-    generation=15
-)
-```
 
 ## Ported in full
 
@@ -75,6 +65,5 @@ Full repo vendored at `ops/actors/advanced_evolution` (~1.1M; PR #12, see ../POR
 
 1. **Integrate into Opaca's learning loop** — When finding confirmed exploitable, trigger evolution
 2. **Define fitness rubric** per vulnerability class (SQLi fitness ≠ XSS fitness ≠ crypto fitness)
-3. **Implement LLM guidance** (optional enhancement for mutation suggestions)
-4. **Export evolved configs** as Opaca's probes/picks/proofs update their TOML configs
-5. **Measure transfer**: Do evolved payloads work on similar targets? (e.g., SQLi payloads learned on Target A work on Target B?)
+3. **Export evolved configs** as Opaca's probes/picks/proofs update their TOML configs
+4. **Measure transfer**: Do evolved payloads work on similar targets? (e.g., SQLi payloads learned on Target A work on Target B?)

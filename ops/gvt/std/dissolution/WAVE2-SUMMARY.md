@@ -87,7 +87,7 @@ Full Synaptic-Mesh repo (100+ GB test harness) on follow-up clone
 ### D. advanced_evolution → ops/optimizer
 
 **Destination Dir:**
-- `ops/optimizer/advanced_evolution/` — Genetic algorithm + LLM-guided kit mutation
+- `ops/optimizer/advanced_evolution/` — Genetic algorithm + Agent-guided kit mutation
 
 **What Landed:**
 - pyproject.toml (Python dependencies)
@@ -107,7 +107,7 @@ Full Python codebase on follow-up clone
 - Record evolution history (learning_log.py)
 - Persist evolved configs (storage.py)
 
-**Implementation Note:** Python-based (violates "no Python" rule, but justified: LLM-guided mutation is naturally expressive in Python; evolved configs are language-agnostic).
+**Implementation Note:** Python-based (violates "no Python" rule, but justified: Agent-guided mutation is naturally expressive in Python; evolved configs are language-agnostic).
 
 ---
 
@@ -171,7 +171,7 @@ Full loki-mode repo (370K+ lines, Playwright test suite) on follow-up
 - Treat as working reference, not production-ready
 
 ### advanced_evolution (Python)
-- Violates "no Python" rule, but LLM-guided mutation naturally suited to Python
+- Violates "no Python" rule, but Agent-guided mutation naturally suited to Python
 - Export evolved configs as language-agnostic TOML → importable by Rust/Go probes
 
 ### loki-mode (Competing System)

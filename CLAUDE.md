@@ -115,7 +115,7 @@ Loops run concurrently. probes/ doesn't finish before picks/ starts.
 Dissolve shodansnipe the same way as everything else. Gamify thru OPACK.
 Its agents and modules become cells. Recombine onto OPACK ECS. Score it.
 Compiled C++ handles branching/merging/pruning/state.
-LLM for triage, attack paths, report prose, problem solving.
+Agent for triage, attack paths, report prose, problem solving.
 
 ## Deeper claude.md
 

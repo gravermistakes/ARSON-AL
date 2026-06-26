@@ -8,7 +8,7 @@ against the `R#` requirements defined here.
 ## 0. One-line
 
 A multicore swarm of cheap, isolated, hot-swappable **actor-cells** over an **ECS**
-world, doing mostly async I/O (network, subprocess, LLM), that **gamifies** found
+world, doing mostly async I/O (network, subprocess, Agent), that **gamifies** found
 bugs into a deterministic score — driven by tools and reached up to by outside AI
 peers, with the human on the outer ring.
 
@@ -16,7 +16,7 @@ peers, with the human on the outer ring.
 
 - **Workload is I/O-bound, not CPU-bound.** The engine *coordinates*: fan out
   HTTP/DNS/socket probes, shell out to native scanners, wait on OAST callbacks,
-  call LLM APIs. Heavy CPU (parsing, fuzzing, SAST) is done by external cells
+  call Agent APIs. Heavy CPU (parsing, fuzzing, SAST) is done by external cells
   (Go/Crystal/C tools) the engine supervises — not in the engine itself.
 - **Fan-out is huge and bursty.** One scope explodes into thousands of
   surfaces → candidates → findings. Each wants to be its own unit of work.
@@ -34,7 +34,7 @@ peers, with the human on the outer ring.
 | **R1** | **Actor-level isolation** — each cell owns its state + mailbox; async message passing; no shared mutable state / no data races by construction | a crashing/compromised cell must not corrupt the world; offensive code must be sandboxable |
 | **R2** | **Massive lightweight concurrency** — 10⁴–10⁶ cheap-to-spawn cells (one per surface/candidate/finding) | fan-out is per-entity, not per-thread |
 | **R3** | **True multicore parallelism** — cells run in parallel across cores, preemptively scheduled | scan/recon loops must saturate the box |
-| **R4** | **Async, non-blocking I/O** — a blocked socket/subprocess/LLM call never stalls other cells | the engine is mostly waiting on I/O |
+| **R4** | **Async, non-blocking I/O** — a blocked socket/subprocess/Agent call never stalls other cells | the engine is mostly waiting on I/O |
 | **R5** | **Supervision / fault tolerance** — "let it crash"; restart strategies; a dead cell is contained and recoverable | tools and targets fail constantly |
 | **R6** | **Hot-swappable cells** — load/unload/upgrade a cell (and its code) at runtime without restarting the world | the operator adds kits/tools mid-hunt; the world (sandbox) outlives any actor |
 | **R7** | **ECS world model** — entities + components + queried systems; the world is the durable sandbox, cells are the systems | matches the dissolution model; decouples data from behavior |
@@ -60,7 +60,7 @@ peers, with the human on the outer ring.
 2. **Native cells** — perf/FFI-heavy probes & scanners (SAST, fuzzers, packet work).
    **S2, R9 dominate.** Can be a *different* language called over ports/FFI/MCP.
 3. **Reasoning peers** — the two outside AI cells (Claude). Not in this language at
-   all; reached over HTTP/MCP. The engine only needs an `LLM`/`NeedsJudgment`
+   all; reached over HTTP/MCP. The engine only needs an `Agent`/`NeedsJudgment`
    component + a drain that calls out.
 
 ## 5. Explicit non-goals (v1)
