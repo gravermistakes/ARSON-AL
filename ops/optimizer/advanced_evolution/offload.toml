@@ -1,0 +1,22 @@
+[offload]
+max_parallel = 1
+test_timeout_secs = 120
+sandbox_project_root = "/app"
+
+[provider]
+type = "modal"
+dockerfile = ".devcontainer/Dockerfile"
+include_cwd = true
+
+[framework]
+type = "pytest"
+paths = ["darwinian_evolver/"]
+command = "uv run --group test pytest"
+
+[groups.all]
+retry_count = 0
+
+[report]
+output_dir = "test-results"
+junit = true
+junit_file = "junit.xml"

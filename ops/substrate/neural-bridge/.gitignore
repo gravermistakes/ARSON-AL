@@ -1,0 +1,70 @@
+# Rust/Cargo
+target/
+Cargo.lock
+**/*.rs.bk
+*.pdb
+
+# WASM build outputs
+pkg/
+pkg-*/
+wasm-pack.log
+
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Build artifacts
+dist/
+build/
+out/
+*.wasm
+*.js.map
+
+# Benchmarks and profiling
+bench_results/
+flamegraph.svg
+perf.data*
+callgrind.out.*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Testing
+coverage/
+test-results/
+screenshots/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Documentation builds
+target/doc/
+book/
+
+# Editor backups
+*~
+*.bak
+*.orig
+
+# Profiling
+*.prof
+*.trace

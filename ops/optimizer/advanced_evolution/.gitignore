@@ -1,0 +1,16 @@
+# Python egg info
+*.egg-info/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Build artifacts
+*.so
+build/
+dist/
+
+# Offload
+test-results/
+.offload-cache/
