@@ -6,7 +6,7 @@ Everything else sorted by what it *mechanically does*.
 ## Structure
 
 ```
-ops/        orchestration, standards, substrate, build tooling
+ops/        the engine + how we work -- actors/ mem/ std/ hyg/
 int/        target modeling, threat mapping, dossier building, scope parsing
 probes/     enumeration, fingerprinting, endpoint extraction, surface discovery
 picks/      fuzzers, bypass techniques, injection payloads — ways in
@@ -16,8 +16,12 @@ staging/    raw clones before dissolution (gitignored)
 
 ## What goes where
 
-**ops/** — coding standards (ponytail ladder), compliance frameworks (AST10),
-ECS substrate (OPACK), orchestration scripts, CI/CD tooling.
+**ops/** -- the engagement engine and the standards it runs under, in four
+buckets: **actors/** (engine + runtimes: opack/Opaca, ruv-fann, synaptic-mesh,
+neural-bridge, loki-mode, advanced_evolution, guild-hall), **mem/** (memory +
+scoring/state), **std/** (standards of practice: ponytail ladder, dissolution +
+research methodology), **hyg/** (hygiene: AST10 compliance, quality gates,
+DeTTECT coverage).
 
 **int/** — threat diagrams, ATT&CK technique mappings, scope parsers,
 investigation case files, social media profilers, target dossier builders,
