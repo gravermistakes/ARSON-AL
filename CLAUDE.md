@@ -8,8 +8,9 @@ Everything else sorted by what it *mechanically does*.
 ```
 ops/        the engine, dissolved by function -- actors/ gaming/ mem/ gvt/
 int/        target modeling, threat mapping, dossier building, scope parsing
-probes/     enumeration, fingerprinting, endpoint extraction, surface discovery
-picks/      fuzzers, bypass techniques, injection payloads — ways in
+probes/     maps, enum, scrapers, crawlers
+picks/      fuzzers, crackers, extractors
+paths/      backdoors, c2, traversals
 proofs/     PoC templates, exploit chains, triage validation, report generation
 .scaff/     parked scaffolding (product UI, build, docs) -- root level
 staging/    raw clones before dissolution (gitignored)
@@ -32,9 +33,13 @@ company/person/infrastructure research tools.
 content discoverers, tech fingerprinters, SPA spiders, secret detectors,
 SAST analyzers, SCA dependency checkers, DNS resolvers.
 
-**picks/** — fuzzers, WAF bypass payloads, injection techniques (SSTI/SQLi/XSS/XXE),
-credential testers, auth bypass methods, deserialization exploits,
-request smuggling tools, prototype pollution, custom attack extension generators.
+**picks/** — fuzzers, crackers, extractors: SQLi/XSS/XXE/SSTI/SSRF tools,
+password crackers, WAF evasion, deserialization, request smuggling, custom
+attack extensions. The firing tools.
+
+**paths/** — backdoors, C2, traversals: persistent access vehicles, C2
+frameworks and traffic profiles, directory traversal, file inclusion. The ways
+back in.
 
 **proofs/** — PoC templates, exploit chain builders, triage simulators,
 economic impact models, OAST blind confirmations, CVSS scorers,
