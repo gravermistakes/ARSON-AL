@@ -35,15 +35,9 @@ Verb-based decomposition:
 
 **Substrate role**: Sits at the **inference boundary** — every scoring decision (triage: true-positive or false-positive? finding severity: critical or medium?) goes through the neural-bridge WASM module.
 
-## Bulk Deferred
+## Ported in full
 
-Full repo with all WASM build artifacts and benchmarks marked for follow-up:
-```bash
-bulk: clone /home/user/ruv-fann-neural-bridge -> /home/user/ARSON-AL/ops/substrate/neural-bridge/
-# Includes: Full build output, WASM modules, performance benchmarks
-```
-
-Currently copied: Core lib.rs + Cargo.toml + SIMD config + README (structure captured).
+Full repo vendored at `ops/actors/neural-bridge` (~416K; PR #12, see ../PORT-LOG.md) - .git and build artifacts excluded. Nothing deferred.
 
 ## Next Steps
 

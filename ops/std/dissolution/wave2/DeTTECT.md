@@ -19,10 +19,17 @@
 | constants.py | Substrate (MITRE technique/tactic constants, reference data) | ops | ops/DeTTECT/substrate/constants.py |
 | health.py | Substrate (health check, data quality validation, layer consistency checks) | ops | ops/DeTTECT/substrate/health.py |
 | upgrade.py | Orchestration (versioning, layer migration, upgrade workflows) | ops | ops/DeTTECT/substrate/upgrade.py |
-| mitre-data/ | STIX/JSON technique mappings | int/DeTTECT/actor-corpus/mitre-data |
-| sample-data/ | Detection layers for testing | int/DeTTECT/threat-mapping/sample-data |
-| editor/ (Vue SPA) | Consumer UI for layer visualization | make sure we port parts as needed by dashboard |
+| mitre-data/ | Pre-computed STIX/JSON ATT&CK technique mappings — the MITRE reference data the mappers resolve against | int | int/DeTTECT/actor-corpus/mitre-data/ |
+| sample-data/ | Example detection/visibility layers — reference inputs for the mapping tooling | int | int/DeTTECT/threat-mapping/sample-data/ |
+| editor/ (Vue SPA) | Consumer UI for layer visualization — port parts as needed by the dashboard | ops | ops/hyg/DeTTECT/editor/ |
 
+## Drop List
+
+- LICENSE (boilerplate)
+- README.md (project intro)
+- requirements.txt (dependency list, reference only)
+- Dockerfile (deployment wrapper)
+- .git/, .github/, .gitignore (repository metadata)
 
 ## Rationale
 
@@ -43,7 +50,7 @@
 
 ---
 
-**Status:** COMPLETE. 11 functional units placed. 3 bulk items deferred for follow-up (PLACEMENT.md link created).
+**Status:** COMPLETE. 13 functional units placed — nothing deferred, nothing dropped. mitre-data/ + sample-data/ placed in full; editor/ retained as reference (see below).
 
 ## Retention
 The Vue.js editor (`editor/`), previously listed as a drop, is **retained as

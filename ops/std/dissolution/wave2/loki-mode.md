@@ -29,7 +29,7 @@
 - `.git/`, `.github/` — Version control
 - `.loki/` state files (session.json, etc.) — Runtime state, not part of codebase
 - `.loki-test-tmp/` — Test scaffolding
-- `web-app/` (frontend build) — Defer full build to follow-up
+- `web-app/` ported as source; build artifacts excluded (rebuild on demand).
 - `vscode-extension/` — IDE plugin (not core to Opaca)
 - Large test suites (dashboard E2E tests with Playwright) — Reference only
 
@@ -93,15 +93,9 @@ loki-mode is a **complete competing system** — it has full CLI, dashboard, mul
 
 Opaca will recombine these patterns onto its own substrate (OPACK/C++ engine + neural layer).
 
-## Bulk Deferred
+## Ported in full
 
-Full loki-mode repo (370K+ lines, extensive Docker/CI, Playwright test suite) marked for follow-up:
-```bash
-bulk: clone /home/user/loki-mode -> /home/user/ARSON-AL/ops/orchestration/loki-mode/
-# Use selectively: autonomy/ is essential, dashboard/ is optional, web-app/ is reference only
-```
-
-Currently copied: SKILL.md + autonomy core (run.sh excerpt) + quality-gates.md + memory code (structure captured).
+Full repo vendored at `ops/actors/loki-mode` (~45M; PR #12, see ../PORT-LOG.md) - .git and build artifacts excluded. Nothing deferred.
 
 ## Next Steps (Implementing Opaca)
 

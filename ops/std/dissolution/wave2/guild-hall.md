@@ -12,11 +12,9 @@
 | netlify.toml (Security headers section) | Baseline defense (X-Frame-Options, X-Content-Type-Options, CSP, Permissions-Policy reference) | ops | ops/gamification/guild-hall/security-headers-baseline.toml |
 | CLAUDE.md (Campaign Mode, quest/points/badges/tiers/leaderboard sections) | Gamification substrate + orchestration methodology (engagement model; quest lifecycle; reward calculation; multi-player coordination) | ops | ops/gamification/guild-hall/orchestration-methodology.md |
 
-## Bulk/Deferred Items
+## Placed in full
 
-| Item | Reason | Note |
-|------|--------|------|
-| supabase/migrations/, supabase/functions/ | Database schema + edge functions; tied to specific remote Supabase deployment | bulk: copy on follow-up if architectural interest; otherwise remains product-code |
+`supabase/migrations/` + `supabase/functions/` retained at `ops/actors/guild-hall/app-reference/supabase/` (PR #13 retention). Nothing deferred.
 
 ## Drop List
 

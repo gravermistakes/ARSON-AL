@@ -36,15 +36,9 @@ ruv-FANN is the **neural compute substrate** for Opaca — the learned intellige
 
 **Key overlap with Opaca:** ruv-swarm's branch/merge/prune + learned scoring is the reference architecture Opaca will recombine. The swarm is **not** Opaca itself, but a working proof-of-concept that demonstrates ephemeral neural intelligence orchestration.
 
-## Bulk Deferred
+## Ported in full
 
-Full repo (1.8GB+, 70+ crates) marked for follow-up clone:
-```bash
-bulk: clone /home/user/ruv-FANN -> /home/user/ARSON-AL/ops/substrate/ruv-fann/
-# Includes: ml-training/ (evolution loop), benchmarks/, examples/ (full suite)
-```
-
-Currently copied: Core Cargo.toml + lib.rs + README (structure captured, light).
+Full repo vendored at `ops/actors/ruv-fann` (~70M; PR #12, see ../PORT-LOG.md) - .git and build artifacts excluded. Nothing deferred.
 
 ## Next Steps
 

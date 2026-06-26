@@ -67,15 +67,9 @@ suggestion = llm.suggest_mutation(
 )
 ```
 
-## Bulk Deferred
+## Ported in full
 
-Full repo (research experiments, large test suites, visualization) marked for follow-up:
-```bash
-bulk: clone /home/user/advanced_evolution -> /home/user/ARSON-AL/ops/optimizer/advanced_evolution/
-# Includes: Full experiment logs, example problems, visualization code
-```
-
-Currently copied: Core Python modules + pyproject.toml + README (structure captured).
+Full repo vendored at `ops/actors/advanced_evolution` (~1.1M; PR #12, see ../PORT-LOG.md) - .git and build artifacts excluded. Nothing deferred.
 
 ## Next Steps
 

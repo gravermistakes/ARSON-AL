@@ -21,7 +21,7 @@
 
 - `.git/`, `.github/workflows/` — Version control
 - `temp-publish/`, `publish-ready/`, staging dirs — Not active units
-- Large test harness (100+ GB) — Defer to follow-up clone if building distributed Opaca
+- Test harness + standalone-crates ported in full (~118M after dedup; the "100+ GB" estimate was wrong).
 - `test-workspace/`, `test-synaptic/` — Dev scaffolding
 
 ## Rationale
@@ -53,16 +53,9 @@ Synaptic-Mesh is a **working prototype**, not production-ready:
 3. Wire neural-mesh's ensemble voting for high-confidence decisions
 4. Skip marketplace escrow initially (implement reputation tracking first)
 
-## Bulk Deferred
+## Ported in full
 
-Full Synaptic-Mesh repo (100+ GB test harness) marked for follow-up:
-```bash
-bulk: clone /home/user/Synaptic-Mesh -> /home/user/ARSON-AL/ops/substrate/synaptic-mesh/
-# Caution: Select only standalone-crates/ for production.
-# Drop test suites and Docker layer unless building full mesh validation.
-```
-
-Currently copied: Cargo.toml + README + core crate manifests (structure captured).
+Full repo vendored at `ops/actors/synaptic-mesh` (~118M after dedup; PR #12, see ../PORT-LOG.md) - .git and build artifacts excluded. Nothing deferred.
 
 ## Next Steps (Multi-Node Opaca)
 
