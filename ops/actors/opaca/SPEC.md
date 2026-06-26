@@ -43,6 +43,15 @@ to stay in a kit, which target element next). So:
 Seeds are logged and forkable (a child actor forks the parent's PRNG). This is
 the whole "intelligence": cheap, fast, reproducible, swarmable. No per-step LLM.
 
+**Difficulty (default: hard).** Like a game AI's easy/normal/hard, the gamebot
+runs at a difficulty that tunes its aggression. **Hard** = explore deeper before
+moving on, try the full tactic set on each surface, switch to exploit the instant
+a vuln-kind finding lands, and persist longer before pruning a hypothesis
+(exhaust the kit, not the patience). Easy = shallow and cheap. Difficulty scales
+three knobs — exploration depth, kit-tactic breadth, prune threshold — and
+nothing else: it never relaxes the scope invariant or the evidence gates. Default
+hard; the arsenal hunts to win.
+
 **Check:** run one actor twice on a fixed finding-feed with the same seed; assert
 identical kit sequence + findings. Re-run with a new seed; assert a different
 path over the same surface.
