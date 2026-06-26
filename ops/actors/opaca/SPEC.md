@@ -1,9 +1,7 @@
 
 # Opaca — skeleton spec
 
-One doc. The skeleton: what Opaca is, how the outside connects, how kits are
-formatted and used, how an actor works, and how it fits together. Architecture
-is in [`../OPACA.md`](../OPACA.md); engine requirements in
+ [`../OPACA.md`](../OPACA.md); engine requirements in
 [`../SWARM-ECS-SPEC.md`](../SWARM-ECS-SPEC.md). OCaml shown is shape, not syntax.
 
 ## 1. What Opaca is
@@ -17,14 +15,13 @@ of dying. Loops are only soft-coded; their strength
 Riot supervises so one crash doesn't sink the engagement.
 
 The dividing line: compiled OCaml does everything deterministic (scope gating,
-evidence checks, severity scoring, dedup, state, kit-switching). The Agent is an
-**tactician** consulted only for judgment (PoC Building,
+evidence checks, severity scoring, dedup, state, kit-switching). The Agent is a **tactician** consulted only for judgment (PoC Building,Verification,
 Complex Linkage patterns, attack-paths,report prose, a tool
 failure the rules don't cover, kit-selection ambiguity).
 
 ## 2. The actor — stochastic semi-deterministic gamebot
 
-An actor is game-enemy-AI grade, not Agentic grade. Its loop:
+An actor is game-enemy grade, not Agentic grade. Its loop:
 
 
 EXAMPLE - NOT LITERAL
@@ -38,7 +35,7 @@ loop:
 ```
 
 **Semi-deterministic.** Rules are fixed and compiled; the **SplitMix64 seed** (maybe different seeds tho)
-supplies all randomness (kit-switch tiebreak, tool order at forks within a kit, how long
+supplies randomness (kit-switch tiebreak, tool order at forks within a kit, how long
 to try a kit, which target element next). So:
 
 - same seed + same target + same kits + same 'timestamp' + same rules -> identical traversal (replay)
@@ -57,44 +54,33 @@ The outside drives Opaca through, in priority order:
 
 1. **MCP server (primary)** — kits exposed as tools; the LLM calls `switch_kit`,
    `get_findings`, `submit_report`, `spawn_actor`. This is the Claude Code path.
-2. **Plugin / stdio bridge** — JSON-lines in/out for direct piping.
-3. **HTTP REST** — `POST /actor/{id}/switch_kit`, `GET /findings`, … for
-   dashboards / non-Claude callers.
+2. **Plugin / stdio bridge** — JSON-lines in/out for direct piping. (i.e marketplace.json plugin.json)
+3. **custom API**.
 
 All three are thin shells over the same engine verbs; none of them *is* the
-engine. Riot provides the socket/TCP IO and `--json` structured output.
+engine. Riot provides the socket/TCP IO and structured output.
 
 ## 5. How it fits together
 
 ```
-Opaca (root supervisor)
-├── KitRegistry            loads kit data, resolves tool paths, serves kits by name
-├── Store (SQLite)         world + findings + actor state + seed log + scores
-├── TargetSupervisor(t)    per target
-│   ├── Actor (seed a)     gamebot in some kit
-│   ├── Actor (seed b)     …concurrent, different seed
-│   └── ChainActor         background: subscribes to all findings, braids P3s -> P1
-└── Interfaces             MCP / stdio / HTTP shells over the engine verbs
+Opaca (Spine, interfaces here)
+├── TargetSupervisor(t)    per entrance point & tree
+│   ├── Actor (seed a)     gamebot, grabs kit t assigned
+│   ├── Actor (seed b)     concurrent, different seed
+│   └── ChainActor         background: records everything categorically
+ 
 ```
 
 - **Findings** are typed (surface | vuln | exploit | chain | report), carry
-  CWE/CVSS/evidence and relations (`DerivedFrom`, `ChainsWith`, `EvidenceFor`),
-  and live in the Store as the world. Illegal transitions (report before a
-  confirmed validation) are unrepresentable.
-- **Scope invariant**: no tool emits toward a target element absent from the
-  authorized manifest — enforced in compiled code before any adapter fires;
-  out-of-scope -> drop + log + score penalty, never send.
-- **Scoring**: deterministic, replayable, per engagement thread (P1=100/P2=50/
-  P3=20/P4=5, chain bonus, FP-avoided bonus, crash penalty, time-to-finding).
-  Score feeds kit selection — learned preference, not hardcoded (the `ops/mem`
-  + `ops/actors/ruv-fann` learning layer).
-- **Persistence**: SQLite, one embedded DB, no external server. Snapshot =
-  reopen the DB; replay = re-run a logged seed.
+  CWE/CVSS/evidence, distance from entry point and relations (`DerivedFrom`, `ChainsWith`, `EvidenceFor`),
+  and live in the Store as the world. Illegal transitions (report before a confirmed validation) are not findings.
+- **Scope invariant**: out-of-scope -> drop + log + score penalty : 5 fails = cull ; stored to neural mesh
+- **Scoring**: deterministic, replayable, per engagement thread ( chain bonus, FP-avoided bonus, crash penalty, time-to-finding scalar, drain cost, ).
+  Score feeds kit selection — learned preference (the `ops/mem` + `ops/actors/ruv-fann` learning layer).
+- **Persistence**:
 
 ## 6. What's decided vs open
 
 Decided: actor=gamebot (seeded semi-deterministic); kits=declarative plug-and-play;
-store=SQLite; MCP primary. Open (defer): exact kit-file syntax, the SQLite schema,
-which OCaml effect/scheduler details Riot settles on. Build order follows §5
-top-down: Store + KitRegistry, then one Actor + one kit over stdio, then MCP,
-then concurrency + ChainActor.
+Open (defer): exact kit-file syntax, memory base,
+which OCaml effect/scheduler details Riot settles on, Build order.
