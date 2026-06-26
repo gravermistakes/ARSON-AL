@@ -49,20 +49,18 @@ targets for the Opaca build:
 | capability | equivalent implementations | canonical candidate |
 |------------|----------------------------|---------------------|
 | **agent/swarm orchestration** | `ruv-swarm` (ruv-fann) · `daa-swarm` (synaptic-mesh) · `loki-mode/swarm` · Opaca actors | Opaca actors on OPACK |
-| **engagement loop** | loki RARV (Reason-Act-Reflect-Verify) · Opaca kit-switch loop · ruv-swarm orchestration | Opaca kit-switch rules |
-| **neural inference** | ruv-fann core · neural-bridge (WASM) · synaptic-neural-wasm / kimi-fann | one scoring engine in `mem/` |
-| **scoring / economics** | guild-hall gamification · Opaca severity score (P1=100…) · loki token-economics / ToolOrchestra · synaptic `claude_market` reputation | Opaca gamified score |
-| **gated / adversarial verification** | ruvn (scout→grade→synth→fact-check→cite) · loki quality-gates (3-reviewer + anti-sycophancy) · Scorpio sentinel→auditor · lance 7-gate / bug-reaper 4-phase (wave-1) | one proofs/ validation gate |
-| **memory system** | loki episodic/semantic/procedural · ruv-swarm-persistence · agentdb / reasoningbank patterns | `mem/` unified store |
-| **ATT&CK technique mapping** | DeTTECT `group_mapping` + actor corpus (`hyg/`) · `int/mitre-attack` (wave-1) | one ATT&CK index in int/ |
+| **engagement loop** | loki RARV (Reason-Act-Reflect-Verify) · Opaca kit-switch loop · ruv-swarm orchestration | Opaca behavioral biases |
+| **neural inference** | ruv-fann core · neural-bridge (WASM) · synaptic-neural-wasm / kimi-fann | multiple scoring engine in `gaming/` |
+| **scoring / economics** | guild-hall gamification · Opaca severity score (P1=100…) · loki token-economics / ToolOrchestra · synaptic `claude_market` reputation | multi-layered gaming |
+| **gated / adversarial verification** | ruvn (scout→grade→synth→fact-check→cite) · loki quality-gates (3-reviewer + anti-sycophancy) · Scorpio sentinel→auditor · lance 7-gate / bug-reaper 4-phase (wave-1) | tiered validation gate systems (different usecases, dimms) |
+| **memory system** | loki episodic/semantic/procedural · ruv-swarm-persistence · agentdb / reasoningbank patterns |  layered stores |
+| **ATT&CK technique mapping** | DeTTECT `group_mapping` + actor corpus (`hyg/`) · `int/mitre-attack` (wave-1) | one index made from combining |
 | **distributed consensus** | QuDAG QR-Avalanche (synaptic) · loki BFT/raft swarm | QuDAG (only if multi-node) |
 
 ## Implication
 
 Literal-dup rows prune to one copy (most of synaptic-mesh's and ruv-fann's
-redundant bytes). Homomorph rows collapse to one canonical on the OPACK/Opaca
-substrate. This file is the dedup index; the per-repo wave-2 manifests
-cross-reference it.
+redundant bytes). Homomorph rows collapse to one canonical on Opaca. This file is the dedup index; the per-repo manifest boss-references it.
 
 ## Pruned — pass 1 (synaptic-mesh)
 
