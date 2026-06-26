@@ -17,7 +17,7 @@ that genuinely need judgment. One reasoning service replaces a swarm.
 - **Component** — data on an entity: `Scope{authorized}`, `Endpoint{method,path}`,
   `Class{ssti}`, `Severity{cvss}`, `Economic{capital,profit}`.
 - **Tag** — a zero-size state marker: `Theoretical`, `Reproduced`, `Accepted`,
-  `Rejected`, `NeedsLLM`.
+  `Rejected`, `NeedsAgent`.
 - **System** — a query + a function. **This is where a dissolved tool lives.**
 - **Relationship** — a typed edge: `(DerivedFrom, parent)`, `(EvidenceFor, finding)`.
 
@@ -64,13 +64,13 @@ system per gate, running on all findings in parallel.
 ## Proposal 3 — Agent as a scarce component (the one place agents survive)
 
 Don't give every cell an Agent. A system that hits genuine ambiguity attaches
-`NeedsLLM{kind, prompt_ctx}` and stops. A **single reasoning drain system**
-batches every `NeedsLLM` entity per tick, makes one batched call, writes the
+`NeedsAgent{kind, prompt_ctx}` and stops. A **single reasoning drain system**
+batches every `NeedsAgent` entity per tick, makes one batched call, writes the
 verdict back as components, removes the tag.
 
 ```
-system anyGate ... if undecidable -> +NeedsLLM{kind: "triage", ctx: finding_id}
-system ReasoningDrain query: NeedsLLM   -> batch N, one Agent call, write verdicts, -NeedsLLM
+system anyGate ... if undecidable -> +NeedsAgent{kind: "triage", ctx: finding_id}
+system ReasoningDrain query: NeedsAgent   -> batch N, one Agent call, write verdicts, -NeedsAgent
 ```
 
 Only four `kind`s ever need the model (per the root doc): **triage**,
@@ -79,7 +79,7 @@ else is deterministic.
 
 **Replaces:** N task-specific agents with **1** batched reasoning service. This
 is the biggest agent-count cut — and it caps token spend by construction
-(`NeedsLLM` queue length is observable and throttleable).
+(`NeedsAgent` queue length is observable and throttleable).
 
 ## Proposal 4 — Skills/playbooks as data, not actors (knowledge cells)
 
@@ -129,7 +129,7 @@ control moves from prompt discipline to typed components.
 | orchestration in transcripts | orchestration in tags + relationships (C++) |
 
 Net: agents collapse to **~1 reasoning service** plus deterministic systems.
-Token cost becomes the length of the `NeedsLLM` queue, which is measurable and
+Token cost becomes the length of the `NeedsAgent` queue, which is measurable and
 bounded — instead of N agents each free-running.
 
 ## Smallest first step
