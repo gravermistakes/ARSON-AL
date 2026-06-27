@@ -5,10 +5,14 @@ The score + reward layer. Mother folder for spec'ing per the "merge these"
 note. Sections fill in from multiple-choice answers; TBD = still pending.
 
 ## Bucket shape
-**Flat `ops/gaming/`** *(defaulted; redirect if wrong)*. score and reward
-collapse into one bucket — they're facets of the same loop, not sibling
-mechanisms. Matches the "merge these" note and ponytail (no sub-dirs for
-distinctions that don't earn them).
+**`ops/gaming/score/` + `ops/gaming/rep/`.** Two sub-buckets:
+- **`score/`** — the live per-engagement tally (points earned and lost in flight).
+- **`rep/`** — the persistent cross-engagement reputation (rides with the
+  actor's UID across targets).
+
+"Reward" as a separate top-level bucket dissolves — what score and rep
+produce (level-up, bounty payout, Agent wallet) is downstream output, not a
+sibling concept.
 
 ## Score (what counts as a point)
 Confirmed signal set:
@@ -34,35 +38,37 @@ Confirmed signal set:
   tactician-level moves cost (LLM calls, external API credits, escalation).
 
 ## Currency model
-**Multi-axis with composite** *(defaulted; redirect if wrong)*. Each signal
-above is tracked as its own axis (so an actor's profile shows where the
-points came from — severity-heavy striker vs. chain-heavy braider vs. fast
-finisher), and a weighted composite rolls up for the leaderboard rank and
-the level-up curve. Both visible. Anti-gaming hooks into the axes (repeat
-decay is per-axis; false flag hits the severity axis hardest).
+**Two factors, multi-axis derived.** Two base factors underlie everything:
+`score` and `rep`. Every other axis (severity contribution, chain
+contribution, time-to-finding, novelty, drain, false-flag penalty, repeat
+decay…) is a **derivation** off those two — not a parallel coordinate.
+Reading a derived axis tells you *how* this actor's score/rep came to be;
+score and rep themselves are the only canonical numbers.
 
 ## Persistence
-**Own `ops/gaming/` store, append-only ledger; mem holds the de-personalized
-patterns** *(defaulted; redirect if wrong)*. Every score event is a ledger
-entry; current score is derived by replay (auditable, supports the
-predetermined level curve cleanly). Per-actor reputation rides this ledger
-(travels with the actor across engagements). The `mem/` layer mirrors only
-the **de-personalized patterns** (what kit on what target-class earned what
-class of finding) — those don't carry actor identity, by design.
+**Per actor UID.** Score and rep are both keyed by the actor's UID — the
+durable identity. The UID carries its history forward through every
+engagement; nothing else stores a score. No engagement-level ledger; no mem
+sidecar; the actor IS the record.
 
 ## Reader
-**All three of {actor, Agent, InsideActor}** read score in real time
-*(defaulted; redirect if wrong)*:
-- **Actor** reads its own score → derives current level → strategy sharpens
-  on the predetermined curve.
-- **Agent** reads cabal-cumulative + per-axis distribution → ranks kits
-  for the moments rules don't cover; wallet unlocks at 500k cumulative.
-- **InsideActor** reads scores across all BadFaithActors → weights which
-  low-sev findings to braid first (higher-scoring contributors' findings
-  weight higher).
+**Post-mortem only.** No actor — and no other CabalActor — reads score
+during an engagement. Score and rep update *between* engagements, not
+within. While a hunt is live, the score is closed-book.
 
-Full leaderboard means visibility doesn't gate this — anyone can see
-anyone's; the reader question is who *uses* it during.
+What happens mid-engagement instead:
+- **The Agent chooses actors, not kits.** When the Agent's role kicks in,
+  it picks *which actor* (which UID, level, rep) to deploy on the next
+  move. Kit selection is not the Agent's job.
+- **Actors choose their own kits**, by preference function + stochastic
+  mix of `(timestamp, score, engagement state)`. The UID-derived
+  disposition gives baseline kit preferences; the stochastic component
+  varies by now-time, score-so-far, and what's happening in the
+  engagement. Semi-random — biased by who the actor is, not arbitrary.
+
+Loop: **Agent says "Soros works the next move" → Soros consults its kit
+preferences modulated by (now, my score, what's happening) → Soros picks a
+kit and goes.** Score only re-enters the picture after the hunt closes.
 
 ## Visibility
 **Full leaderboard.** Every actor sees every other actor's score. Competitive.
@@ -110,19 +116,23 @@ inter-org trades is intel about who knows what).
   Feedback §evolution above. Platinum is where the system gets weird.
 
 ## Where gaming/ lives
-`ops/gaming/` — flat. The ledger store lives here. Mem-side
-pattern-mirroring lives in `ops/mem/`. No `gaming/` outside `ops/`.
+`ops/gaming/score/` and `ops/gaming/rep/`. Per-actor-UID stores live in
+each. No external sidecar in `mem/`. No `gaming/` outside `ops/`.
 
 ## Build order
-1. Lock the score-event schema (the ledger row shape: actor UID, axis,
-   delta, signed reason, timestamp, target ref).
-2. Build the append-only ledger store (SQLite, embedded — same persistence
-   call as Opaca state).
-3. Wire the level curve (predetermined math; pure function of an axis-vector
-   over a time-decayed window).
-4. Implement the Reader hooks: actor reads own, Agent reads cumulative,
-   InsideActor reads peer scores for braid weighting.
-5. Pattern-mirroring into `mem/` — de-personalized roll-ups, no actor UIDs.
-6. Tier decoration (name-portion mutator on rank-change).
-7. Platinum-pair crossbreed trigger → advanced_evolution hand-off.
-8. Market-side hand-off → synaptic-market for inter-org kit/secret trade.
+1. Lock the **actor-UID record** schema (score and rep keyed by UID; the
+   derived axes computed on read, not stored).
+2. Build the per-UID store under `score/` (in-engagement live) and `rep/`
+   (cross-engagement persistent).
+3. Wire the **post-mortem update**: at engagement close, fold score deltas
+   into rep, apply time-decay on rep, retire engagement-local score.
+4. Wire the **predetermined level curve** as a pure function over an
+   actor's rep + score history.
+5. Implement the **actor kit-preference function**: UID-derived baseline
+   biased by `(timestamp, score, engagement state)`; semi-random sampler.
+6. Implement the **Agent actor-selection** path (Agent picks UIDs, not
+   kits) — the hand-off from rules-can't-decide to Agent.
+7. Tier decoration (name-portion mutator on rep-tier change).
+8. Platinum-pair crossbreed trigger → advanced_evolution hand-off.
+9. Market-side hand-off → synaptic-market for inter-org kit/secret trade.
+10. Agent wallet unlock at 500k cabal-cumulative.
