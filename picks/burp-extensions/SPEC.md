@@ -1,103 +1,109 @@
 <!-- generated: spec; sign-off epoch appended at commit -->
-# Web2 request routing — intercept-proxy adapter spec
+# CrisisActor — the web2 intercept-proxy actor
 
-How Opaca drives web2 requests through Burp, Caido, or ZAP. One Opaca-facing
-contract; per-tool adapters underneath. Drop-in, swap-out — the actor doesn't
-know which tool is running.
+How Opaca drives web2 requests through Burp, Caido, or ZAP. **One actor class
+owns the proxy.** Other actors send it messages. The proxy's native API is
+private to the CrisisActor.
 
-## What this is for
+## The shape
 
-A web2 actor in a recon/scan/exploit kit doesn't speak raw HTTP. It speaks
-*intent*: "send this request shape through the target's auth/crypto/sig
-pipeline and tell me what came back." The target's pipeline is usually
-non-trivial (signed bodies, rotating headers, JWT refresh, custom encoding) —
-that's exactly what intercept-proxy extensions exist to handle. So the actor
-hands a typed RequestSpec to a proxy + an extension that knows the target's
-quirks, and reads typed Responses + Findings back.
+```
+TargetSupervisor (per-surface)
+├── CrisisActor                           ← long-lived; owns one proxy session
+│   • state: open session + installed exts + finding log
+│   • backend: one of {Burp, Caido, ZAP}, picked at start, hidden from others
+├── Actor (recon kit) -─ sends → CrisisActor
+├── Actor (scan kit)  -─ sends → CrisisActor
+└── ChainActor       -─ subscribes → CrisisActor.findings
+```
 
-## The one contract
+A web2 actor never speaks HTTP, never opens a socket, never knows whether
+Burp or ZAP is on the other end. It sends Riot messages. The CrisisActor speaks
+its backend's native API and emits typed results back.
+
+## Message protocol (internal, not wire)
 
 ```ocaml
 (* shape, not syntax *)
-module Proxy : sig
-  type session                    (* one open proxy, scoped to a target *)
-  type ext                        (* installed extension: handles target quirks *)
+type req =
+  | Install_ext of ext_pack            (* sig, jwt-refresh, target encoding... *)
+  | Send of RequestSpec.t              (* one HTTP intent *)
+  | Scan of ScanSpec.t                 (* active scan via backend's scanner *)
+  | Get_findings                       (* drain the passive-finding log *)
 
-  val start    : target -> session
-  val install  : session -> ext_pack -> ext      (* crypto/auth/sig handler *)
-  val send     : session -> RequestSpec.t -> Response.t
-  val findings : session -> Finding.t list       (* passive matches the proxy collected *)
-  val stop     : session -> unit
-end
+type reply =
+  | Ok of Response.t * Finding.t list  (* response + anything passive caught *)
+  | Findings of Finding.t list
+  | NeedsAgent of ambiguity            (* punt to the Agent tactician *)
+  | Failed of err
 ```
 
-`ext_pack` is a per-target blob (signing key, auth fn, encoding rules) the
-actor or the Agent assembled during recon. The proxy applies it on every
-outgoing request without the actor having to know.
+`ext_pack` is target-specific (assembled at recon by the actor or Agent:
+signing key, auth function, encoding rules). Installed once, reapplied on every
+send.
 
-## Per-tool adapters (same contract, different backend)
+## Backends — CrisisActor variants
 
-| backend | api | what the adapter wraps |
-|---------|-----|------------------------|
-| **Burp Montoya** | Java, gradle | the recommended target. Adapter loads as a Montoya extension; exposes `send`/`findings` over a local socket to Opaca. |
-| **Burp Extender (legacy)** | Java, maven | the older API the existing Jython scripts use. Same socket, narrower feature set. Keep for the encrypted-Intruder scripts already vendored. |
-| **Caido** | JS/TS via `@caido/sdk-{frontend,backend}` (npm) | newer; Rust core + JS plugins. Adapter is a Caido plugin that proxies the same socket protocol. Note: the github.com/caido/caido vendored here is brand/docs — the SDK is npm. |
-| **OWASP ZAP** | Java, gradle | full daemon mode with its own REST API and gRPC. Adapter is the thinnest of the three: ZAP already does most of the protocol; we wrap it. |
+All variants expose the same message interface. Internals differ:
 
-The contract is the **socket protocol**, not a code library. Each backend ships
-an extension/plugin that listens on a unix socket Opaca connects to. The
-extension is small (delegates to its native API); Opaca's adapter just speaks
-the protocol.
+| backend | api | how CrisisActor wraps it |
+|---------|-----|-------------------------|
+| **Burp Montoya** | Java, gradle | subprocess-spawn Burp with a small Montoya extension that opens a unix socket; CrisisActor talks to it via that socket. Recommended target — most mature API. |
+| **Burp Extender (legacy)** | Java, maven | same shape, narrower API. Kept only for the encrypted-Intruder Jython scripts already vendored. |
+| **OWASP ZAP** | Java, gradle | spawn ZAP in daemon mode; talk its REST/gRPC API directly. Adapter is thin — ZAP already does most of the work. |
+| **Caido** | TS via `@caido/sdk-{frontend,backend}` (npm) | Caido plugin opens a socket; CrisisActor connects. Note: `caido/` here is brand/docs — the SDK is npm-only. |
 
-## Wire format
+Backend choice is one parameter at CrisisActor start; the rest of the engine
+sees one actor class.
 
-Newline-delimited JSON over unix socket. One frame per direction per request.
+## Lifecycle (Riot supervision tree)
 
-```
-> {"op":"send","req":{"method":"POST","url":"…","headers":{…},"body_b64":"…"},
-   "ext":["sig-v2","jwt-refresh"]}
-< {"resp":{"status":200,"headers":{…},"body_b64":"…","timing_ms":143},
-   "findings":[{"kind":"passive","class":"reflected","ctx":"…"}]}
-```
+- **Start**: TargetSupervisor spawns CrisisActor with `(target, backend)`. The
+  actor starts the backend (subprocess), waits for ready, transitions to live.
+- **Install**: extension installs are replayable. CrisisActor keeps an install
+  log; on restart, the supervisor restarts the actor and the actor replays the
+  log against the fresh backend.
+- **Send**: every `Send` returns `Ok` (or `NeedsAgent` / `Failed`). Per-target
+  serialization vs. concurrent dispatch is the actor's policy.
+- **Crash**: the backend dies, the actor crashes with it, the supervisor
+  restarts. Other actors' pending `Send`s retry per their kit's retry rule.
+- **Stop**: TargetSupervisor terminates CrisisActor at engagement end;
+  backend subprocess reaped.
 
-`body_b64` keeps binary cleanly. `ext` lists ext-packs to apply (order matters).
-The proxy returns the response *plus* anything its passive rules caught (a
-finding stream, not just the HTTP reply).
+## Generalization — the ToolActor class
 
-## Lifecycle
+CrisisActor is one species of a broader pattern. **Any long-lived stateful
+external tool earns its own actor.** The shape is always:
 
-- **One session per target surface** (matches `TargetSupervisor` per-surface).
-  The same session serves all actors hunting that surface; their requests
-  multiplex over it. Faster than spinning a proxy per actor; isolates by
-  surface, which is the security boundary.
-- **Extensions installed lazily** the first time a target needs them. Cached
-  per session. Re-applied on session restart.
-- **Crash recovery**: the session dies, the supervisor restarts it, the
-  registry replays the install list. Actors retry their pending sends.
+> *ToolActor owns the tool's session, exposes typed Riot messages, hides the
+> native API.*
 
-## Why this and not raw HTTP
+Candidates beyond Proxy:
+- **LDAPActor** — drives BOFHound's parser engine for AD recon over long
+  sessions.
+- **TeamserverActor** — Sliver/Havoc beacon manager when a C2 path stands up.
+- **OASTActor** — long-lived Collaborator/Interactsh listener for blind PoCs.
 
-- Recon already runs through the proxy → consistent passive findings
-- Custom auth/crypto solved once per target, not per kit
-- Replay/repeater "for free" via session log → debugging + Agent context
-- Same kit code works whether the operator chose Burp, Caido, or ZAP
+Short-lived one-shots (noir extract, vigolium scan, drogonsec audit) stay as
+direct tool invocations from kits. The rule: **session state → actor; one-shot →
+invocation.**
 
 ## Build order
 
-1. **Define the socket protocol** (this file, then JSON schema).
-2. **Burp Montoya adapter** first (most mature API; easiest to validate).
-3. **ZAP adapter** next (already has a REST API; adapter is mostly translation).
-4. **Caido adapter** when its SDK stabilizes (currently npm-only, no public
-   git surface).
-5. **Burp Extender legacy** only if the existing Jython scripts move forward
-   intact; otherwise port them to Montoya.
+1. **Define the message types** (this file → Opaca types in OCaml).
+2. **Burp Montoya CrisisActor** first — write the Montoya extension that opens
+   the socket; write the OCaml actor.
+3. **ZAP CrisisActor** next — almost-translation around ZAP's REST API.
+4. **Caido CrisisActor** when its SDK story stabilizes.
+5. Generalize the ToolActor base when a second tool class shows up (LDAPActor
+   is the likely next).
 
 ## Open
 
-- Should ext-packs live as kit data (declarative) or compiled OCaml modules?
-  Lean declarative — they're target-specific blobs assembled at recon time.
-- Passive vs. active findings boundary: the proxy emits passive-matched
-  findings on every response. Active scans (Burp Scanner, ZAP active) are a
-  separate `scan` op, not `send`.
-- This cluster's directory is misnamed: `picks/burp-extensions/` now holds
-  three proxies. Rename to `picks/intercept-proxies/` when convenient.
+- **Backend choice**: operator config at start, or learned per target from
+  score history? Default to config; let the learning layer override later.
+- **Per-target serialization**: should CrisisActor serialize all sends to one
+  surface (safe but slow) or pipeline concurrently (fast but races on stateful
+  exts)? Start serialized; relax when an ext declares itself stateless.
+- **Dir name**: `picks/burp-extensions/` now holds three proxies. Rename to
+  `picks/intercept-proxies/` when convenient.
