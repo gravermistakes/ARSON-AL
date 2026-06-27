@@ -8,14 +8,23 @@ private to the CrisisActor.
 ## The shape
 
 ```
-TargetSupervisor (per-surface)
-├── CrisisActor                           ← long-lived; owns one proxy session
+TargetSupervisor (per target)
+├── CrisisActor                           ← per target; owns the proxy session
 │   • state: open session + installed exts + finding log
 │   • backend: one of {Burp, Caido, ZAP}, picked at start, hidden from others
-├── Actor (recon kit) -─ sends → CrisisActor
-├── Actor (scan kit)  -─ sends → CrisisActor
-└── ChainActor       -─ subscribes → CrisisActor.findings
+├── InsideActor                           ← per target; braids low-sev → chains
+└── SurfaceSupervisor (per attack surface)
+    ├── BadFaithActor "Soros"             ← per surface; gamebot working a kit
+    ├── BadFaithActor "Rogan"             ← concurrent, different seed/disposition
+    └── BadFaithActor "Nixon"             ← …
+        (each sends → CrisisActor; emits → InsideActor)
 ```
+
+CrisisActor and InsideActor live at target level — one proxy session and one
+chain-builder per target, shared across every surface. BadFaithActors live at
+surface level — many per surface, each hunting its own path. Per-target state
+(auth/cookies, accumulated chain candidates) stays continuous across surfaces;
+per-surface state (the gamebot's traversal) stays scoped to its surface.
 
 A web2 actor never speaks HTTP, never opens a socket, never knows whether
 Burp or ZAP is on the other end. It sends Riot messages. The CrisisActor speaks
@@ -89,8 +98,8 @@ piece of the engagement. Three species named so far:
 - **BadFaithActor** — the orchestrator working a kit, switching kits on
   findings; the bad-faith client probing the target. (What earlier docs called
   "the actor" / "the gamebot.")
-- **CrisisActor** — the staged-scene intermediary owning a proxy session for
-  one surface (this doc).
+- **CrisisActor** — the staged-scene intermediary owning the proxy session for
+  one target (this doc).
 - **InsideActor** — the background process listening to every BadFaithActor's
   findings and braiding low-sev results into chains. The inside job.
 
@@ -104,6 +113,17 @@ More species earn the class as they show up. Likely next:
 **The rule: session state → CabalActor; one-shot → direct invocation.** Noir
 extract, vigolium scan, drogonsec audit run as plain tool invocations from a
 kit. They don't earn the actor class.
+
+## Naming instances
+
+Below the species, every actor *instance* gets a conspiracy-figure handle
+drawn from a pool — `Soros`, `Rogan`, `Nixon`, `Adolph`, `Kennedy`, `Epstein`,
+`Kissinger`, `Hoover`, `Icke`, `Jones`, `Rothschild`, `Tupac`, `Elvis`, …. The
+name is the actor's identity in logs, dashboards, and replay: *"BadFaithActor
+Soros switched to web2-exploit after Kennedy's recon hit."* Same engagement
+spawns many — one per surface, plus the per-target Crisis and Inside actors,
+each carrying its own name. Name is the human handle; the seed UID is the
+machine identity.
 
 ## Build order
 
