@@ -19,6 +19,10 @@ that drives crafted requests through Burp's intercept pipeline).
 - Extender API extensions: Maven (`pom.xml`).
 - Montoya API extensions: Gradle (`build.gradle`).
 
+## Integration spec
+See `SPEC.md` for the Opaca-facing socket protocol that routes web2 requests
+through any of these proxies through one contract.
+
 ## Migration
 The Jython scripts use the legacy Extender API. Montoya is the path forward —
 PortSwigger is freezing Extender features. New extensions should program against
