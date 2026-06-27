@@ -5,12 +5,24 @@ The score + reward layer. Mother folder for spec'ing per the "merge these"
 note. Sections fill in from multiple-choice answers; TBD = still pending.
 
 ## Bucket shape
-TBD
+**Flat `ops/gaming/`** *(defaulted; redirect if wrong)*. score and reward
+collapse into one bucket — they're facets of the same loop, not sibling
+mechanisms. Matches the "merge these" note and ponytail (no sub-dirs for
+distinctions that don't earn them).
 
 ## Score (what counts as a point)
-TBD — currency model still pending. Confirmed signals: severity points (P1=100,
-P2=50, P3=20, P4=5 — from OPACA.md), chain bonus, FP-avoided bonus, crash
-penalty, time-to-finding scalar, drain cost, false-flag penalty (see Anti-gaming).
+Confirmed signal set:
+
+| signal | sign | source |
+|---|---|---|
+| Severity points (P1=100 / P2=50 / P3=20 / P4=5) | + | OPACA.md gamification |
+| Chain bonus (sum × multiplier) | + | OPACA.md |
+| FP-avoided bonus | + | OPACA.md |
+| Time-to-finding scalar | + | OPACA.md |
+| Repeat-find decay (trends to 0) | – | Anti-gaming |
+| False flag (claim that doesn't hold) | – | Anti-gaming |
+| Tool crash penalty | – | OPACA.md (kit reliability) |
+| Drain cost | – | OPACA.md (compute / token spend) |
 
 ## Reward (what points buy)
 - **Level-up** — score sharpens the actor's strategy (predetermined scaling
@@ -22,10 +34,35 @@ penalty, time-to-finding scalar, drain cost, false-flag penalty (see Anti-gaming
   tactician-level moves cost (LLM calls, external API credits, escalation).
 
 ## Currency model
-TBD
+**Multi-axis with composite** *(defaulted; redirect if wrong)*. Each signal
+above is tracked as its own axis (so an actor's profile shows where the
+points came from — severity-heavy striker vs. chain-heavy braider vs. fast
+finisher), and a weighted composite rolls up for the leaderboard rank and
+the level-up curve. Both visible. Anti-gaming hooks into the axes (repeat
+decay is per-axis; false flag hits the severity axis hardest).
 
 ## Persistence
-TBD
+**Own `ops/gaming/` store, append-only ledger; mem holds the de-personalized
+patterns** *(defaulted; redirect if wrong)*. Every score event is a ledger
+entry; current score is derived by replay (auditable, supports the
+predetermined level curve cleanly). Per-actor reputation rides this ledger
+(travels with the actor across engagements). The `mem/` layer mirrors only
+the **de-personalized patterns** (what kit on what target-class earned what
+class of finding) — those don't carry actor identity, by design.
+
+## Reader
+**All three of {actor, Agent, InsideActor}** read score in real time
+*(defaulted; redirect if wrong)*:
+- **Actor** reads its own score → derives current level → strategy sharpens
+  on the predetermined curve.
+- **Agent** reads cabal-cumulative + per-axis distribution → ranks kits
+  for the moments rules don't cover; wallet unlocks at 500k cumulative.
+- **InsideActor** reads scores across all BadFaithActors → weights which
+  low-sev findings to braid first (higher-scoring contributors' findings
+  weight higher).
+
+Full leaderboard means visibility doesn't gate this — anyone can see
+anyone's; the reader question is who *uses* it during.
 
 ## Visibility
 **Full leaderboard.** Every actor sees every other actor's score. Competitive.
@@ -73,7 +110,19 @@ inter-org trades is intel about who knows what).
   Feedback §evolution above. Platinum is where the system gets weird.
 
 ## Where gaming/ lives
-TBD (probably stays at ops/gaming/, but persistence answer ties this).
+`ops/gaming/` — flat. The ledger store lives here. Mem-side
+pattern-mirroring lives in `ops/mem/`. No `gaming/` outside `ops/`.
 
 ## Build order
-TBD — locks once Bucket / Currency / Persistence are picked.
+1. Lock the score-event schema (the ledger row shape: actor UID, axis,
+   delta, signed reason, timestamp, target ref).
+2. Build the append-only ledger store (SQLite, embedded — same persistence
+   call as Opaca state).
+3. Wire the level curve (predetermined math; pure function of an axis-vector
+   over a time-decayed window).
+4. Implement the Reader hooks: actor reads own, Agent reads cumulative,
+   InsideActor reads peer scores for braid weighting.
+5. Pattern-mirroring into `mem/` — de-personalized roll-ups, no actor UIDs.
+6. Tier decoration (name-portion mutator on rank-change).
+7. Platinum-pair crossbreed trigger → advanced_evolution hand-off.
+8. Market-side hand-off → synaptic-market for inter-org kit/secret trade.
