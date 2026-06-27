@@ -1,0 +1,28 @@
+name: Require Changelog Updates
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+    branches:
+      - main
+
+jobs:
+  check-changelog:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Check Changelog
+      run: |
+        git fetch origin ${{ github.base_ref }}:${{ github.base_ref }}
+        changed_files=$(git diff --name-only HEAD $(git merge-base HEAD ${{ github.base_ref }}))
+        if [[ $changed_files != *CHANGELOG.md* ]]; then
+          echo "::error::No changes to CHANGELOG.md detected. Please update the changelog before merging."
+          exit 1
+        fi
