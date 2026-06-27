@@ -70,23 +70,40 @@ sees one actor class.
 - **Stop**: TargetSupervisor terminates CrisisActor at engagement end;
   backend subprocess reaped.
 
-## Generalization — the ToolActor class
+## Where CrisisActor sits — the CabalActor class
 
-CrisisActor is one species of a broader pattern. **Any long-lived stateful
-external tool earns its own actor.** The shape is always:
+```
+Human + Agent                          (operator, tactician — external)
+        ↓
+Opaca Spine                            (root supervisor + world + scheduler)
+        ↓
+CabalActor                             (abstract: long-lived, stateful, supervised)
+├── BadFaithActor   orchestrator       (the gamebot working the engagement)
+├── CrisisActor     proxy vector       (Burp / Caido / ZAP — this spec)
+└── InsideActor     chain-logs         (background; braids low-sev into chains)
+```
 
-> *ToolActor owns the tool's session, exposes typed Riot messages, hides the
-> native API.*
+**CabalActor** is the abstract base — any long-lived stateful actor that owns a
+piece of the engagement. Three species named so far:
 
-Candidates beyond Proxy:
-- **LDAPActor** — drives BOFHound's parser engine for AD recon over long
-  sessions.
-- **TeamserverActor** — Sliver/Havoc beacon manager when a C2 path stands up.
-- **OASTActor** — long-lived Collaborator/Interactsh listener for blind PoCs.
+- **BadFaithActor** — the orchestrator working a kit, switching kits on
+  findings; the bad-faith client probing the target. (What earlier docs called
+  "the actor" / "the gamebot.")
+- **CrisisActor** — the staged-scene intermediary owning a proxy session for
+  one surface (this doc).
+- **InsideActor** — the background process listening to every BadFaithActor's
+  findings and braiding low-sev results into chains. The inside job.
 
-Short-lived one-shots (noir extract, vigolium scan, drogonsec audit) stay as
-direct tool invocations from kits. The rule: **session state → actor; one-shot →
-invocation.**
+More species earn the class as they show up. Likely next:
+- **GlowActor** — C2 teamserver (Sliver / Havoc / CS) when a path stands up.
+- **GangstalkerActor** — long-lived LDAP/AD recon via BOFHound: every login,
+  every group, every machine.
+- **ChemtrailActor** — OAST listener (Collaborator / Interactsh) receiving
+  blind callbacks from above.
+
+**The rule: session state → CabalActor; one-shot → direct invocation.** Noir
+extract, vigolium scan, drogonsec audit run as plain tool invocations from a
+kit. They don't earn the actor class.
 
 ## Build order
 
