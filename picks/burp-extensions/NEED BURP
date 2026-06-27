@@ -1,1 +1,19 @@
 need iburp, and then break itndown
+
+ACTION: get the Burp extension API source, then dissolve it
+
+candidates to clone:
+- PortSwigger/burp-extender-api  (the original Java Extender API)
+- PortSwigger/burp-extensions-montoya-api  (newer Montoya API; replacing extender)
+both need adding to session scope (currently 403).
+
+Burp Suite itself is closed-source (PortSwigger) — only the public extension
+API is on github. so "break it down" means: dissolve the API repo into the
+arsenal — interfaces/types into picks/ (the surface extensions program against),
+example extensions into picks/burp-extensions/ alongside the existing 3 scripts,
+build/docs into .scaff.
+
+existing here: 3 Jython 2.7 scripts (IHttpListener intruder/scanner runtime
+encryption, editor-tab crypt) — they're solid examples but program against the
+legacy Extender API; new Burp wants Montoya. Either gets the species-roster
+treatment after the API repo lands.
