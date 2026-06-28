@@ -65,7 +65,7 @@ After dissolution, `staging/` can be deleted.
 2. Read everything end to end
 3. For each functional unit, sort by action
 4. Place it with its peers from other repos
-5. Log what went where in `{category}/MANIFEST.md`
+5. Log what went where in `{category}/MANIFEST.yml`
 6. When all components are placed, `rm -rf staging/{name}/`
 
 ## Compilers
