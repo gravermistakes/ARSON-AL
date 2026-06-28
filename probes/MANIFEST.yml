@@ -134,3 +134,35 @@ dissolved:
     dropped: [build/, '*/node_modules', '*/.next', '*/dist']
     reason_dropped: build artifacts only. test/ corpus, docs/, presets, platform/ UI all kept.
     notes: ~67M after excluding build output. Largest tool in the arsenal.
+
+  - source_repo: Web3-Security-Tools
+    origin: https://github.com/Quillhash/Web3-Security-Tools
+    license: see upstream
+    classification: web3-sast-tools
+    rationale: >
+      EVM static and dynamic audit tools, visualizers, and metrics utilities.
+      Categorized as probe/ knowledge/tools.
+    placed:
+      - unit: SAST tool catalog
+        action: list SAST/scanning and visual auditing tools
+        files: probes/web3/sast-tools.md
+
+  - source_repo: cosmos-security-handbook
+    origin: https://www.faulttolerant.xyz/2024-01-16-cosmos-security-1/
+    license: see upstream
+    classification: cosmos-chain-security
+    rationale: >
+      Cosmos SDK security handbook, covering consensus paths, ABCI hooks,
+      non-determinism, panic halts, and composite KV key collisions.
+      Establishes Cosmos guidance and playbooks in probes/.
+    placed:
+      - unit: Cosmos SDK chain guide
+        action: audit target on Cosmos chains
+        files: probes/web3/lance/chains/cosmos.md
+      - unit: Cosmos playbooks
+        action: detect Cosmos-specific bug classes
+        files:
+          - probes/web3/lance/vulnerabilities/cosmos-nondeterminism.md
+          - probes/web3/lance/vulnerabilities/cosmos-abci-panic.md
+          - probes/web3/lance/vulnerabilities/cosmos-kv-key-collision.md
+
