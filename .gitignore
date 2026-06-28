@@ -6,3 +6,4 @@ staging/
 .env
 *.key
 *.pem
+ops/actors/engine/opack/build/

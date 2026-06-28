@@ -175,7 +175,7 @@ namespace opack
 	template<typename T>
 	Entity channel(World& world)
 	{
-		return world.entity<T>().add<Channel>();
+		return world.entity<T>().template add<Channel>();
 	}
 
 	template<std::derived_from<Message> T>

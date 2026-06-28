@@ -5,10 +5,12 @@
 Enumeration, fingerprinting, endpoint extraction, surface discovery, and the
 detection knowledge that says *what to look for*. The engine of the scan loop.
 - `web3/lance/` — Web3 detection knowledge (gate G2): `audit-rules.md` (the
-  class-based detection ruleset), `vulnerabilities/` (13 exploit-class playbooks
+  class-based detection ruleset), `vulnerabilities/` (19 exploit-class playbooks
   — reentrancy, oracle manipulation, flash-loan, bridge replay, signature
-  replay, AMM/vault/accounting invariants, upgradeability, Move capability/race),
-  and `chains/` (EVM, Sui Move, cross-chain bridge, L2-specific risks).
+  replay, AMM/vault/accounting invariants, upgradeability, Move capability/race,
+  Cosmos non-determinism, IBC packet handling, keeper auth bypass, store key
+  malleability, unmetered computation, fee market/gas mispricing),
+  and `chains/` (EVM, Sui Move, cross-chain bridge, L2-specific, Cosmos SDK/IBC/CosmWasm).
 - `web2/bug-reaper/` — Web2 recon (`recon.md`: subdomain enum, fingerprinting,
   JS mining, endpoint discovery), white-box SAST (`source-code-audit.md`), and
   the detection ruleset (`audit-rules.md`).

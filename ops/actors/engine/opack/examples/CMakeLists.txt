@@ -31,6 +31,13 @@ endforeach()
 foreach(plecs IN LISTS EXAMPLES_PLECS)
 endforeach()
 
+# 07_opaca_actor: deterministic actor with SHAKE256 UUID gen (needs OpenSSL)
+find_package(OpenSSL REQUIRED)
+add_executable(07_opaca_actor "${CMAKE_CURRENT_LIST_DIR}/07_opaca_actor/main.cpp")
+target_compile_features(07_opaca_actor PRIVATE cxx_std_20)
+target_link_libraries(07_opaca_actor PRIVATE opack OpenSSL::Crypto)
+set_target_properties(07_opaca_actor PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${OPACK_BINARY_OUTPUT_DIR}/examples/07_opaca_actor/")
+
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 	add_executable(FlecsTestBench "test_bench.cpp")
 	target_compile_features(FlecsTestBench PRIVATE cxx_std_11)
