@@ -16,22 +16,22 @@ dissolved:
       generators, is proofs/. Scope/intake → int/web3, detection → probes/web3.
     placed:
       - unit: 7-gate methodology spine
-        verb: orchestrate scope→detection→validation→report
+        action: orchestrate scope→detection→validation→report
         files: [web3/lance/SKILL.md, web3/lance/workflow.md]
       - unit: validation gate references (G3-G6)
-        verb: prove exploitability / economics / reject FPs / simulate triage
+        action: prove exploitability / economics / reject FPs / simulate triage
         files: web3/lance/refs/   # exploit, economic, false-positive, triage, severity-guide
       - unit: platform triage rules
-        verb: simulate per-platform triage
+        action: simulate per-platform triage
         files: web3/lance/platforms/   # immunefi, hackenproof, hackerone-web3, bugcrowd-web3
       - unit: report templates + finding schema
-        verb: render platform-ready reports
+        action: render platform-ready reports
         files: web3/lance/templates/
       - unit: scoring/triage/report/adapter scripts
-        verb: score CVSS, simulate triage, generate report, adapt invariant output
+        action: score CVSS, simulate triage, generate report, adapt invariant output
         files: web3/lance/scripts/   # scoring_engine, triage_simulator, generate_web3_report, invariant_output_adapter
       - unit: per-agent skill adapters
-        verb: deliver the lance skill to agents
+        action: deliver the lance skill to agents
         files: web3/lance/agents/
     cross_refs:
       int: int/web3/lance        # G0/G1 scope + intake
@@ -57,19 +57,19 @@ dissolved:
       probes/web2, exploitation → picks/web2.
     placed:
       - unit: 4-phase methodology spine
-        verb: orchestrate recon→detect→validate→report
+        action: orchestrate recon→detect→validate→report
         files: web2/bug-reaper/SKILL.md
       - unit: validation gate references
-        verb: prove exploitability / reject FPs / score severity
+        action: prove exploitability / reject FPs / score severity
         files: web2/bug-reaper/refs/   # exploit-validation, false-positive-elimination, severity-guide
       - unit: exploit chain builder
-        verb: braid low-sev findings into a critical chain
+        action: braid low-sev findings into a critical chain
         files: web2/bug-reaper/refs/chaining.md
       - unit: platform triage rules
-        verb: simulate per-platform triage
+        action: simulate per-platform triage
         files: web2/bug-reaper/platforms/   # hackerone, bugcrowd, intigriti, yeswehack
       - unit: report generator
-        verb: render platform-ready report
+        action: render platform-ready report
         files: web2/bug-reaper/scripts/generate_report.py
     dropped:
       - README.md, CHANGELOG.md, .gitignore

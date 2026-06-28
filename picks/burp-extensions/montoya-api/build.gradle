@@ -1,0 +1,49 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'signing'
+    id 'net.researchgate.release' version '3.0.1'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation(
+            "org.junit.jupiter:junit-jupiter:${junit5Version}",
+            "org.assertj:assertj-core:${assertJVersion}",
+            "org.mockito:mockito-core:${mockitoVersion}"
+    )
+}
+
+compileJava {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+    options.encoding = "UTF-8"
+}
+
+test {
+    useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            groupId = "net.portswigger.burp.extensions"
+            artifactId = "montoya-api"
+        }
+    }
+}
+
+release {
+    tagTemplate = '$name-$version'
+    git {
+        requireBranch.set('main')
+    }
+}
+
+createReleaseTag.dependsOn publish
+

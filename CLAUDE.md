@@ -6,18 +6,24 @@ Everything else sorted by what it *mechanically does*.
 ## Structure
 
 ```
-ops/        orchestration, standards, substrate, build tooling
+ops/        the engine, dissolved by function -- actors/ gaming/ mem/ gvt/
 int/        target modeling, threat mapping, dossier building, scope parsing
-probes/     enumeration, fingerprinting, endpoint extraction, surface discovery
-picks/      fuzzers, bypass techniques, injection payloads — ways in
+probes/     maps, enum, scrapers, crawlers
+picks/      fuzzers, crackers, extractors
+paths/      backdoors, c2, traversals
 proofs/     PoC templates, exploit chains, triage validation, report generation
+.scaff/     parked scaffolding (product UI, build, docs) -- root level
 staging/    raw clones before dissolution (gitignored)
 ```
 
 ## What goes where
 
-**ops/** — coding standards (ponytail ladder), compliance frameworks (AST10),
-ECS substrate (OPACK), orchestration scripts, CI/CD tooling.
+**ops/** -- the engine, fully dissolved by function: **actors/** (engine, the
+RARV loop, the swarm runtimes), **gaming/** (score + reward: scoring, evolution,
+economics, gamified tiers), **mem/** (the neural engines + memory stores), and
+**gvt/** governance (consensus/QuDAG; hyg = AST10 + quality-gates + DeTTECT; std
+= ponytail + methodology + dissolution). Product/build scaffolding is parked at
+root `.scaff/`.
 
 **int/** — threat diagrams, ATT&CK technique mappings, scope parsers,
 investigation case files, social media profilers, target dossier builders,
@@ -27,9 +33,13 @@ company/person/infrastructure research tools.
 content discoverers, tech fingerprinters, SPA spiders, secret detectors,
 SAST analyzers, SCA dependency checkers, DNS resolvers.
 
-**picks/** — fuzzers, WAF bypass payloads, injection techniques (SSTI/SQLi/XSS/XXE),
-credential testers, auth bypass methods, deserialization exploits,
-request smuggling tools, prototype pollution, custom attack extension generators.
+**picks/** — fuzzers, crackers, extractors: SQLi/XSS/XXE/SSTI/SSRF tools,
+password crackers, WAF evasion, deserialization, request smuggling, custom
+attack extensions. The firing tools.
+
+**paths/** — backdoors, C2, traversals: persistent access vehicles, C2
+frameworks and traffic profiles, directory traversal, file inclusion. The ways
+back in.
 
 **proofs/** — PoC templates, exploit chain builders, triage simulators,
 economic impact models, OAST blind confirmations, CVSS scorers,
@@ -53,7 +63,7 @@ After dissolution, `staging/` can be deleted.
 
 1. Clone into `staging/{name}/`
 2. Read everything end to end
-3. For each functional unit, sort by verb
+3. For each functional unit, sort by action
 4. Place it with its peers from other repos
 5. Log what went where in `{category}/MANIFEST.md`
 6. When all components are placed, `rm -rf staging/{name}/`
@@ -105,7 +115,7 @@ Loops run concurrently. probes/ doesn't finish before picks/ starts.
 Dissolve shodansnipe the same way as everything else. Gamify thru OPACK.
 Its agents and modules become cells. Recombine onto OPACK ECS. Score it.
 Compiled C++ handles branching/merging/pruning/state.
-LLM for triage, attack paths, report prose, problem solving.
+Agent for triage, attack paths, report prose, problem solving.
 
 ## Deeper claude.md
 

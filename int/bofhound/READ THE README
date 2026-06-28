@@ -1,0 +1,12 @@
+this version was stubbed 3 years ago
+
+ACTION: replace with the maintained fork
+
+source repo to clone: coffeegist/bofhound
+- README of the current vendored copy literally redirects there
+- "THIS REPO IS NO LONGER ACTIVE" banner
+- requires adding to session scope before clone (currently 403)
+
+once cloned: dissolve by action — parser code -> int/ (LDAP log parser);
+tests/test_data corpus -> .scaff/bofhound (keep, don't drop, per the existing
+manifest). same dissolution pattern wave-1 used.

@@ -15,13 +15,13 @@ dissolved:
       intake went to int/web3, validation/report to proofs/web3.
     placed:
       - unit: detection ruleset (G2)
-        verb: enumerate exploit classes to check
+        action: enumerate exploit classes to check
         files: web3/lance/audit-rules.md
       - unit: vulnerability-class playbooks
-        verb: detect a specific Web3 bug class
+        action: detect a specific Web3 bug class
         files: web3/lance/vulnerabilities/   # 13 playbooks
       - unit: chain-specific detection guidance
-        verb: adjust detection per chain
+        action: adjust detection per chain
         files: web3/lance/chains/   # evm, sui-move, cross-chain-bridge, l2
     cross_refs:
       int: int/web3/lance        # scope + intake (G0/G1)
@@ -41,13 +41,13 @@ dissolved:
       both probes/. The detection ruleset rounds out the probe knowledge.
     placed:
       - unit: recon methodology
-        verb: discover surface (subdomains, tech, JS, endpoints)
+        action: discover surface (subdomains, tech, JS, endpoints)
         files: web2/bug-reaper/recon.md
       - unit: white-box SAST methodology
-        verb: audit source for sinks
+        action: audit source for sinks
         files: web2/bug-reaper/source-code-audit.md
       - unit: detection ruleset
-        verb: enumerate what to check
+        action: enumerate what to check
         files: web2/bug-reaper/audit-rules.md
     cross_refs:
       int: int/web2/bug-reaper
@@ -66,7 +66,7 @@ dissolved:
       The arsenal's first real scanner binary; placed whole as a coherent unit.
     placed:
       - unit: scanner binary + engines
-        verb: statically scan source for vulns/CVEs/secrets/IaC
+        action: statically scan source for vulns/CVEs/secrets/IaC
         files: drogonsec/   # cmd/, internal/{engine,analyzer,sca,leaks,ai,reporter,...}, configs, docs/, go.mod, Makefile
         detail: >
           SARIF 2.1 / CWE / CVSS 3.1 output, OWASP Top 10:2025. Internal AI
@@ -89,7 +89,7 @@ dissolved:
       (endpoint extractors). The recon-loop surface engine.
     placed:
       - unit: endpoint-extraction engine
-        verb: parse source -> endpoint inventory
+        action: parse source -> endpoint inventory
         files: noir/   # src/ (analyzers + tree-sitter grammars), spec/ corpus, docs/, build (shard.yml, Dockerfile, justfile)
         detail: >
           src/ext/tree_sitter/grammars vendors generated parser.c for many langs
@@ -112,7 +112,7 @@ dissolved:
       agent skills in ops/.)
     placed:
       - unit: blockchain appsec verification standard
-        verb: enumerate web3 security requirements to audit against
+        action: enumerate web3 security requirements to audit against
         files: probes/web3/blockchain-appsec/   # guides/, index, info
     dropped: [_config.yml, Gemfile, 404.html, CONTRIBUTING.md, SECURITY.md, leaders.md, .github/]
     reason_dropped: Jekyll site scaffolding + governance.
@@ -128,7 +128,7 @@ dissolved:
       plus an in-process agent engine. The flagship probes/ scanner.
     placed:
       - unit: scanner + modules + agent engine
-        verb: scan web apps/APIs for vulns; ingest + analyze traffic
+        action: scan web apps/APIs for vulns; ingest + analyze traffic
         files: probes/vigolium/   # pkg/ (core+modules), internal/, cmd/, public/presets, docs/, test/ fixtures
     build: "make build (go 1.26) -> bin/vigolium. See probes/vigolium/CLAUDE.md."
     dropped: [build/, '*/node_modules', '*/.next', '*/dist']

@@ -1,21 +1,10 @@
-# DeTTECT Bulk Placement Notes
+# DeTTECT — placement notes
 
-## Deferred Items (Bulk, Follow-Up Copy)
+All components placed; nothing deferred (per "no deferring").
 
-The following DeTTECT components are large or asset-heavy and should be copied on follow-up:
+- `mitre-data/`  -> `int/DeTTECT/actor-corpus/mitre-data/` (STIX/JSON ATT&CK reference data the mappers resolve against)
+- `sample-data/` -> `int/DeTTECT/threat-mapping/sample-data/` (example detection/visibility layers)
+- `editor/` (Vue SPA) -> retained as reference at `ops/hyg/DeTTECT/editor/`
+- `requirements.txt`, `Dockerfile`, `LICENSE`, `README.md` -> dropped (deps / deploy / boilerplate)
 
-| Item | Path | Reason | Size | Status |
-|------|------|--------|------|--------|
-| **MITRE ATT&CK data** | `mitre-data/` | Pre-computed STIX/JSON technique mappings; used by group_mapping.py and technique_mapping.py | ~2-5 MB | bulk: copy on follow-up |
-| **Sample data** | `sample-data/` | Example detection/technique mappings for testing; illustrative only | ~500 KB | bulk: copy on follow-up |
-| **Editor UI** | `editor/` (Vue SPA) | React/Vue single-page app for visual threat layer editing; frontend only | ~3+ MB | bulk: drop (UI scaffold, preserved in-repo) |
-| **Requirements.txt** | `requirements.txt` | Python dependencies for DeTTECT tooling | ~1 KB | keep reference in ops/ |
-| **Dockerfile** | `Dockerfile` | Container image for DeTTECT deployment | ~1 KB | keep reference in ops/ |
-
-## Recommended Follow-Up Dissolution
-
-After initial placement, copy these items into:
-- `mitre-data/` → `/home/user/ARSON-AL/int/DeTTECT/actor-corpus/mitre-data` (reference data for actor->technique mapping)
-- `sample-data/` → `/home/user/ARSON-AL/int/DeTTECT/threat-mapping/sample-data` (example mappings)
-
-The editor/ (Vue SPA) can remain in source repo; it is UI/product code, not functional arsenal units.
+Full units table: `ops/std/dissolution/wave2/DeTTECT.md`.

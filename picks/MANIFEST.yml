@@ -18,10 +18,10 @@ dissolved:
       validation/report → proofs.
     placed:
       - unit: exploitation-class playbooks
-        verb: exploit a specific Web2 bug class
+        action: exploit a specific Web2 bug class
         files: web2/bug-reaper/vulnerabilities/   # 19 classes
       - unit: WAF bypass technique
-        verb: evade WAF/defenses
+        action: evade WAF/defenses
         files: web2/bug-reaper/waf-bypass.md
     cross_refs:
       int: int/web2/bug-reaper      # scope parsing
@@ -42,10 +42,10 @@ dissolved:
       in" → picks/. Placed whole.
     placed:
       - unit: fuzzing methodology
-        verb: harness + fuzz + triage memory bugs
+        action: harness + fuzz + triage memory bugs
         files: [fuzz-skill/SKILL.md, fuzz-skill/fuzzing-toolchain.md, fuzz-skill/crash-triage.md]
       - unit: worked fuzzer + corpus
-        verb: demonstrate the toolchain end to end
+        action: demonstrate the toolchain end to end
         files: fuzz-skill/test-vuln/
         detail: >
           vuln_parser.c + build.sh and 5 sanitizer/coverage builds
@@ -64,7 +64,7 @@ dissolved:
       and methodology (the paper + slides). SSTI is a named picks/ class. Ways in.
     placed:
       - unit: SSTI payloads + research
-        verb: exploit server-side template injection
+        action: exploit server-side template injection
         files: picks/ssti-research/   # Payloads.md, README, 2 PDFs (paper+slides), images/
     notes: PDFs + images kept per policy (docs/research/examples).
 
@@ -78,7 +78,7 @@ dissolved:
       is a named picks/ unit — tooling to bend the proxy into the attack.
     placed:
       - unit: burp extension examples
-        verb: extend Burp for custom attack flows (runtime crypto in intruder/scanner)
+        action: extend Burp for custom attack flows (runtime crypto in intruder/scanner)
         files: picks/burp-extensions/   # *.py (Jython), README
     notes: >
       Jython 2.7 scripts (run inside Burp), not python3 — one uses tabs that

@@ -1,32 +1,28 @@
-<!-- generated: 1782457509 -->
 # OPS
 
 ## What's here
-The perpetual loop — the engine, its memory, the standards it enforces, the
-hygiene it keeps. Four buckets:
-- `actors/` — the engagement engine + agent/swarm runtimes: opack/Opaca (ECS
-  substrate + SWARM-ECS-SPEC + OPACA.md), ruv-fann (+ruv-swarm), synaptic-mesh,
-  neural-bridge, loki-mode (RARV autonomy), advanced_evolution (kit-config
-  evolution), guild-hall (gamified engagement scoring). Runs the loops.
-- `mem/` — memory + learned state: loki-mode episodic/semantic memory; the
-  advanced_evolution learning loop (cross-ref into actors/).
-- `std/` — standards of practice: the ponytail ladder, research + dissolution
-  methodology, the wave manifests. How we write and sort.
-- `hyg/` — hygiene / compliance / coverage: AST10 agentic-skills compliance,
-  loki-mode quality gates, DeTTECT detection-coverage (evasion-surface) tooling.
+The engine, fully dissolved by function — no repo wrappers. Buckets:
+- `actors/` — the runtimes that hunt: `engine/` (opack ECS + OPACA spec),
+  `loop/` (loki RARV engagement loop), `swarm/` (ruv-swarm + daa-swarm + loki
+  swarm orchestration).
+- `gaming/` — `score/` (scoring logic) + `reward/` (advanced_evolution,
+  loki token-economics, synaptic market, guild-hall tiers).
+- `mem/` — the neural engines (ruv-fann core, neural-bridge, neuro-divergent,
+  synaptic neural-mesh, kimi-fann) + memory stores (loki memory).
+- `gvt/` — governance: `consensus/` (QuDAG), `hyg/` (AST10, loki quality-gates,
+  DeTTECT coverage), `std/` (ponytail, methodology, dissolution).
+
+Product/build/docs scaffolding is parked at root `.scaff/`.
 
 ## Build
-- Ponytail: `cp -R std/ponytail/skills/* ~/.claude/skills/`.
-- Opaca/OPACK substrate: see `actors/opack` + `actors/OPACA.md`.
-
-## Test
-Per-tool; see each subtree's own README / CLAUDE.md.
+- Ponytail: `cp -R gvt/std/ponytail/skills/* ~/.claude/skills/`.
+- Opaca / OPACK substrate: see `actors/engine/`.
 
 ## Feeds
-- Loop: Perpetual — std/ enforced always; actors/ run the loops; mem/ persists
-  state + score; hyg/ keeps coverage + compliance.
-- Consumes: nothing (top of the stack). Emits: the engine + the standards.
+- Loop: Perpetual — gvt/ enforced always; actors/ run the loops; gaming/ scores;
+  mem/ remembers + learns.
+- Consumes: nothing (top of the stack). Emits: the engine + the governance.
 
 ## Issues
-- wave-2 manifests under `std/dissolution/` carry pre-reorg paths; see
-  `std/dissolution/REORG.md` for the old->new map.
+- wave manifests under `gvt/std/dissolution/` cite pre-dissolution paths; sort by
+  function (see `gvt/std/dissolution/REORG.md`), not the stale path.
