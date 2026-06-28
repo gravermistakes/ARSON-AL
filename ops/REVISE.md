@@ -6,8 +6,8 @@ Bones. Revise in place; `___` = fill me.
 the engine, dissolved by function
 
 ## Four buckets
-- `actors/` — engine + runtimes (engine/opack+Opaca+specs, loop/loki RARV, swarm/{ruv,daa,loki})
-- `gaming/` — score + rep + reward outputs (SPEC.md ✓)
+- `actors/` — engine + runtimes (engine (opack -> Opaca)+specs, loop/loki RARV, swarm/{ruv,daa,loki})
+- `gaming/` — score + rep (SPEC.md merfs correcting)
 - `mem/` — neural engines + memory stores (REVISE pending per priority)
 - `gvt/` — governance (consensus/QuDAG, hyg/ast10+DeTTECT+loki-quality-gates, std/ponytail+dissolution+research)
 
