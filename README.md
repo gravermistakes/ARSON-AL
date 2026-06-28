@@ -37,14 +37,14 @@ Everything sorted by what it mechanically does, not where it came from.
 ```
 ops/        the engine
   actors/     deterministic runtimes (opack ECS, swarm BFT, ruv-swarm neural, loki RARV)
-  gaming/     scoring + reward (evolution, token economics, guild tiers)
-  mem/        neural engines (ruv-fann, neural-bridge, synaptic mesh) + memory stores
+  gaming/     scoring + reward (evolution, guild tiers)
+  mem/        neural engines (ruv-fann, neural-bridge, synaptic mesh) + memory stores + chain state
   gvt/        governance (QuDAG consensus, quality gates, DeTTECT, ponytail methodology)
 int/        target modeling, threat mapping, ATT&CK technique mappings
 probes/     enumeration, scanning, fingerprinting, secret detection, SAST, SCA
 picks/      fuzzing, cracking, extraction, WAF evasion, deserialization, smuggling
 paths/      C2 frameworks, backdoors, traversals, persistent access
-proofs/     PoC templates, exploit chains, CVSS scoring, platform report generators
+proofs/     PoC templates, CVSS scoring, platform report generators
 ```
 
 ## Actors
