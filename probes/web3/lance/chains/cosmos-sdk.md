@@ -83,6 +83,30 @@ Cosmos SDK apps are Go modules composed of:
 - Module account balance assumptions (other modules can send tokens)
 - Community pool drain via governance with insufficient checks
 
+### 11. Store Key Malleability & Prefix Iteration
+- Unpadded numeric IDs in composite keys cause prefix collision (poolId 42 matches 421)
+- Non-unique composite keys — two objects overwrite same key
+- Iterator bounds off-by-one (reverse iterator missing +1 byte on end)
+- Missing separator bytes between variable-length key fields
+
+**Check**: every key schema in `types/keys.go` — numeric IDs must be big-endian, separators required.
+
+### 12. Unmetered / Unbounded Computation
+- BeginBlock/EndBlock calling CosmWasm contracts without gas limits
+- Token transfer hooks executing arbitrary contract code in module context
+- Iterative math (Newton's method) without convergence cap
+- Recursive contract calls in unmetered context
+
+**Check**: every external call in BeginBlock/EndBlock must use `ctx.WithGasMeter(sdk.NewGasMeter(limit))`.
+
+### 13. Fee Market & Gas Mispricing
+- State-creating operations undercharged (future iteration cost externalized)
+- AnteHandler `simulate` flag creating gas estimate divergence
+- SendCoins batch panic in BeginBlock (one invalid coin halts chain)
+- Fixed fees breaking composability with contract callers
+
+**Check**: AnteHandler for simulate-conditional logic, SendCoins in BeginBlock/EndBlock paths.
+
 ## IBC Deep Dive
 
 ### Packet Lifecycle
