@@ -26,7 +26,7 @@ grep -rn 'storetypes.KVStorePrefixIterator\|store.Iterator\|sdk.KVStorePrefixIte
 grep -rn 'storetypes.KVStoreReversePrefixIterator\|store.ReverseIterator' --include='*.go' | grep -v _test.go
 
 # Key functions without separators
-grep -rn 'func.*Key.*\(.*uint64\|func.*Key.*\(.*string' --include='*.go' | grep -v _test.go | grep -v vendor
+grep -rn -E 'func.*Key.*(uint64|string)' --include='*.go' | grep -v _test.go | grep -v vendor
 ```
 
 ### Manual
