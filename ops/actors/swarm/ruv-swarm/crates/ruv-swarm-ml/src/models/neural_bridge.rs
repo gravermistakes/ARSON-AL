@@ -77,7 +77,7 @@ impl NeuralForecastModel {
     
     /// Generate predictions
     pub fn predict(&mut self, input: &[f32]) -> Result<Vec<f32>, String> {
-        Ok(self.network.run(input))
+        self.network.run(input).map_err(|e| e.to_string())
     }
 }
 
