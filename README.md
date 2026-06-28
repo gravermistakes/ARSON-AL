@@ -1,53 +1,78 @@
 # ARSON-AL
 
-Autonomous security research engine. Sorted by action, not origin.
+Autonomous security research engine. Concurrent loops that hunt, validate,
+and chain findings into exploitable paths. No pipeline — loops branch, merge,
+and prune in parallel.
 
-## Structure
+## How it works
+
+A target enters through `int/`. Recon models the surface. Probes extract what's
+exposed. Findings feed back into recon (more surface) and forward into picks
+(exploitation). Proofs gate everything — nothing exits without a PoC. Background
+chain loop braids low-severity findings into critical chains.
 
 ```
-ops/        engine — actors, scoring, neural, governance
-int/        target modeling, threat mapping, scope parsing
-probes/     enumeration, scanning, fingerprinting, secret detection
-picks/      fuzzing, cracking, extraction, WAF evasion
-paths/      C2, backdoors, traversals
-proofs/     PoC, exploit chains, triage, report generation
+int/ models target ──→ probes/ extract surface ──→ picks/ fire
+  ↑                        │                          │
+  └── findings refine ─────┘          proofs/ gate ←──┘
+                                         │
+                                   chain loop braids
+```
+
+Four concurrent loops:
+
+- **Recon** — int/ models, probes/ extracts, findings refine the model, repeat.
+- **Scan** — probes/ scan exposed surface, hits spawn adjacent probes.
+- **Validation** — proofs/ gate for exploitability, failures feed back to recon or scan.
+- **Chain** — background. Collects low-severity rejects, braids into critical chains.
+
+Branching: new surface spawns a probe. Source code found spawns SAST. Chain
+succeeds = report. Pruning: hypothesis dies, patched, or 3 PoC approaches
+exhausted.
+
+## What's where
+
+Everything sorted by what it mechanically does, not where it came from.
+
+```
+ops/        the engine
+  actors/     deterministic runtimes (opack ECS, swarm BFT, ruv-swarm neural, loki RARV)
+  gaming/     scoring + reward (evolution, token economics, guild tiers)
+  mem/        neural engines (ruv-fann, neural-bridge, synaptic mesh) + memory stores
+  gvt/        governance (QuDAG consensus, quality gates, DeTTECT, ponytail methodology)
+int/        target modeling, threat mapping, ATT&CK technique mappings, scope parsing
+probes/     enumeration, scanning, fingerprinting, secret detection, SAST, SCA
+picks/      fuzzing, cracking, extraction, WAF evasion, deserialization, smuggling
+paths/      C2 frameworks, backdoors, traversals, persistent access
+proofs/     PoC templates, exploit chains, CVSS scoring, platform report generators
 ```
 
 ## Actors
 
-Three deterministic runtimes in `ops/actors/`. No LLM per step — Agent is
-tactician consulted on uncertainty escalation only.
+Three deterministic runtimes in `ops/actors/`. No LLM per step. Each actor's
+seed is its UUID — SHAKE256(timestamp) to septal (base 7) to 13 digits. Kit
+selection is a pure function of UUID, timestamp, hunt state, and kit crosslinks.
+Agent is the tactician, consulted only on uncertainty escalation.
 
-| Actor | Lang | What |
-|-------|------|------|
-| opack | C++ | ECS substrate. Perceive-decide-act loop, SHAKE256 UUID seed. |
-| swarm | Python | BFT consensus. HMAC auth, reputation, PBFT-lite. |
-| ruv-swarm | Rust | Neural swarm. 12 crates, ruv-fann ML integration. |
+**opack** (C++) — ECS substrate on flecs. Perceive-decide-act loop. Emergent
+recon-scan-exploit-validate-report chains from kit scoring, not scripted
+sequences.
 
-Outer orchestrator: Loki RARV (`ops/actors/loop/`). Reason-Act-Reflect-Verify.
+**swarm** (Python) — BFT consensus. HMAC authentication, replay protection,
+reputation tracking, PBFT-lite. 43 verified test cases.
+
+**ruv-swarm** (Rust) — Neural swarm orchestration. 12 workspace crates with
+ruv-fann ML integration for adaptive decision-making.
+
+Outer orchestrator: **Loki RARV** — Reason-Act-Reflect-Verify. The RARV loop
+wraps the actors but never replaces their inner deterministic loops.
 
 ## Dissolution
 
-Every repo clones to `staging/`, gets cracked open by function.
-Each component answers one question: **ops, int, probe, pick, path, or proof?**
-Origin repo name is irrelevant. Only the action matters.
+Every tool enters through `staging/`. Gets cracked open. Each component — a
+script, a methodology, a payload set, a scanner module — answers one question:
+**ops, int, probe, pick, path, or proof?**
 
-## Governance
-
-`ops/gvt/` — consensus (QuDAG), hygiene (AST10, quality gates, DeTTECT),
-standards (ponytail, methodology, dissolution manifests).
-
-Ponytail: `cp -R ops/gvt/std/ponytail/skills/* ~/.claude/skills/`
-
-## Build
-
-| What | How |
-|------|-----|
-| opack | `cd ops/actors/engine/opack && mkdir build && cd build && cmake .. && make` |
-| swarm tests | `cd ops/actors/swarm/swarm && python3 -m pytest tests/ -v` |
-| ruv-swarm | `cd ops/actors/swarm/ruv-swarm && cargo check -p ruv-swarm-core` |
-| loki syntax | `bash -n ops/actors/loop/loki/autonomy/run.sh` |
-
-## License
-
-GPL preferred. MIT/BSD ok.
+If it does two things, split it. A WAF bypass doc with bypass techniques (pick)
+and detection signatures (probe) becomes two files. A tool's name and origin
+repo are irrelevant to placement. Only the action matters.
