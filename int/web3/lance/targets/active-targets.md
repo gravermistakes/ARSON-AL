@@ -66,28 +66,41 @@ DSS core is exhausted. No novel Critical/High across entire codebase. Best leads
 | Chain | Cosmos SDK (Go) |
 | Scope | cosmos-sdk, ibc-go, CometBFT |
 
-### Triage Status
+### Triage Status — IBC-go
 - **ibc-go non-determinism**: SCANNED. Clean on hot paths (time.Now only in CLI, floats IEEE 754 deterministic).
 - **ibc-go PFM (packet-forward-middleware)**: FLAGGED. `panic()` in error/timeout path (keeper.go:149). Complex escrow accounting worth deeper review.
 - **ibc-go GMP module**: REVIEWED. No AllowMessages whitelist (by design for GMP). Signer verification present but less restrictive than ICA.
 - **ibc-go rate-limiting**: REVIEWED. Unparseable packets silently pass (by design — non-transfer packets).
-- **cosmos-sdk modules**: SCAN RUNNING. Fork agent scanning x/group, x/distribution, x/authz, x/staking, x/gov.
-- **CosmWasm runtime**: SCAN RUNNING. Fork agent scanning VM layer, std library, crypto package.
+- **ibc-go callbacks module**: NOT SCANNED. IBC callbacks to smart contracts — potential unmetered computation vector.
+
+### Triage Status — Cosmos SDK Modules (SCANNED)
+- **x/staking**: HOT LEAD. CancelUnbondingDelegation bypasses OnHold() — ICS slashing evasion. CVSS 6.5. See `cosmos-sdk-staking-audit.md`.
+- **x/staking (secondary)**: InitialBalance desync in partial cancel after slash. Under-slashing vector. CVSS 5.3.
+- **x/staking (tertiary)**: Consensus key rotation creates slashing evasion window. CVSS 4.9.
+- **x/gov**: Zero quorum allowed (Quorum="0" passes validation). Two-step governance takeover chain. CVSS 7.5. See `cosmos-sdk-gov-audit.md`.
+- **x/gov (secondary)**: Expedited-to-regular conversion timing bug — negligible remaining vote time after conversion. CVSS 4.3.
+- **x/gov (tertiary)**: ConsensusParams authority override escalation path. CVSS 7.2 conditional.
+
+### Triage Status — CosmWasm (SCANNED)
+- **VM runtime**: 9 production `panic!()` in host crypto functions. Conditional on triggering unexpected CryptoError variant. See `cosmwasm-scan.md`.
+- **Gas metering**: CLEARED. Thorough checked arithmetic throughout. No gaps.
+- **Memory/feature gates**: CLEARED. Proper limits, feature blocking (threads/SIMD/ref types).
 
 ### Vulnerability Classes to Hunt
-1. Key malleability / prefix iteration (store key design)
-2. Unmetered computation in BeginBlock/EndBlock hooks
-3. Fee market / gas mispricing (SendCoins batch panic)
-4. IBC packet handling (escrow accounting, timeout refund)
-5. Keeper authorization bypass (MsgServer signer validation)
-6. Non-determinism (map iteration in state handlers)
-7. Integer overflow in distribution/staking math
+1. **ICS slashing evasion** via CancelUnbondingDelegation OnHold bypass (HOT)
+2. **Governance takeover** via zero quorum + authority override (HOT)
+3. Key malleability / prefix iteration (store key design)
+4. Unmetered computation in BeginBlock/EndBlock hooks
+5. Fee market / gas mispricing (SendCoins batch panic)
+6. IBC packet handling (escrow accounting, timeout refund)
+7. CosmWasm crypto panic triggering
 
 ### Next Actions
-1. Deep review PFM panic path — can an attacker trigger it?
-2. Wait for cosmos-sdk module scan results
-3. Wait for CosmWasm scan results
-4. Check appchain forks for unpatched SDK versions (dYdX, Celestia, Injective)
+1. **PoC: OnHold bypass** — verify ICS uses PutUnbondingOnHold, build exploit scenario
+2. **PoC: Zero quorum chain** — verify param update can set quorum=0, build two-step attack
+3. Deep review PFM panic path — can an attacker trigger it?
+4. Scan ibc-go callbacks module for unmetered computation
+5. Check appchain forks for unpatched SDK versions (dYdX, Celestia, Injective)
 
 ---
 
