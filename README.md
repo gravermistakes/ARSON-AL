@@ -40,7 +40,7 @@ ops/        the engine
   gaming/     scoring + reward (evolution, token economics, guild tiers)
   mem/        neural engines (ruv-fann, neural-bridge, synaptic mesh) + memory stores
   gvt/        governance (QuDAG consensus, quality gates, DeTTECT, ponytail methodology)
-int/        target modeling, threat mapping, ATT&CK technique mappings, scope parsing
+int/        target modeling, threat mapping, ATT&CK technique mappings
 probes/     enumeration, scanning, fingerprinting, secret detection, SAST, SCA
 picks/      fuzzing, cracking, extraction, WAF evasion, deserialization, smuggling
 paths/      C2 frameworks, backdoors, traversals, persistent access
