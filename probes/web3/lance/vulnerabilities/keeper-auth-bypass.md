@@ -16,13 +16,13 @@ Unauthorized state mutation — fund theft, parameter manipulation, or privilege
 ### Automated
 ```bash
 # MsgServer handlers — check each has signer validation
-grep -rn 'func.*MsgServer.*\(.*context\.Context.*Msg' --include='*.go' | grep -v _test.go
+grep -rn -E 'func.*MsgServer.*context\.Context.*Msg' --include='*.go' | grep -v _test.go
 
 # Missing authority check in governance-controlled handlers
 grep -rn 'func.*MsgServer' --include='*.go' -A20 | grep -v 'authority\|GetSigners\|sdk\.AccAddress'
 
 # Keeper methods without access control (public methods callable by any module)
-grep -rn 'func (k Keeper)' --include='*.go' | grep -v '_test.go' | grep -v 'unexported'
+grep -rn -E 'func \(k \*?Keeper\) [A-Z]' --include='*.go' | grep -v '_test.go'
 
 # Authz grant validation
 grep -rn 'authz.NewGenericAuthorization\|authz.NewGrant' --include='*.go'

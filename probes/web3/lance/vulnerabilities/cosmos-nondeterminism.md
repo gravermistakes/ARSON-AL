@@ -17,7 +17,7 @@ Consensus-breaking bug. Validators compute different state roots → chain halt.
 ### Automated
 ```bash
 # Map iteration — highest frequency Cosmos consensus bug
-grep -rn 'for.*range' --include='*.go' | xargs grep -l 'map\[' | grep -v _test.go | grep -v vendor
+grep -rl 'map\[' --include='*.go' | grep -v _test.go | grep -v vendor | xargs grep -l 'for.*range'
 
 # Float arithmetic
 grep -rn 'float32\|float64' --include='*.go' | grep -v _test.go | grep -v vendor
