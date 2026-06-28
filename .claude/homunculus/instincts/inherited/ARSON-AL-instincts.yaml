@@ -1,0 +1,368 @@
+# Instincts generated from https://github.com/gravermistakes/ARSON-AL
+# Generated: 2026-06-28T08:40:50.100Z
+# Version: 2.0
+# NOTE: This file supplements (does not replace) any existing curated instincts.
+# High-confidence manually curated instincts should be preserved alongside these.
+
+---
+id: ARSON-AL-commit-length
+trigger: "when writing a commit message"
+confidence: 0.6
+domain: git
+source: repo-analysis
+source_repo: https://github.com/gravermistakes/ARSON-AL
+---
+
+# ARSON AL Commit Length
+
+## Action
+
+Write moderate-length commit messages (~61 characters)
+
+## Evidence
+
+- Average commit message length: 61 chars
+- Based on 6 commits
+
+---
+id: ARSON-AL-naming-files
+trigger: "when creating a new file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/gravermistakes/ARSON-AL
+---
+
+# ARSON AL Naming Files
+
+## Action
+
+Use kebab-case naming convention
+
+## Evidence
+
+- Analyzed file naming patterns in repository
+- Dominant pattern: kebab-case
+
+---
+id: ARSON-AL-import-alias
+trigger: "when importing modules"
+confidence: 0.85
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/gravermistakes/ARSON-AL
+---
+
+# ARSON AL Import Alias
+
+## Action
+
+Use path aliases (@/, ~/) instead of relative imports
+
+## Evidence
+
+- Import analysis shows alias pattern
+- Example: import { x } from '@/lib/x'
+
+---
+id: ARSON-AL-export-style
+trigger: "when exporting from a module"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/gravermistakes/ARSON-AL
+---
+
+# ARSON AL Export Style
+
+## Action
+
+Prefer default exports
+
+## Evidence
+
+- Export pattern analysis
+- Dominant style: default
+
+---
+id: ARSON-AL-arch-type-based
+trigger: "when adding new code"
+confidence: 0.8
+domain: architecture
+source: repo-analysis
+source_repo: https://github.com/gravermistakes/ARSON-AL
+---
+
+# ARSON AL Arch Type Based
+
+## Action
+
+Place code in the appropriate type folder (components/, services/, utils/, etc.)
+
+## Evidence
+
+- Type-based module organization detected
+- Folders: 
+
+---
+id: ARSON-AL-workflow-bones-only-spec-draft-workflow
+trigger: "when doing bones only spec draft workflow"
+confidence: 0.6
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/gravermistakes/ARSON-AL
+---
+
+# ARSON AL Workflow Bones Only Spec Draft Workflow
+
+## Action
+
+Follow the bones-only-spec-draft-workflow workflow:
+1. Create a REVISE.md file in the target directory with a bones-only (skeleton) draft.
+2. List key sections such as action sort, inventory, loop role, emits/consumes, open questions.
+3. Leave blanks or placeholders for content to be filled in by a domain expert.
+4. Once the draft is filled, promote it to SPEC.md.
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~2x per month
+- Files: */REVISE.md, ops/*/REVISE.md
+
+---
+id: ARSON-AL-workflow-spec-promotion-sync-workflow
+trigger: "when doing spec promotion sync workflow"
+confidence: 0.6
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/gravermistakes/ARSON-AL
+---
+
+# ARSON AL Workflow Spec Promotion Sync Workflow
+
+## Action
+
+Follow the spec-promotion-sync-workflow workflow:
+1. Copy or merge content from REVISE.md to SPEC.md in the same directory.
+2. Add new sections, refine existing ones, and clarify deferred topics.
+3. Leave REVISE.md as the ongoing working draft.
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~2x per month
+- Files: */SPEC.md, */REVISE.md
+
+---
+id: arson-al-instinct-file-naming
+trigger: "When creating a new file in the repository"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: gravermistakes/ARSON-AL
+---
+
+# Arson Al Instinct File Naming
+
+## Action
+
+Name the file using kebab-case (e.g., my-module.ts)
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.files
+- All observed file names in examples follow kebab-case
+
+---
+id: arson-al-instinct-function-naming
+trigger: "When defining a new function"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: gravermistakes/ARSON-AL
+---
+
+# Arson Al Instinct Function Naming
+
+## Action
+
+Name the function using camelCase (e.g., processInput)
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.functions
+
+---
+id: arson-al-instinct-class-naming
+trigger: "When defining a new class"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: gravermistakes/ARSON-AL
+---
+
+# Arson Al Instinct Class Naming
+
+## Action
+
+Name the class using PascalCase (e.g., UserManager)
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.classes
+
+---
+id: arson-al-instinct-constant-naming
+trigger: "When defining a constant"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: gravermistakes/ARSON-AL
+---
+
+# Arson Al Instinct Constant Naming
+
+## Action
+
+Name the constant using SCREAMING_SNAKE_CASE (e.g., DEFAULT_TIMEOUT)
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.constants
+
+---
+id: arson-al-instinct-import-alias
+trigger: "When importing modules"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: gravermistakes/ARSON-AL
+---
+
+# Arson Al Instinct Import Alias
+
+## Action
+
+Use alias import style instead of relative paths
+
+## Evidence
+
+- Pattern in codeStyle.importStyle
+
+---
+id: arson-al-instinct-default-export
+trigger: "When exporting from a module"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: gravermistakes/ARSON-AL
+---
+
+# Arson Al Instinct Default Export
+
+## Action
+
+Use default export style
+
+## Evidence
+
+- Pattern in codeStyle.exportStyle
+
+---
+id: arson-al-instinct-test-location
+trigger: "When adding tests for a module"
+confidence: 0.7
+domain: testing
+source: repo-analysis
+source_repo: gravermistakes/ARSON-AL
+---
+
+# Arson Al Instinct Test Location
+
+## Action
+
+Place test files in the same directory as the code (mixed location)
+
+## Evidence
+
+- architecture.folderStructure.testLocation is 'mixed'
+
+---
+id: arson-al-instinct-git-commit-prefix
+trigger: "When writing a commit message"
+confidence: 0.9
+domain: git
+source: repo-analysis
+source_repo: gravermistakes/ARSON-AL
+---
+
+# Arson Al Instinct Git Commit Prefix
+
+## Action
+
+Prefix the commit with a type and optional subsystem in parentheses (e.g., spec(opaca): ... or lance(cosmos): ...)
+
+## Evidence
+
+- Pattern in commits.prefixes
+- Examples: 'spec(opaca): ...', 'lance(cosmos): ...'
+
+---
+id: arson-al-instinct-git-commit-length
+trigger: "When composing a commit message"
+confidence: 0.7
+domain: git
+source: repo-analysis
+source_repo: gravermistakes/ARSON-AL
+---
+
+# Arson Al Instinct Git Commit Length
+
+## Action
+
+Keep the commit message concise, around 60 characters on average
+
+## Evidence
+
+- commits.averageLength is 61
+
+---
+id: arson-al-instinct-bones-only-spec-draft
+trigger: "When starting formalization of a new subsystem or top-level directory"
+confidence: 0.95
+domain: workflow
+source: repo-analysis
+source_repo: gravermistakes/ARSON-AL
+---
+
+# Arson Al Instinct Bones Only Spec Draft
+
+## Action
+
+Create a bones-only REVISE.md draft in the target directory, listing key sections and leaving placeholders
+
+## Evidence
+
+- bones-only-spec-draft-workflow steps and examples
+- Files: */REVISE.md, ops/*/REVISE.md
+
+---
+id: arson-al-instinct-spec-promotion-sync
+trigger: "When a REVISE.md draft is ready to become the canonical specification"
+confidence: 0.9
+domain: workflow
+source: repo-analysis
+source_repo: gravermistakes/ARSON-AL
+---
+
+# Arson Al Instinct Spec Promotion Sync
+
+## Action
+
+Copy or merge content from REVISE.md to SPEC.md, refining and clarifying sections as needed
+
+## Evidence
+
+- spec-promotion-sync-workflow steps and examples
+- Files: */SPEC.md, */REVISE.md
+
