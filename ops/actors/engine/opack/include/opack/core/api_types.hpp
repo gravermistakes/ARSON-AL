@@ -12,6 +12,7 @@
 
 #include <unordered_map>
 #include <concepts>
+#include <vector>
 
 #include <flecs.h>
 #include <fmt/core.h>
