@@ -66,13 +66,3 @@ ruv-fann ML integration for adaptive decision-making.
 
 Outer orchestrator: **Loki RARV** — Reason-Act-Reflect-Verify. The RARV loop
 wraps the actors but never replaces their inner deterministic loops.
-
-## Dissolution
-
-Every tool enters through `staging/`. Gets cracked open. Each component — a
-script, a methodology, a payload set, a scanner module — answers one question:
-**ops, int, probe, pick, path, or proof?**
-
-If it does two things, split it. A WAF bypass doc with bypass techniques (pick)
-and detection signatures (probe) becomes two files. A tool's name and origin
-repo are irrelevant to placement. Only the action matters.
