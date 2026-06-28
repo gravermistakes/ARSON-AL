@@ -3,7 +3,8 @@
 Bones. Revise in place; `___` = fill me.
 
 ## Action
-PoC templates, exploit chains, triage validation, report generation
+PoC templates, triage validation, report generation
+exploit chains → ops/mem/chains (chain loop state lives in mem)
 nothing exits without a PoC
 
 ## What's here (species)
@@ -16,7 +17,7 @@ nothing exits without a PoC
 
 ## Loop role
 validation — gate candidates for exploitability + economics; only Medium+ that pass triage become reports
-chain — InsideActor braids low-sev findings into reports
+chain — InsideActor braids low-sev findings into reports (chain state in ops/mem/chains)
 
 ## Emits
 - platform-ready reports (Immunefi/Bugcrowd/HackenProof/HackerOne/Intigriti/YWH)
