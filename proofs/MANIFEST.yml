@@ -78,3 +78,20 @@ dissolved:
       SKILL spine references scripts/analyze_scope.py (now int/web2) and the
       recon/SAST refs (now probes/web2) by old paths — cross-linked, not
       rewritten. chaining.md realizes ARSENAL's "Chain loop". Python kept.
+
+  - source_repo: Awesome-web3-Security
+    origin: https://github.com/Anugrahsr/Awesome-web3-Security
+    license: see upstream
+    classification: web3-validation-resources
+    rationale: >
+      Web3 CTF/PoC training frameworks and smart contract audit report indexes.
+      Serves as the foundational blueprint corpus for writing and verifying PoCs,
+      and resolving false positives during triage in proofs/web3/.
+    placed:
+      - unit: CTF and PoC playgrounds
+        action: reference vulnerable contracts and draft exploit testing templates
+        files: proofs/web3/ctf-environments.md
+      - unit: public audit finding databases
+        action: search real audit precedents to verify finding validity and severity
+        files: proofs/web3/audit-reports.md
+
