@@ -32,9 +32,9 @@ recon — models target → probes/ extract surface → findings refine model
 - ___
 
 ## Consumes
-- raw scope (bounty programs, target lists)
+- Agent instructions (scope feeds this)
 - ___
 
 ## Open
-- shodansnipe agents = proto-kits → recombine onto Opaca as BadFaithActor loadouts
+- shodansnipe agents = proto-kits → recombine to opaca as kits
 - ___
