@@ -86,8 +86,8 @@
 - crosslinks are soft weighting (can't block paths to starve competitors)
 
 ## Market layer (synaptic-market)
-- kits + secrets traded between orgs (multi-team)
-- also a memory aspect (log of inter-org trades = intel)
+- kits + secrets traded between orgs
+- synaptic stuff goes memory
 - *deferred*
 
 ## Reward outputs (what score+rep produce)
