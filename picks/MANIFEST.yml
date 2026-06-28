@@ -78,8 +78,23 @@ dissolved:
       is a named picks/ unit — tooling to bend the proxy into the attack.
     placed:
       - unit: burp extension examples
-        action: extend Burp for custom attack flows (runtime crypto in intruder/scanner)
-        files: picks/burp-extensions/   # *.py (Jython), README
+          action: extend Burp for custom attack flows (runtime crypto in intruder/scanner)
+          files: picks/burp-extensions/   # *.py (Jython), README
     notes: >
       Jython 2.7 scripts (run inside Burp), not python3 — one uses tabs that
       python3 py_compile rejects; correct under Jython. Kept as-is.
+
+  - source_repo: Web3-Security-Tools
+    origin: https://github.com/Quillhash/Web3-Security-Tools
+    license: see upstream
+    classification: web3-fuzzing-toolchain
+    rationale: >
+      EVM Fuzzers are the canonical smart-contract exploitation playbooks
+      to break invariants ("fuzzers ... picks/"). This populates picks/web3/
+      with the foundational fuzzer catalog.
+    placed:
+      - unit: EVM fuzzing toolchain
+        action: harness + fuzz invariants on contract targets
+        files: picks/web3/evm-fuzzers.md
+    notes: Includes Echidna, Foundry Fuzz, ChainFuzz, Harvey, and sFuzz.
+
