@@ -128,3 +128,30 @@ purpose: target modeling, threat mapping, dossier building
       - unit: hacking resource index
         action: look up security resources/topics
         files: int/awesome-hacking/README.md
+
+  - source_repo: Web3-Security-Tools
+    origin: https://github.com/Quillhash/Web3-Security-Tools
+    license: see upstream
+    classification: web3-on-chain-forensics
+    rationale: >
+      Blockchain explorers, contract decompilers, transaction trace debuggers,
+      and token/rug checkers. Feeds the on-chain target intelligence mapping of int/web3/.
+    placed:
+      - unit: on-chain forensics tools
+        action: trace money flows, decompile unverified code, and inspect transaction traces
+        files: int/web3/on-chain-forensics.md
+
+  - source_repo: Awesome-web3-Security
+    origin: https://github.com/Anugrahsr/Awesome-web3-Security
+    license: see upstream
+    classification: web3-intelligence-feeds
+    rationale: >
+      Indices of bug bounty platforms and threat intelligence feeds. Feeds target
+      scoping and ongoing incident analysis in int/web3/.
+    placed:
+      - unit: bounty platforms and news directories
+        action: model target programs and consume weekly incident indicators
+        files:
+          - int/web3/bounty-platforms.md
+          - int/web3/threat-intel-feeds.md
+
