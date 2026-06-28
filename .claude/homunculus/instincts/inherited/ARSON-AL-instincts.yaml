@@ -1,0 +1,109 @@
+---
+id: arsenal-structure
+trigger: "when organizing files or adding new tools"
+confidence: 0.95
+domain: architecture
+source: inherited
+scope: project
+---
+## Action
+Always organize all directories and files functionally into the six ARSENAL core subdirectories:
+- `ops/`: engine, swarm runtimes, gaming, neural/memory, consensus.
+- `int/`: target threat diagrams, dossier, scope parsing, OSINT.
+- `probes/`: scanners, crawlers, SAST/SCA/secrets detectors, detection knowledge.
+- `picks/`: fuzzers, exploit techniques, bypass payloads.
+- `paths/`: backdoors, C2, traversals.
+- `proofs/`: PoC templates, triage, severity scoring, platform report generators.
+
+A tool's name or origin repo is irrelevant; only its behavior/action dictates its placement.
+
+---
+id: dissolution-protocol
+trigger: "when importing or migrating a new repository"
+confidence: 0.90
+domain: workflow
+source: inherited
+scope: project
+---
+## Action
+Follow the 6-step dissolution process for any cloned repo:
+1. Clone into `staging/{name}/`
+2. Read everything end-to-end.
+3. For each functional unit, sort by mechanical action.
+4. Place with its peers from other repos.
+5. Log what went where in `{category}/MANIFEST.md` or `{category}/MANIFEST.yml`.
+6. When all components are placed, delete `staging/{name}/`.
+
+---
+id: loop-topology
+trigger: "when executing automated or manual workflows"
+confidence: 0.90
+domain: workflow
+source: inherited
+scope: project
+---
+## Action
+Run workflows in concurrent loops:
+- Perpetual: always enforce ops/ standards.
+- Recon loop: int/ target modeling -> probes/ surface extraction -> model refinement.
+- Scan loop: probes/ scan exposed surface -> discover new targets.
+- Validation loop: proofs/ gate for exploitability -> ops/ check.
+- Chain loop: braid low-severity findings into critical exploit chains -> report.
+
+---
+id: ponytail-standard
+trigger: "when writing or modifying code"
+confidence: 0.95
+domain: code-quality
+source: inherited
+scope: project
+---
+## Action
+Activate the Ponytail coding standard. Build the laziest solution that actually works — climb only to the first rung that holds:
+1. YAGNI (You Aren't Gonna Need It).
+2. Reuse existing code or utilities.
+3. Standard library.
+4. Native framework features.
+5. Already-installed dependencies.
+6. One-line solutions.
+7. Minimum lines of custom code.
+
+---
+id: claude-md-rule
+trigger: "when entering or creating a new directory"
+confidence: 0.85
+domain: documentation
+source: inherited
+scope: project
+---
+## Action
+If no `claude.md` exists in a subdirectory, create one under 50 lines containing:
+- # {DIRECTORY}
+- ## What's here — one paragraph
+- ## Build — exact commands
+- ## Test — verification
+- ## Feeds — loops, what's consumed/emitted
+- ## Issues — what's broken
+Tag the file with `<!-- generated: {epoch} -->`.
+
+---
+id: no-python-standard
+trigger: "when choosing language or dependencies"
+confidence: 0.85
+domain: code-quality
+source: inherited
+scope: project
+---
+## Action
+Do not use Python when practical. Prefer compiled binaries, Shell, Go, or Node depending on the tier. GPL license is preferred, MIT/BSD are acceptable.
+
+---
+id: findings-standard
+trigger: "when logging or formatting vulnerability findings"
+confidence: 0.90
+domain: report
+source: inherited
+scope: project
+---
+## Action
+Ensure findings always document: severity, CWE, CVSS, exploit path, runnable PoC, and specific remediation details. Export as SARIF for CI/CD or CycloneDX for SBOM.
