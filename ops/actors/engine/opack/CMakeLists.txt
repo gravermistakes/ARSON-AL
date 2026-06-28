@@ -22,7 +22,8 @@ project(OPACK
 set(CPM_DOWNLOAD_VERSION 0.38.1)
 include(cmake/cpm.cmake)
 include(cmake/target_set_compile_warnings.cmake)
-CPMAddPackage("gh:TheLartians/PackageProject.cmake@1.11.0")
+# Commented out due to network access constraints
+# CPMAddPackage("gh:TheLartians/PackageProject.cmake@1.11.0")
 
 
 # Include guards
@@ -43,6 +44,8 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   # since it calls enable_testing, which must be in the
   # main CMakeLists.
   include(CTest)
+  # Disable testing for dependencies to avoid CPM fetches
+  set(BUILD_TESTING OFF CACHE BOOL "Disable testing" FORCE)
   # ponytail: docs/ dropped in dissolution — Doxygen target removed.
 
 endif()
@@ -62,36 +65,53 @@ option(OPACK_ENABLE_LOG           "Enable runtime log. Disabling it may lead to 
 # Dependencies
 # ============
 
+# Check if dependencies exist locally
+set(DEPS_PATH "/tmp/cpm-cache/sources")
+
 # A fast entity component system (ECS) for C & C++
-CPMAddPackage(
-        NAME flecs
-        GITHUB_REPOSITORY SanderMertens/flecs
-        #GIT_TAG master
-        GIT_TAG v3.1.0
-        OPTIONS
-        "FLECS_STATIC ON"
-        "FLECS_SHARED OFF"
-)
+if(EXISTS "${DEPS_PATH}/flecs-src")
+  add_subdirectory("${DEPS_PATH}/flecs-src" "${CMAKE_BINARY_DIR}/flecs-build")
+  set(flecs_SOURCE_DIR "${DEPS_PATH}/flecs-src")
+else()
+  CPMAddPackage(
+          NAME flecs
+          GITHUB_REPOSITORY SanderMertens/flecs
+          #GIT_TAG master
+          GIT_TAG v3.1.0
+          OPTIONS
+          "FLECS_STATIC ON"
+          "FLECS_SHARED OFF"
+  )
+endif()
 set_target_properties(flecs_static PROPERTIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES $<TARGET_PROPERTY:flecs_static,INTERFACE_INCLUDE_DIRECTORIES>)
 
 # A modern formatting library
-CPMAddPackage(
-		NAME fmt 
-		GITHUB_REPOSITORY fmtlib/fmt
-		GIT_TAG 9.1.0
-		OPTIONS
-            "FMT_INSTALL ON"
-)
+if(EXISTS "${DEPS_PATH}/fmt-src")
+  add_subdirectory("${DEPS_PATH}/fmt-src" "${CMAKE_BINARY_DIR}/fmt-build")
+  set(fmt_SOURCE_DIR "${DEPS_PATH}/fmt-src")
+else()
+  CPMAddPackage(
+          NAME fmt
+          GITHUB_REPOSITORY fmtlib/fmt
+          GIT_TAG 9.1.0
+          OPTIONS
+              "FMT_INSTALL ON"
+  )
+endif()
 set_target_properties(fmt PROPERTIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES $<TARGET_PROPERTY:fmt,INTERFACE_INCLUDE_DIRECTORIES>)
 
 # A convenient random API
-CPMAddPackage(
-		NAME random
-		GITHUB_REPOSITORY effolkronium/random
-		GIT_TAG master
-		OPTIONS
-            "Random_BuildTests OFF"
-)
+if(EXISTS "${DEPS_PATH}/random-src")
+  set(random_SOURCE_DIR "${DEPS_PATH}/random-src")
+else()
+  CPMAddPackage(
+          NAME random
+          GITHUB_REPOSITORY effolkronium/random
+          GIT_TAG master
+          OPTIONS
+              "Random_BuildTests OFF"
+  )
+endif()
 
 # OPACK Library
 # =============
