@@ -10,7 +10,7 @@ description = "Machine learning integration for RUV Swarm"
 
 [dependencies]
 ruv-swarm-core = { path = "../ruv-swarm-core", version = "1.0.6" }
-ruv-fann = { path = "../../..", features = ["gpu", "serde"] }
+ruv-fann = { path = "/home/user/ruv-FANN", features = ["gpu", "serde"] }
 
 # Core dependencies
 serde = { workspace = true }
