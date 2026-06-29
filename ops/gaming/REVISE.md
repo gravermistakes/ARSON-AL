@@ -1,5 +1,8 @@
 # Gaming
 
+# [!THIS IS OFFICIAL! HUMAN PROVENANCE!!]
+
+
 ## Bucket shape
 - `ops/gaming/score/`
 - `ops/gaming/rep/`
