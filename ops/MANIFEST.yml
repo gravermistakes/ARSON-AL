@@ -11,18 +11,14 @@ dissolved:
     license: MIT
     classification: coding-standards
     rationale: >
-      The "ponytail ladder" — the coding standard ARSENAL writes every tool
-      under. Pure standards + the orchestration that enforces them. No
-      int/probe/pick/proof material; dissolves wholly into ops/.
+      The "ponytail ladder" — the coding standard ARSENAL writes every tool under. Pure standards + the orchestration that enforces them. No int/probe/pick/proof material; dissolves wholly into ops/.
     placed:
       - unit: ponytail ladder + enforcement modes
         verb: enforce coding standard
         files: standards/ponytail/skills/
         detail: >
-          6 skills — ponytail (the ladder: YAGNI/reuse/stdlib/native/dep/
-          one-line/minimum), ponytail-review (diff over-engineering review),
-          ponytail-audit (repo-wide bloat audit), ponytail-debt (ponytail:
-          comment ledger), ponytail-help, ponytail-gain.
+          6 skills — ponytail (the ladder: YAGNI/reuse/stdlib/native/dep/one-line/minimum), ponytail-review (diff overEngineering review),
+          ponytail-audit (repo-wide bloat audit), ponytailDebt (ponytail: comment ledger), ponytail-help, ponytail-gain.
       - unit: lifecycle hooks
         verb: auto-activate + enforce
         files: standards/ponytail/hooks/
