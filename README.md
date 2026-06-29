@@ -1,4 +1,5 @@
 # ARSON-AL
+## Attachment Repository Servicing Online-Native Agentic Liability
 
 Autonomous security research engine. Concurrent loops that hunt, validate,
 and chain findings into exploitable paths. No pipeline — loops branch, merge,
