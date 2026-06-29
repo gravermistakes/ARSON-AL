@@ -97,7 +97,7 @@ Agent for SCOPE PARSING ONLY HAPPENS HERE, triage, attack paths, report prose, p
 
 ## Deeper claude.md
 
-When entering a subdirectory, if no `claude.md`, create one:
+When entering a subdirectory, if no `CLAUDE.md`, create one:
 
 ```
 # {DIRECTORY}
