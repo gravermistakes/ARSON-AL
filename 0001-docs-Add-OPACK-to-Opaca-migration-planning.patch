@@ -1,0 +1,1232 @@
+From c8873a05f72e5ae313ceb7b44984b5fc41e534bf Mon Sep 17 00:00:00 2001
+From: gravermistakes <gravermistakes@users.noreply.github.com>
+Date: Mon, 29 Jun 2026 10:43:33 -0700
+Subject: [PATCH] docs: Add OPACK to Opaca migration planning
+
+- Migration roadmap with 3 phases over 28 weeks
+- Migration rationale addressing actor/entity equivalence
+- Phase 0 implementation checklist with detailed tasks
+
+Justifies migration based on runtime properties (concurrency, fault
+isolation, ecosystem fit) rather than abstraction model.
+---
+ MIGRATION-RATIONALE.md              | 205 +++++++++++
+ OPACK-TO-OPACA-MIGRATION-ROADMAP.md | 530 ++++++++++++++++++++++++++++
+ PHASE-0-CHECKLIST.md                | 456 ++++++++++++++++++++++++
+ 3 files changed, 1191 insertions(+)
+ create mode 100644 MIGRATION-RATIONALE.md
+ create mode 100644 OPACK-TO-OPACA-MIGRATION-ROADMAP.md
+ create mode 100644 PHASE-0-CHECKLIST.md
+
+diff --git a/MIGRATION-RATIONALE.md b/MIGRATION-RATIONALE.md
+new file mode 100644
+index 00000000..d23402bd
+--- /dev/null
++++ b/MIGRATION-RATIONALE.md
+@@ -0,0 +1,205 @@
++# Migration Rationale: Why Opaca Despite Actor/Entity Equivalence
++
++**Date:** 2026-06-29  
++**Status:** Approved  
++**Decision:** Proceed with OPACK → Opaca migration
++
++---
++
++## The Equivalence Observation
++
++**Critical Insight:** If you replace "actor" with "entity" in Opaca's design, it's structurally identical to OPACK:
++
++| OPACK (C++/Flecs) | Opaca (OCaml/Riot) | Abstraction |
++|-------------------|-------------------|-------------|
++| Entity | Actor | Thing with state |
++| Component | Mailbox/State | Data attached to thing |
++| Actuator | Kit | Capability to do stuff |
++| Action | Tool execution | The stuff being done |
++| System | Message handler | Logic that processes things |
++| Hierarchy | Supervision tree | Parent-child relationships |
++
++**Both implement:** Perceive → Decide → Act loop with composable behaviors and fault tolerance.
++
++---
++
++## Why Migrate Anyway?
++
++The migration is **not** about the abstraction model (actor vs entity). It's about the **runtime properties** and **ecosystem fit** for the security research domain.
++
++### 1. Runtime Properties (The Real Differentiators)
++
++#### 1.1 Concurrency Model
++- **OPACK:** Single-threaded ECS queries with manual parallelism
++  - Flecs has multicore support, but requires explicit system scheduling
++  - Shared mutable state (ECS world) requires careful synchronization
++  - Parallelism is opt-in and complex to reason about
++
++- **Opaca:** Multicore by default with isolated actors
++  - OCaml 5 domains give true parallelism without shared memory
++  - Each actor has its own heap (per-actor GC, no stop-the-world)
++  - Message passing enforces isolation (no accidental data races)
++  - **Benefit:** Safer concurrency, easier to scale to 100+ concurrent probes
++
++#### 1.2 Fault Isolation
++- **OPACK:** Crash in one system can corrupt the ECS world
++  - Flecs hierarchy helps, but shared state is a single point of failure
++  - Debugging requires understanding the entire world state
++
++- **Opaca:** Crash in one actor is isolated by Riot supervision
++  - Supervisor restarts crashed actor with clean state
++  - Other actors continue unaffected
++  - **Benefit:** "Let it crash" philosophy = more robust long-running engagements
++
++#### 1.3 Hot Code Reload (Potential)
++- **OPACK:** Requires full recompilation and restart
++  - C++ templates bake behavior at compile time
++  - Dynamic loading (dlopen) is possible but fragile
++
++- **Opaca:** OCaml supports code reloading (though not trivial)
++  - Riot actors can be upgraded without stopping the daemon
++  - Kit definitions are data, not compiled code
++  - **Benefit:** Update tactics mid-engagement without losing state
++
++#### 1.4 Effects-Based I/O
++- **OPACK:** Blocking I/O or manual async (callbacks/futures)
++  - Flecs doesn't provide async primitives
++  - Tool execution blocks the ECS world
++
++- **Opaca:** Eio provides structured concurrency with effects
++  - Direct-style async (looks synchronous, runs concurrent)
++  - Cancellation and timeouts are first-class
++  - **Benefit:** Cleaner code for I/O-heavy security tools
++
++### 2. Ecosystem Fit
++
++#### 2.1 Security Domain
++- **OCaml:** Strong in formal verification, cryptography, networking
++  - Used by Jane Street (finance), Docker (containers), Tezos (blockchain)
++  - Libraries: mirage (unikernels), ocaml-tls, angstrom (parsers)
++  - **Fit:** Security research needs parsers, crypto, network protocols
++
++- **C++:** General-purpose, but security libs are scattered
++  - Flecs is great for games, not security
++  - **Mismatch:** We're forcing a game engine into offensive security
++
++#### 2.2 Type System
++- **OPACK:** C++ templates provide compile-time safety
++  - But: Template errors are cryptic, compilation is slow
++  - Type safety is opt-in (easy to bypass with casts)
++
++- **Opaca:** OCaml algebraic types + pattern matching
++  - Exhaustiveness checking (compiler ensures all cases handled)
++  - No null pointers, no segfaults (unless FFI)
++  - **Benefit:** Fewer runtime errors, faster iteration
++
++#### 2.3 Tooling
++- **OPACK:** CMake, GDB, Valgrind
++  - Build times increase with templates
++  - Debugging template errors is painful
++
++- **Opaca:** Dune, OCaml debugger, Merlin (IDE support)
++  - Fast incremental compilation
++  - Better error messages
++  - **Benefit:** Faster development cycle
++
++### 3. Operational Benefits
++
++#### 3.1 Deployment
++- **OPACK:** Static binary, but large (Flecs + all tools)
++  - Recompilation required for any change
++  - Distribution is monolithic
++
++- **Opaca:** Daemon + kit files (data)
++  - Update kits without recompiling engine
++  - Distribute kits separately (marketplace model)
++  - **Benefit:** Faster updates, community contributions
++
++#### 3.2 Observability
++- **OPACK:** Manual logging, Flecs explorer (GUI)
++  - Hard to trace across systems
++  - No structured telemetry
++
++- **Opaca:** Riot provides structured logging + telemetry
++  - Trace messages across actors
++  - Metrics built-in (actor count, message rate, etc.)
++  - **Benefit:** Easier debugging and monitoring
++
++#### 3.3 Testing
++- **OPACK:** Unit tests require full ECS world setup
++  - Integration tests are slow (compile + run)
++  - Hard to mock external tools
++
++- **Opaca:** Actors are isolated, easy to test
++  - Mock actors for integration tests
++  - Property-based testing (QCheck)
++  - **Benefit:** Faster test suite, better coverage
++
++---
++
++## What We're NOT Gaining
++
++**Honesty check:** These are NOT reasons to migrate:
++
++1. **Abstraction model** — Actor vs Entity is just naming
++2. **Composability** — Both support it (ECS components vs actor kits)
++3. **Hierarchy** — Both have it (Flecs parent/child vs Riot supervision)
++4. **Performance** — OCaml is slower than C++ for CPU-bound tasks
++   - But: Security research is I/O-bound (network, disk, subprocesses)
++   - Acceptable tradeoff: 2x slower is fine if we gain safety + flexibility
++
++---
++
++## The Real Question: Could We Enhance OPACK Instead?
++
++**Alternative:** Keep OPACK, add:
++1. Dynamic kit loading (dlopen)
++2. Better concurrency (thread pool)
++3. Supervision (custom crash handlers)
++4. Hot reload (plugin system)
++
++**Why not?**
++- **Complexity:** Retrofitting these into C++/Flecs is harder than starting fresh
++- **Safety:** C++ makes it easy to shoot yourself in the foot (data races, memory leaks)
++- **Ecosystem:** We'd still be fighting the game-engine paradigm
++- **Time:** Building a robust plugin system in C++ takes as long as the migration
++
++**Verdict:** Migration is less risky than retrofitting.
++
++---
++
++## Decision Summary
++
++**We migrate because:**
++1. **Safer concurrency** — Isolated actors > shared ECS world
++2. **Better fault tolerance** — Supervision > manual error handling
++3. **Ecosystem fit** — OCaml security libs > C++ game engine
++4. **Operational flexibility** — Runtime kits > compile-time templates
++5. **Developer experience** — Better types, tools, errors
++
++**We accept:**
++1. **Performance cost** — 2x slower is acceptable for I/O-bound work
++2. **Learning curve** — Team needs to learn OCaml + Riot
++3. **Ecosystem maturity** — Riot is younger than Flecs
++4. **Migration risk** — 6-9 months of parallel operation
++
++**The actor/entity equivalence is real, but the runtime properties are not equivalent.**
++
++---
++
++## Appendix: Hybrid Approach (Rejected)
++
++**Considered:** Keep Flecs ECS core, add OCaml orchestration layer on top.
++
++**Why rejected:**
++- **Complexity:** Two languages, two runtimes, FFI overhead
++- **Debugging:** Harder to trace across language boundary
++- **Deployment:** More dependencies, larger binary
++- **Benefit unclear:** If we're adding OCaml anyway, why keep C++?
++
++**Verdict:** Full migration is cleaner than hybrid.
++
++---
++
++**Approved by:** Technical Lead  
++**Next:** Proceed with Phase 0 (Foundation) per roadmap
+diff --git a/OPACK-TO-OPACA-MIGRATION-ROADMAP.md b/OPACK-TO-OPACA-MIGRATION-ROADMAP.md
+new file mode 100644
+index 00000000..7a14430d
+--- /dev/null
++++ b/OPACK-TO-OPACA-MIGRATION-ROADMAP.md
+@@ -0,0 +1,530 @@
++# OPACK to Opaca Migration Roadmap
++
++**Status:** Draft v0.1  
++**Last Updated:** 2026-06-29  
++**Decision:** Migrate from C++ OPACK (Flecs ECS) to OCaml 5 Opaca (Riot actors)
++
++---
++
++## Executive Summary
++
++This roadmap outlines the migration from OPACK (C++ ECS-based agent framework) to Opaca (OCaml 5 actor-based security research engine). The migration transforms a template-heavy, compile-time ECS system into a runtime-flexible, kit-based actor system with supervision and hot-swappable behavior.
++
++**Timeline Estimate:** 6-9 months (3 phases)  
++**Risk Level:** Medium-High (new runtime, paradigm shift)  
++**Rollback Strategy:** Parallel operation during Phase 2, feature flags in Phase 3
++
++---
++
++## 1. Current State Analysis (OPACK)
++
++### 1.1 Architecture Overview
++
++**Core Components:**
++- **Flecs ECS Runtime** — Entity-Component-System substrate
++- **Action System** — Actuators execute actions with lifecycle hooks (begin/update/end)
++- **Perception System** — Entities perceive other entities through senses
++- **Operation System** — Composable operations with inputs/outputs
++- **Behavior System** — Agents have behaviors that impact operations
++
++**Key Abstractions:**
++```cpp
++// Actions with required actuators
++OPACK_ACTION(MyAction)
++opack::init<MyAction>(world)
++    .require<MyActuator>()
++    .on_begin([](entity){...})
++    .on_update([](entity, dt){...})
++    .on_end([](entity){...});
++
++// Actors with actuators
++OPACK_SUB_PREFAB(MyAgent, opack::Agent)
++opack::add_actuator<MyActuator, MyAgent>(world);
++
++// Execution
++auto agent = opack::spawn<MyAgent>(world);
++opack::act(agent, opack::spawn<MyAction>(world));
++```
++
++**Dependencies:**
++- Flecs 3.x (ECS core)
++- CMake build system
++- C++20 features (concepts, ranges)
++- fmt library for formatting
++- doctest for testing
++
++**Strengths:**
++- Compile-time type safety
++- Zero-cost abstractions
++- Composable ECS architecture
++- Action tracking and history
++- Supervision through Flecs hierarchy
++
++**Weaknesses:**
++- No runtime hot-swap (requires recompilation)
++- Template complexity limits extensibility
++- Tight coupling to Flecs
++- No native actor isolation
++- Limited concurrency model
++
++### 1.2 Component Inventory
++
++| Component | Purpose | Lines of Code | Complexity | Migration Priority |
++|-----------|---------|---------------|------------|-------------------|
++| `action.hpp` | Action lifecycle & actuators | ~600 | High | P0 (Core) |
++| `components.hpp` | ECS components | ~200 | Medium | P0 (Core) |
++| `perception.hpp` | Entity perception | ~300 | Medium | P1 (Feature) |
++| `operation.hpp` | Composable operations | ~400 | High | P2 (Advanced) |
++| `simulation.hpp` | World management | ~250 | Medium | P0 (Core) |
++| `communication.hpp` | Entity messaging | ~200 | Low | P1 (Feature) |
++
++**Total Estimated LOC:** ~2,000 C++ (core), ~5,000 including modules/examples
++
++---
++
++## 2. Target State (Opaca)
++
++### 2.1 Architecture Vision
++
++**Core Primitives:**
++- **Actor** — Riot process running a kit, seeded for determinism
++- **Kit** — Bundle of tools + switch rules (declarative)
++- **Finding** — Typed result (surface/vuln/exploit/chain/report)
++- **Supervisor** — Fault-tolerant process tree
++- **Store** — Persistent state (findings, scores, chains)
++
++**Key Differences from OPACK:**
++
++| Aspect | OPACK (C++) | Opaca (OCaml) |
++|--------|-------------|---------------|
++| Paradigm | ECS (entities/components) | Actor model (processes/messages) |
++| Concurrency | Single-threaded ECS queries | Multicore actors (domains) |
++| Composition | Compile-time templates | Runtime kit switching |
++| Fault Tolerance | Flecs hierarchy | Riot supervision trees |
++| Hot Swap | None | Planned (code reloading) |
++| Type Safety | C++ templates | OCaml algebraic types |
++| State | ECS world | Actor mailboxes + Store |
++
++### 2.2 Target Architecture
++
++```
++Opaca Daemon
++├── KitRegistry (loads kit definitions)
++├── TargetSupervisor (per engagement)
++│   ├── Actor (seed=a, kit=recon)
++│   ├── Actor (seed=b, kit=scan)
++│   ├── Actor (seed=c, kit=exploit)
++│   └── ChainActor (background aggregator)
++├── Store (findings, scores, state)
++└── Interfaces
++    ├── MCP Server (Claude Code)
++    ├── Stdio Bridge (JSON lines)
++    └── HTTP API (dashboards)
++```
++
++**Actor Lifecycle:**
++```ocaml
++(* Pseudo-code shape *)
++let rec actor_loop state kit =
++  receive () >>= function
++  | Finding f ->
++      let next_kit = evaluate_switch_rules kit f state in
++      if next_kit <> kit then
++        actor_loop state next_kit
++      else
++        run_kit kit f state >>= fun new_state ->
++        actor_loop new_state kit
++  | Shutdown -> return ()
++```
++
++---
++
++## 3. Migration Phases
++
++### Phase 0: Foundation (Weeks 1-4)
++
++**Goal:** Establish OCaml 5 + Riot development environment and core types
++
++**Tasks:**
++1. **Environment Setup**
++   - [ ] Install OCaml 5.2+ with opam
++   - [ ] Set up dune build system
++   - [ ] Install Riot, eio, and dependencies
++   - [ ] Create project structure (`opaca/` directory)
++   - [ ] Set up CI/CD (GitHub Actions with OCaml)
++
++2. **Core Type System**
++   - [ ] Define `Finding` types (surface/vuln/exploit/chain/report)
++   - [ ] Define `Kit` type and registry interface
++   - [ ] Define `Actor` state type
++   - [ ] Define `Score` and `Seed` types
++   - [ ] Create serialization (JSON/S-expressions)
++
++3. **Minimal Actor Runtime**
++   - [ ] Spawn a single Riot actor
++   - [ ] Implement basic message passing
++   - [ ] Add simple supervision (restart on crash)
++   - [ ] Verify multicore scheduling (domains)
++
++**Deliverables:**
++- `opaca/lib/types.ml` — Core types
++- `opaca/lib/actor.ml` — Basic actor spawn/message
++- `opaca/test/test_actor.ml` — Unit tests
++- `docs/OPACA-TYPES.md` — Type system documentation
++
++**Success Criteria:**
++- ✓ OCaml 5 compiles and runs on target platform
++- ✓ Riot actors spawn and communicate
++- ✓ Supervision restarts crashed actors
++- ✓ Tests pass on CI
++
++**Risks:**
++- Riot API instability (mitigation: pin version, track upstream)
++- OCaml 5 effects learning curve (mitigation: study eio examples)
++
++---
++
++### Phase 1: Core Engine (Weeks 5-12)
++
++**Goal:** Implement actor-kit system with basic tool execution
++
++**Tasks:**
++
++#### 1.1 Kit System
++- [ ] Design kit definition format (S-expressions or YAML)
++- [ ] Implement `KitRegistry` (load/validate kits)
++- [ ] Implement kit-switch rules engine
++- [ ] Add tool adapter interface (subprocess, binary, script)
++- [ ] Create 2-3 example kits (recon, scan, validate)
++
++#### 1.2 Actor Engine
++- [ ] Implement seeded actor spawn (SplitMix64 PRNG)
++- [ ] Implement perceive-decide-act loop
++- [ ] Add kit switching in-place (no respawn)
++- [ ] Implement finding emission and routing
++- [ ] Add actor scoring system
++
++#### 1.3 Supervision
++- [ ] Implement `TargetSupervisor` (per-engagement tree)
++- [ ] Add crash recovery with state restoration
++- [ ] Implement actor lifecycle hooks (start/stop/crash)
++- [ ] Add telemetry and logging (structured output)
++
++#### 1.4 State Management
++- [ ] Implement `Store` (in-memory findings database)
++- [ ] Add finding deduplication
++- [ ] Implement state persistence (SQLite or flat files)
++- [ ] Add snapshot/restore for replay
++
++**Deliverables:**
++- `opaca/lib/kit.ml` — Kit registry and switching
++- `opaca/lib/engine.ml` — Actor loop and supervision
++- `opaca/lib/store.ml` — State persistence
++- `opaca/bin/opaca.ml` — CLI daemon
++- `kits/` — Example kit definitions
++- `docs/KIT-FORMAT.md` — Kit specification
++
++**Success Criteria:**
++- ✓ Actor spawns with seed, runs a kit, emits findings
++- ✓ Actor switches kits on finding trigger
++- ✓ Supervisor restarts crashed actor with last state
++- ✓ Findings persist across daemon restart
++- ✓ Multiple actors run concurrently on different cores
++
++**Risks:**
++- Kit definition format bikeshedding (mitigation: start simple, iterate)
++- Tool adapter complexity (mitigation: start with subprocess only)
++- State persistence performance (mitigation: benchmark early, optimize later)
++
++---
++
++### Phase 2: Parallel Operation (Weeks 13-20)
++
++**Goal:** Run Opaca alongside OPACK, migrate tools incrementally
++
++**Tasks:**
++
++#### 2.1 Tool Migration
++- [ ] Audit existing tools in `probes/`, `picks/`, `paths/`, `proofs/`
++- [ ] Categorize tools by kit (recon/scan/exploit/validate/chain)
++- [ ] Create tool adapters for top 10 tools
++- [ ] Test tool execution from Opaca actors
++- [ ] Document tool integration patterns
++
++#### 2.2 Integration Layer
++- [ ] Implement MCP server (expose kits as tools)
++- [ ] Implement stdio bridge (JSON lines)
++- [ ] Add HTTP API (basic endpoints)
++- [ ] Create Claude Code integration examples
++- [ ] Add observability (metrics, traces)
++
++#### 2.3 Feature Parity
++- [ ] Port perception system (actor-to-actor awareness)
++- [ ] Port communication system (inter-actor messages)
++- [ ] Implement chain loop (background aggregator)
++- [ ] Add scope gating (out-of-scope detection)
++- [ ] Implement scoring and reputation
++
++#### 2.4 Validation
++- [ ] Run same engagement on OPACK and Opaca
++- [ ] Compare findings (coverage, accuracy)
++- [ ] Benchmark performance (throughput, latency)
++- [ ] Stress test (100+ concurrent actors)
++- [ ] Security audit (isolation, privilege separation)
++
++**Deliverables:**
++- `opaca/lib/mcp.ml` — MCP server
++- `opaca/lib/stdio.ml` — Stdio bridge
++- `opaca/lib/http.ml` — HTTP API
++- `tools/migrate_tool.sh` — Tool migration script
++- `docs/TOOL-INTEGRATION.md` — Integration guide
++- `benchmarks/` — Performance comparison
++
++**Success Criteria:**
++- ✓ Opaca finds same vulns as OPACK on test target
++- ✓ MCP server works with Claude Code
++- ✓ Performance within 2x of OPACK (acceptable for I/O-bound)
++- ✓ No crashes under stress test
++- ✓ Security audit passes
++
++**Risks:**
++- Tool compatibility issues (mitigation: adapter abstraction)
++- Performance regression (mitigation: profile and optimize hot paths)
++- Integration bugs (mitigation: extensive testing, feature flags)
++
++---
++
++### Phase 3: Full Migration (Weeks 21-28)
++
++**Goal:** Deprecate OPACK, Opaca becomes primary engine
++
++**Tasks:**
++
++#### 3.1 Advanced Features
++- [ ] Implement hot code reloading (if feasible)
++- [ ] Add neural mesh integration (`ops/mem/`)
++- [ ] Implement learning layer (kit preference)
++- [ ] Add distributed mode (multi-node swarm)
++- [ ] Implement gamification (actor scoring, guilds)
++
++#### 3.2 Ecosystem
++- [ ] Migrate all tools to Opaca kits
++- [ ] Create kit marketplace (community kits)
++- [ ] Write comprehensive documentation
++- [ ] Create video tutorials
++- [ ] Build operator dashboard (Pharo/web)
++
++#### 3.3 Deprecation
++- [ ] Mark OPACK as deprecated
++- [ ] Archive OPACK codebase
++- [ ] Update all references to Opaca
++- [ ] Migrate existing engagements
++- [ ] Sunset OPACK (remove from builds)
++
++**Deliverables:**
++- `opaca/` — Production-ready engine
++- `kits/` — Full kit library
++- `docs/` — Complete documentation
++- `dashboard/` — Operator UI
++- `MIGRATION-COMPLETE.md` — Final report
++
++**Success Criteria:**
++- ✓ All OPACK features ported or replaced
++- ✓ Zero critical bugs in production
++- ✓ Documentation complete
++- ✓ Community adoption (if open-source)
++- ✓ OPACK fully removed from codebase
++
++**Risks:**
++- Feature creep (mitigation: strict scope, defer non-critical)
++- Adoption resistance (mitigation: training, support)
++- Unforeseen blockers (mitigation: buffer time, fallback plan)
++
++---
++
++## 4. Dependency Graph
++
++```mermaid
++graph TD
++    A[Phase 0: Foundation] --> B[Phase 1: Core Engine]
++    B --> C[Phase 2: Parallel Operation]
++    C --> D[Phase 3: Full Migration]
++    
++    A --> A1[OCaml Setup]
++    A --> A2[Core Types]
++    A --> A3[Minimal Actor]
++    
++    B --> B1[Kit System]
++    B --> B2[Actor Engine]
++    B --> B3[Supervision]
++    B --> B4[State Management]
++    
++    B1 --> C1[Tool Migration]
++    B2 --> C2[Integration Layer]
++    B3 --> C3[Feature Parity]
++    B4 --> C4[Validation]
++    
++    C1 --> D1[Advanced Features]
++    C2 --> D2[Ecosystem]
++    C3 --> D3[Deprecation]
++    C4 --> D3
++```
++
++**Critical Path:**
++1. Phase 0 (Foundation) — Blocks everything
++2. Phase 1.2 (Actor Engine) — Blocks Phase 2
++3. Phase 2.4 (Validation) — Gates Phase 3
++
++**Parallel Workstreams:**
++- Kit system (1.1) can develop alongside actor engine (1.2)
++- Tool migration (2.1) can start during Phase 1
++- Documentation can be written throughout
++
++---
++
++## 5. Risk Assessment
++
++### 5.1 Technical Risks
++
++| Risk | Probability | Impact | Mitigation |
++|------|-------------|--------|------------|
++| Riot API instability | Medium | High | Pin version, track upstream, contribute fixes |
++| OCaml 5 effects bugs | Low | High | Use stable eio, report issues, fallback to lwt |
++| Performance regression | Medium | Medium | Profile early, optimize hot paths, accept 2x slowdown for I/O |
++| Tool compatibility | High | Medium | Adapter abstraction, test incrementally |
++| State corruption | Low | High | Transactional store, frequent snapshots, backups |
++| Hot reload failure | High | Low | Defer to Phase 3, restart-based fallback |
++
++### 5.2 Organizational Risks
++
++| Risk | Probability | Impact | Mitigation |
++|------|-------------|--------|------------|
++| Scope creep | High | Medium | Strict phase gates, defer non-critical features |
++| Knowledge gap (OCaml) | Medium | Medium | Training, pair programming, external consult |
++| Timeline slip | Medium | High | Buffer time (28 weeks → 36 weeks realistic) |
++| Adoption resistance | Low | Medium | Parallel operation, gradual migration, training |
++
++---
++
++## 6. Testing Strategy
++
++### 6.1 Unit Tests
++- **Coverage Target:** 80%+ for core modules
++- **Framework:** Alcotest or OUnit2
++- **Focus:** Type safety, actor lifecycle, kit switching, finding routing
++
++### 6.2 Integration Tests
++- **Scenarios:** Full engagement workflows (recon → scan → exploit → validate → report)
++- **Tools:** Real tools from `probes/`, `picks/`, `proofs/`
++- **Validation:** Compare findings with OPACK baseline
++
++### 6.3 Performance Tests
++- **Benchmarks:** Actor spawn time, message throughput, kit switch latency
++- **Load Tests:** 100+ concurrent actors, 1000+ findings/sec
++- **Profiling:** Flamegraphs, memory usage, GC pressure
++
++### 6.4 Security Tests
++- **Isolation:** Verify actor crash doesn't affect others
++- **Privilege:** Ensure tools run with minimal permissions
++- **Audit:** External security review of MCP server, HTTP API
++
++---
++
++## 7. Rollback Strategy
++
++### 7.1 Phase 1 Rollback
++- **Trigger:** Core engine fails validation
++- **Action:** Abandon Opaca, continue with OPACK
++- **Cost:** 12 weeks development time
++
++### 7.2 Phase 2 Rollback
++- **Trigger:** Performance or stability issues
++- **Action:** Keep OPACK as primary, Opaca as experimental
++- **Cost:** 20 weeks development time, partial tool migration
++
++### 7.3 Phase 3 Rollback
++- **Trigger:** Critical production bug
++- **Action:** Revert to OPACK, fix Opaca offline
++- **Cost:** Downtime, reputation damage
++
++**Mitigation:**
++- Feature flags for gradual rollout
++- Parallel operation during Phase 2
++- Comprehensive testing before Phase 3
++- Backup OPACK binaries and state
++
++---
++
++## 8. Success Metrics
++
++### 8.1 Technical Metrics
++- **Correctness:** 95%+ finding overlap with OPACK
++- **Performance:** <2x latency vs OPACK for I/O-bound tasks
++- **Reliability:** <1 crash per 1000 actor-hours
++- **Concurrency:** 100+ actors on 8-core machine
++- **Coverage:** 80%+ unit test coverage
++
++### 8.2 Operational Metrics
++- **Deployment:** <5 min from code to running daemon
++- **Observability:** Structured logs, metrics, traces
++- **Debuggability:** Replay engagements from seed
++- **Maintainability:** <500 LOC per module average
++
++### 8.3 Adoption Metrics
++- **Migration:** 100% of tools ported by Phase 3
++- **Usage:** 80%+ of engagements on Opaca by end of Phase 3
++- **Satisfaction:** Positive feedback from operators
++- **Documentation:** Complete API docs, tutorials, examples
++
++---
++
++## 9. Open Questions
++
++1. **Hot Code Reloading:** Is it feasible in OCaml 5? Defer to Phase 3 or drop?
++2. **ECS Compatibility:** Should we keep a minimal ECS layer for compatibility, or fully commit to actors?
++3. **Neural Mesh Integration:** How does `ops/mem/` integrate with Opaca? Separate process or embedded?
++4. **Distributed Mode:** Single-node first, or design for multi-node from start?
++5. **Kit Format:** S-expressions, YAML, or OCaml DSL?
++6. **Tool Sandboxing:** Containers, seccomp, or trust-based?
++
++**Resolution Process:** Research spike → RFC → Team decision → Document in `docs/DECISIONS.md`
++
++---
++
++## 10. Next Steps
++
++### Immediate Actions (Week 1)
++1. **Approve Roadmap** — Review with team, incorporate feedback
++2. **Set Up Environment** — Install OCaml 5, Riot, create `opaca/` directory
++3. **Spike Riot** — Build minimal actor example, verify multicore
++4. **Define Types** — Draft `Finding`, `Kit`, `Actor` types in `types.ml`
++
++### Week 2-4 (Phase 0)
++- Complete foundation tasks
++- Write unit tests for core types
++- Document type system
++- Set up CI/CD
++
++### Week 5 Checkpoint
++- Review Phase 0 deliverables
++- Go/No-Go decision for Phase 1
++- Adjust timeline if needed
++
++---
++
++## 11. References
++
++- **OPACA.md** — Target architecture specification
++- **SWARM-ECS-SPEC.md** — Engine requirements
++- **LANGUAGE-CANDIDATES.md** — Language selection rationale
++- **OPACK README.md** — Current system documentation
++- [Riot GitHub](https://github.com/leostera/riot) — Actor framework
++- [Eio Documentation](https://github.com/ocaml-multicore/eio) — Effects-based I/O
++- [OCaml 5 Manual](https://ocaml.org/manual/5.2/) — Language reference
++
++---
++
++**Document Status:** Draft v0.1 — Awaiting team review  
++**Next Review:** 2026-07-06  
++**Owner:** Migration Team  
++**Approvers:** Technical Lead, Security Lead, Operations Lead
+diff --git a/PHASE-0-CHECKLIST.md b/PHASE-0-CHECKLIST.md
+new file mode 100644
+index 00000000..5162764a
+--- /dev/null
++++ b/PHASE-0-CHECKLIST.md
+@@ -0,0 +1,456 @@
++# Phase 0: Foundation - Implementation Checklist
++
++**Duration:** Weeks 1-4  
++**Goal:** Establish OCaml 5 + Riot development environment and core types  
++**Status:** Not Started
++
++---
++
++## Week 1: Environment Setup & Project Structure
++
++### 1.1 Development Environment
++- [ ] **Install OCaml 5.2+**
++  - [ ] Install opam (OCaml package manager)
++  - [ ] Initialize opam: `opam init`
++  - [ ] Create switch: `opam switch create 5.2.0`
++  - [ ] Verify: `ocaml --version` shows 5.2.0+
++  - **Acceptance:** OCaml 5.2+ compiles and runs
++
++- [ ] **Install Core Dependencies**
++  - [ ] Install dune: `opam install dune`
++  - [ ] Install Riot: `opam install riot`
++  - [ ] Install eio: `opam install eio eio_main`
++  - [ ] Install testing: `opam install alcotest`
++  - [ ] Install utilities: `opam install fmt logs yojson`
++  - **Acceptance:** All packages install without errors
++
++- [ ] **IDE Setup**
++  - [ ] Install LSP: `opam install ocaml-lsp-server`
++  - [ ] Install formatter: `opam install ocamlformat`
++  - [ ] Configure editor (VS Code/Vim/Emacs)
++  - [ ] Test autocomplete and type hints
++  - **Acceptance:** IDE shows types and autocompletes
++
++### 1.2 Project Structure
++- [ ] **Create Directory Layout**
++  ```
++  opaca/
++  ├── bin/           # Executables
++  ├── lib/           # Core library
++  ├── test/          # Unit tests
++  ├── kits/          # Kit definitions
++  ├── docs/          # Documentation
++  ├── dune-project  # Project config
++  └── README.md
++  ```
++  - [ ] Create all directories
++  - [ ] Initialize dune-project
++  - [ ] Create initial README.md
++  - **Acceptance:** `dune build` succeeds (even with empty project)
++
++- [ ] **Configure Build System**
++  - [ ] Create `dune-project` with:
++    - Project name: opaca
++    - OCaml version: >= 5.2
++    - Dependencies: riot, eio, alcotest, fmt, logs, yojson
++  - [ ] Create `lib/dune` for library
++  - [ ] Create `bin/dune` for executable
++  - [ ] Create `test/dune` for tests
++  - **Acceptance:** `dune build @all` succeeds
++
++### 1.3 CI/CD Setup
++- [ ] **GitHub Actions Workflow**
++  - [ ] Create `.github/workflows/ci.yml`
++  - [ ] Add OCaml setup action
++  - [ ] Add build step: `dune build`
++  - [ ] Add test step: `dune runtest`
++  - [ ] Add format check: `dune build @fmt`
++  - **Acceptance:** CI passes on push
++
++- [ ] **Pre-commit Hooks**
++  - [ ] Create `.ocamlformat` config
++  - [ ] Add format check to git hooks
++  - [ ] Add build check to git hooks
++  - **Acceptance:** Commits fail if code doesn't format
++
++---
++
++## Week 2: Core Type System
++
++### 2.1 Finding Types
++- [ ] **Define Finding Variants**
++  - [ ] Create `lib/finding.ml`
++  - [ ] Define type:
++    ```ocaml
++    type surface = {
++      url : string;
++      method_ : string;
++      params : (string * string) list;
++      headers : (string * string) list;
++    }
++    
++    type vuln = {
++      cwe : int;
++      severity : severity;
++      description : string;
++      evidence : string list;
++    }
++    
++    type exploit = {
++      vuln : vuln;
++      poc : string;
++      success : bool;
++    }
++    
++    type chain = {
++      findings : finding list;
++      impact : string;
++      cvss : float;
++    }
++    
++    type report = {
++      title : string;
++      findings : finding list;
++      timestamp : float;
++    }
++    
++    and finding =
++      | Surface of surface
++      | Vuln of vuln
++      | Exploit of exploit
++      | Chain of chain
++      | Report of report
++    
++    and severity = P1 | P2 | P3 | P4
++    ```
++  - [ ] Add pretty-printing functions
++  - [ ] Add JSON serialization (Yojson)
++  - **Acceptance:** Types compile, serialize to JSON
++
++- [ ] **Finding Relations**
++  - [ ] Define relation types:
++    ```ocaml
++    type relation =
++      | DerivedFrom of finding
++      | ChainsWith of finding
++      | EvidenceFor of finding
++    ```
++  - [ ] Add relation tracking to findings
++  - [ ] Add relation query functions
++  - **Acceptance:** Can link findings together
++
++- [ ] **Write Tests**
++  - [ ] Create `test/test_finding.ml`
++  - [ ] Test finding creation
++  - [ ] Test JSON round-trip
++  - [ ] Test relation tracking
++  - **Acceptance:** All tests pass
++
++### 2.2 Kit Types
++- [ ] **Define Kit Structure**
++  - [ ] Create `lib/kit.ml`
++  - [ ] Define type:
++    ```ocaml
++    type tool = {
++      name : string;
++      path : string;
++      args : string list;
++      timeout : float;
++    }
++    
++    type switch_rule =
++      | OnSurface of string  (* kit name *)
++      | OnVuln of string
++      | OnExploit of string
++      | OnChain of string
++    
++    type t = {
++      name : string;
++      tools : tool list;
++      switch_rules : switch_rule list;
++    }
++    ```
++  - [ ] Add kit validation
++  - [ ] Add kit loading from file
++  - **Acceptance:** Can load kit from JSON/S-exp
++
++- [ ] **Kit Registry**
++  - [ ] Create `lib/kit_registry.ml`
++  - [ ] Implement registry type:
++    ```ocaml
++    type t = {
++      kits : (string, Kit.t) Hashtbl.t;
++    }
++    ```
++  - [ ] Add `register : t -> Kit.t -> unit`
++  - [ ] Add `lookup : t -> string -> Kit.t option`
++  - [ ] Add `list : t -> Kit.t list`
++  - **Acceptance:** Can register and lookup kits
++
++- [ ] **Write Tests**
++  - [ ] Create `test/test_kit.ml`
++  - [ ] Test kit creation
++  - [ ] Test kit validation
++  - [ ] Test registry operations
++  - **Acceptance:** All tests pass
++
++### 2.3 Actor Types
++- [ ] **Define Actor State**
++  - [ ] Create `lib/actor.ml`
++  - [ ] Define type:
++    ```ocaml
++    type seed = int64
++    
++    type state = {
++      seed : seed;
++      current_kit : string;
++      findings : Finding.t list;
++      score : float;
++      prng : Random.State.t;
++    }
++    ```
++  - [ ] Add state initialization
++  - [ ] Add state serialization
++  - **Acceptance:** State can be saved/restored
++
++- [ ] **Actor Messages**
++  - [ ] Define message type:
++    ```ocaml
++    type msg =
++      | Finding of Finding.t
++      | SwitchKit of string
++      | GetState of state Riot.Ref.t
++      | Shutdown
++    ```
++  - [ ] Add message serialization
++  - **Acceptance:** Messages can be sent/received
++
++- [ ] **Write Tests**
++  - [ ] Create `test/test_actor.ml`
++  - [ ] Test state creation
++  - [ ] Test state serialization
++  - [ ] Test message types
++  - **Acceptance:** All tests pass
++
++### 2.4 Score Types
++- [ ] **Define Scoring System**
++  - [ ] Create `lib/score.ml`
++  - [ ] Define type:
++    ```ocaml
++    type event =
++      | FindingConfirmed of Finding.severity
++      | ChainCompleted of int  (* num findings *)
++      | FalsePositiveAvoided
++      | ToolCrash
++      | TimeToFinding of float
++    
++    type t = {
++      total : float;
++      events : event list;
++    }
++    ```
++  - [ ] Add scoring functions
++  - [ ] Add score calculation
++  - **Acceptance:** Can calculate scores
++
++- [ ] **Write Tests**
++  - [ ] Create `test/test_score.ml`
++  - [ ] Test score calculation
++  - [ ] Test event tracking
++  - **Acceptance:** All tests pass
++
++---
++
++## Week 3: Minimal Actor Runtime
++
++### 3.1 Basic Actor Spawn
++- [ ] **Implement Actor Process**
++  - [ ] Create `lib/actor_runtime.ml`
++  - [ ] Implement spawn function:
++    ```ocaml
++    val spawn : seed:int64 -> kit:string -> Riot.Pid.t
++    ```
++  - [ ] Implement basic message loop
++  - [ ] Add logging (Logs library)
++  - **Acceptance:** Actor spawns and logs startup
++
++- [ ] **Message Passing**
++  - [ ] Implement send function:
++    ```ocaml
++    val send : Riot.Pid.t -> Actor.msg -> unit
++    ```
++  - [ ] Implement receive in actor loop
++  - [ ] Add message queue monitoring
++  - **Acceptance:** Messages sent and received
++
++- [ ] **Write Tests**
++  - [ ] Create `test/test_actor_runtime.ml`
++  - [ ] Test actor spawn
++  - [ ] Test message passing
++  - [ ] Test actor shutdown
++  - **Acceptance:** All tests pass
++
++### 3.2 Supervision
++- [ ] **Implement Supervisor**
++  - [ ] Create `lib/supervisor.ml`
++  - [ ] Implement supervisor process:
++    ```ocaml
++    type strategy = OneForOne | OneForAll
++    
++    val start : strategy -> (unit -> Riot.Pid.t) list -> Riot.Pid.t
++    ```
++  - [ ] Add crash detection
++  - [ ] Add restart logic
++  - **Acceptance:** Supervisor restarts crashed actors
++
++- [ ] **Crash Recovery**
++  - [ ] Implement state restoration
++  - [ ] Add crash logging
++  - [ ] Add restart limits (max 3 restarts/minute)
++  - **Acceptance:** Actor restarts with last state
++
++- [ ] **Write Tests**
++  - [ ] Create `test/test_supervisor.ml`
++  - [ ] Test crash detection
++  - [ ] Test restart logic
++  - [ ] Test restart limits
++  - **Acceptance:** All tests pass
++
++### 3.3 Multicore Verification
++- [ ] **Domain Scheduling**
++  - [ ] Create test with 10 actors
++  - [ ] Verify actors run on different domains
++  - [ ] Measure message throughput
++  - **Acceptance:** Actors utilize multiple cores
++
++- [ ] **Performance Baseline**
++  - [ ] Measure actor spawn time
++  - [ ] Measure message latency
++  - [ ] Measure memory per actor
++  - [ ] Document results in `docs/PERFORMANCE.md`
++  - **Acceptance:** Metrics documented
++
++- [ ] **Write Tests**
++  - [ ] Create `test/test_multicore.ml`
++  - [ ] Test concurrent actors
++  - [ ] Test message ordering
++  - **Acceptance:** All tests pass
++
++---
++
++## Week 4: Documentation & Integration
++
++### 4.1 Type System Documentation
++- [ ] **Create Type Reference**
++  - [ ] Create `docs/TYPES.md`
++  - [ ] Document Finding types with examples
++  - [ ] Document Kit types with examples
++  - [ ] Document Actor types with examples
++  - [ ] Document Score types with examples
++  - **Acceptance:** All types documented
++
++- [ ] **API Documentation**
++  - [ ] Add odoc comments to all modules
++  - [ ] Generate HTML docs: `dune build @doc`
++  - [ ] Review generated docs
++  - **Acceptance:** Docs build without warnings
++
++### 4.2 Example Programs
++- [ ] **Minimal Actor Example**
++  - [ ] Create `examples/minimal_actor.ml`
++  - [ ] Spawn actor, send message, shutdown
++  - [ ] Add comments explaining each step
++  - **Acceptance:** Example runs successfully
++
++- [ ] **Supervision Example**
++  - [ ] Create `examples/supervision.ml`
++  - [ ] Spawn supervisor with 3 actors
++  - [ ] Crash one actor, verify restart
++  - **Acceptance:** Example demonstrates restart
++
++- [ ] **Kit Loading Example**
++  - [ ] Create `examples/kit_loading.ml`
++  - [ ] Load kit from file
++  - [ ] Print kit details
++  - **Acceptance:** Example loads kit
++
++### 4.3 Integration Testing
++- [ ] **End-to-End Test**
++  - [ ] Create `test/test_e2e.ml`
++  - [ ] Spawn actor with kit
++  - [ ] Send finding message
++  - [ ] Verify kit switch
++  - [ ] Verify state persistence
++  - **Acceptance:** Full workflow works
++
++- [ ] **Stress Test**
++  - [ ] Create `test/test_stress.ml`
++  - [ ] Spawn 100 actors
++  - [ ] Send 1000 messages
++  - [ ] Verify no crashes
++  - **Acceptance:** System handles load
++
++### 4.4 Phase 0 Review
++- [ ] **Code Review**
++  - [ ] Review all code for style
++  - [ ] Check test coverage (aim for 80%+)
++  - [ ] Run `dune build @fmt` and fix issues
++  - **Acceptance:** Code passes review
++
++- [ ] **Documentation Review**
++  - [ ] Review all docs for completeness
++  - [ ] Check examples work
++  - [ ] Fix any broken links
++  - **Acceptance:** Docs are complete
++
++- [ ] **Deliverables Checklist**
++  - [ ] `opaca/lib/types.ml` — Core types ✓
++  - [ ] `opaca/lib/actor.ml` — Basic actor spawn/message ✓
++  - [ ] `opaca/test/test_actor.ml` — Unit tests ✓
++  - [ ] `docs/TYPES.md` — Type system documentation ✓
++  - [ ] CI/CD passing ✓
++  - **Acceptance:** All deliverables complete
++
++---
++
++## Success Criteria (Phase 0)
++
++- [x] OCaml 5.2+ compiles and runs on target platform
++- [ ] Riot actors spawn and communicate
++- [ ] Supervision restarts crashed actors
++- [ ] Tests pass on CI (80%+ coverage)
++- [ ] Core types defined and documented
++- [ ] Basic actor runtime works
++- [ ] Examples demonstrate key features
++
++---
++
++## Risks & Mitigation
++
++| Risk | Mitigation |
++|------|------------|
++| Riot API changes | Pin version to 0.0.9, track upstream |
++| OCaml 5 effects bugs | Use stable eio 1.0, report issues |
++| Learning curve | Pair programming, study examples |
++| Timeline slip | Buffer week 4 for catch-up |
++
++---
++
++## Next Steps After Phase 0
++
++1. **Week 5 Checkpoint**
++   - Review Phase 0 deliverables
++   - Go/No-Go decision for Phase 1
++   - Adjust timeline if needed
++
++2. **Phase 1 Prep**
++   - Design kit definition format
++   - Plan tool adapter interface
++   - Set up Phase 1 project board
++
++---
++
++**Status:** Ready to begin  
++**Owner:** Development Team  
++**Start Date:** TBD  
++**Target Completion:** 4 weeks from start
+-- 
+2.54.0
+
