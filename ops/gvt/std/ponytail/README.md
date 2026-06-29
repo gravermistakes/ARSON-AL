@@ -24,7 +24,6 @@ The ladder runs *after* you understand the problem, not instead of it.
 
 | Level | What changes |
 |-------|-------------|
-| **lite** | Build what's asked, name the lazier alternative in one line. |
 | **full** | The ladder enforced. Stdlib and native first. Shortest diff, shortest explanation. Default. |
 | **ultra** | YAGNI extremist. Deletion before addition. Challenge the requirement before building. |
 
@@ -32,7 +31,7 @@ The ladder runs *after* you understand the problem, not instead of it.
 
 | Skill | Trigger | Purpose |
 |-------|---------|---------|
-| `ponytail` | `/ponytail [lite\|full\|ultra]` | Lazy mode. Simplest solution that works. |
+| `ponytail` | `/ponytail [full\|ultra]` | Lazy mode. Simplest solution that works. |
 | `ponytail-review` | `/ponytail-review` | Over-engineering review on a diff. One line per finding. |
 | `ponytail-audit` | `/ponytail-audit` | Whole-repo audit for complexity. Ranked, biggest cut first. |
 | `ponytail-debt` | `/ponytail-debt` | Harvest every `ponytail:` comment into a debt ledger. |
