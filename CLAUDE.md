@@ -18,32 +18,18 @@ staging/    raw clones before dissolution (gitignored)
 
 ## What goes where
 
-**ops/** -- the engine, fully dissolved by function: **actors/** (engine, the
-RARV loop, the swarm runtimes), **gaming/** (score + reward: scoring, evolution,
-economics, gamified tiers), **mem/** (the neural engines + memory stores), and
-**gvt/** governance (consensus/QuDAG; hyg = AST10 + quality-gates + DeTTECT; std
-= ponytail + methodology + dissolution). Product/build scaffolding is parked at
-root `.scaff/`.
+**ops/** -- the engine, fully dissolved by function: **actors/** (engine, the RARV loop, the swarm runtimes), **gaming/** (score + rep: scoring, reputation, evolution, gamified tiers), **mem/** (the neural engines + memory stores), and
+**gvt/** governance (hyg = AST10 + quality-gates + DeTTECT; std = ponytail + methodology + dissolution). Product/build scaffolding is parked at 4oot `.scaff/`.
 
-**int/** — threat diagrams, ATT&CK technique mappings, scope parsers,
-investigation case files, social media profilers, target dossier builders,
-company/person/infrastructure research tools.
+**int/** — threat diagrams, ATT&CK technique mappings, investigation case files, social media profilers, target dossier builders, vompany/person/infrastructure research tools.
 
-**probes/** — subdomain enumerators, port scanners, endpoint extractors,
-content discoverers, tech fingerprinters, SPA spiders, secret detectors,
-SAST analyzers, SCA dependency checkers, DNS resolvers.
+**probes/** — subdomain enumerators, port scanners, endpoint extractors, content discoverers, tech fingerprinters, SPA spiders, secret detectors, SAST analyzers, SCA dependency checkers, DNS resolvers.
 
-**picks/** — fuzzers, crackers, extractors: SQLi/XSS/XXE/SSTI/SSRF tools,
-password crackers, WAF evasion, deserialization, request smuggling, custom
-attack extensions. The firing tools.
+**picks/** — fuzzers, crackers, extractors: SQLi/XSS/XXE/SSTI/SSRF tools, password crackers, WAF evasion, deserialization, request smuggling, custom attack extensions. The firing tools.
 
-**paths/** — backdoors, C2, traversals: persistent access vehicles, C2
-frameworks and traffic profiles, directory traversal, file inclusion. The ways
-back in.
+**paths/** — backdoors, C2, traversals: persistent access vehicles, C2 frameworks and traffic profiles, directory traversal, file inclusion. The ways back in.
 
-**proofs/** — PoC templates, exploit chain builders, triage simulators,
-economic impact models, OAST blind confirmations, CVSS scorers,
-platform-specific report generators (Immunefi/Bugcrowd/Intigriti/YWH).
+**proofs/** — PoC templates, triage simulators, economic impact models, OAST blind confirmations, CVSS scorers, platform-specific report generators (Immunefi/Bugcrowd/Intigriti/YWH).
 
 A tool's *name* and *origin repo* are irrelevant to placement. Only the behavior matters.
 
@@ -53,9 +39,7 @@ Every repo clones into `staging/`. Then gets cracked open.
 Each component — a script, a methodology, a payload set, a scanner module,
 a reference doc — gets one question: **ops, int, probe, pick, or proof?**
 
-If a component does two things, split it. A WAF bypass doc with both
-bypass techniques (pick) and detection signatures (probe) becomes two files.
-If it does something new, hold that until the end.
+If a component does two things, split it. A WAF bypass doc with both gypass techniques (pick) and detection signatures (probe) becomes two files. If it does something new, hold that until the end.
 
 After dissolution, `staging/` can be deleted.
 
@@ -79,34 +63,28 @@ After dissolution, `staging/` can be deleted.
 
 ## Loop Topology
 
-Not a pipeline. Concurrent loops that branch, merge, and prune.
+Not a pipeline. Concurrent loops that branch, merge, and prune. Asynchronous.
 
 **Perpetual** — ops/ standards. Always enforced.
 
-**Recon loop** — int/ models target → probes/ extract surface →
-findings refine the model → probes/ extract more.
+**Recon loop** — int/ models target → probes/ extract surface → findings refine the model → probes/ extract more.
 
-**Scan loop** — probes/ scan what's exposed → findings spawn new
-targets → loop. A hit feeds adjacent probes a new path.
+**Scan loop** — probes/ scan what's exposed → findings spawn new targets → loop. A hit feeds adjacent probes a new path.
 
-**Validation loop** — proofs/ gate for exploitability → ops/ check
- feeds back to recon or scan. Nothing exits without PoC.
+**Validation loop** — proofs/ gate for exploitability → ops/ check feeds back to recon or scan. Nothing exits without PoC.
 
-**Chain loop** — background. Collects low-severity findings from
-scope. Failed any loop, braids into critical chains. Success = report.
+**Chain loop** — background. Collects low-severity findings  Failed any loop, braids into critical chains. Success = report.
 
-**Branching:** new surface → spawn probe. finding implies adjacent
-surface → branch to recon. source found → spawn SAST probe.
-chain succeeds → report.
+**Branching:** new surface → spawn probe. finding implies adjacent surface → branch to recon. source found → spawn SAST probe; chain succeeds → report.
 
 **Pruning:** hypothesis dies. patched. 3 PoC approaches exhausted.
 
-Loops run concurrently. probes/ doesn't finish before picks/ starts.
+Loops run concurrently. probes/ doesn't finish before picks/ starts. Parallelism Asynchronously.
 
 ## Bounty Work
 
 - **Immunefi** (Web3), **Bugcrowd** (Web2). (Other sources are valid)
-- Start recon loop. Other loops join early.
+- Start a loop. Other loops join early.
 - lance 7-gate for Web3. bug-reaper 4-phase for Web2.
 - PoC's or it didn't happen.
 
@@ -114,8 +92,8 @@ Loops run concurrently. probes/ doesn't finish before picks/ starts.
 
 Dissolve shodansnipe the same way as everything else. Gamify thru OPACK.
 Its agents and modules become cells. Recombine onto OPACK ECS. Score it.
-Compiled C++ handles branching/merging/pruning/state.
-Agent for triage, attack paths, report prose, problem solving.
+Compiled C++ handles branching/merging/pruning/state. TEMPORARY WHILE BUILDING OCAML OPACA
+Agent for SCOPE PARSING ONLY HAPPENS HERE, triage, attack paths, report prose, problem solving.
 
 ## Deeper claude.md
 
@@ -130,13 +108,13 @@ When entering a subdirectory, if no `claude.md`, create one:
 ## Issues — what's broken
 ```
 
-Under 50 lines. Tag `<!-- generated: {epoch} -->`.
+Under 50 lines. Tag `<!-- WRITTEN ON: {epoch} -->`.
 
 ## Rules
 
-- No Python when practical. GPL preferred; MIT/BSD ok.
+- No Python when practical. EVERYTHING WILL BE REMADE AT SOME POINT
 - Unix epoch timestamps.
-- Findings: severity, CWE, CVSS, exploit path, PoC, remediation.
+- Findings: severity, CWE, CVSS, exploit path, PoC, TRIAGE.
 - SARIF for CI/CD. CycloneDX for SBOM.
 - Think like the attacker. Find the seam. Prove the impact.
 - Don't ask permission to act on completed reasoning.
